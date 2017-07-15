@@ -19,7 +19,7 @@ Look at lines
 ```
 
 How would we extract all needed data without regexes?
-This is possible way:
+This is a possible way:
 * We have the rest of line. What can we do with that, basic operations:
   1. We can look for the some string or character in the rest or in the first N characters in the rest.
   2. We can check if the rest starts with the string or character.
@@ -35,7 +35,7 @@ This is possible way:
 ```perl
 line = 
   _ ' '                                  # Pass to the space (x20) character
-  Time(string) ']'                       # Take everything as a notion for Time right to ']' character
+  Time(string) ']'                       # Take everything as a record for Time right to ']' character
   ^" FETCH_EVENTS "                      # Current rest must starts with " FETCH_EVENTS " string
   ^"first=" First(uint8) ' '             # The rest must starts with "first=" characters, then take the rest until ' ' as uint8
                                          # under the name of First
