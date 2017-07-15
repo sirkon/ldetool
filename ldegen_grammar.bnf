@@ -1,0 +1,78 @@
+/* Lexical Part */
+
+int_lit : _digit {_digit};
+
+_digit : '0'-'9' ;
+
+_letter : 'a'-'z' | 'A'-'Z' | '_';
+
+identifier : _letter {_letter|_digit};
+
+_escaped_string_content : '\\' | '0' | 't' | 'n' | 'r' | 'a' | 'b' | '"' ;
+
+_escaped_string_char : '\\' _escaped_string_content;
+
+_string_content : _escaped_string_char | . ;
+
+string_lit: '"' { _string_content } '"' ;
+
+_escaped_char_content : '\\' | '0' | 't' | 'n' | 'r' | 'a' | 'b' | '\'' ;
+
+_escaped_char : '\\' _escaped_char_content ;
+
+_char_content : _escaped_char | . ;
+
+char_lit: '\'' _char_content '\'' ;
+
+stress : '!' ;
+
+_lineComment : '#' {.} '\n' ;
+
+!whitespace : ' ' | '\t' | '\n' | '\r' ;
+!line_comment: _lineComment;
+
+
+/* Syntax Part */
+
+														<<import ( "logparsergen/ast" )>>
+
+
+Rules
+        : Rules Rule                                    << ast.RuleSeq($0, $1) >>
+		| Rule                                          << ast.LastItem($0) >>
+		;
+
+
+Rule
+        : identifier "=" Action ";"                     << ast.Rule($0, $2) >>
+		;
+
+
+Action
+		: "(" Action ")" Action                         << ast.ActionSeq($1, $3) >>
+		| "(" Action ")"                                << $1, nil >>
+        | AtomicAction Action                           << ast.ActionSeq($0, $1) >>
+		| AtomicAction                                  << ast.Action($0) >>
+		| stress Action                                 << ast.MatchRequired($1) >>
+		;
+
+
+AtomicAction
+        : "^" string_lit                           		<< ast.StartsWithString($1) >>
+		| "^" char_lit                                  << ast.StartsWithChar($1) >>
+		| "_" "[" int_lit ":" "]"                       << ast.PassFirst($2) >>
+		| "_" Target							     	<< ast.PassUntil($1) >>
+		| identifier "(" identifier ")" "??" string_lit << ast.TakeUntilStringOrRest($0, $2, $5) >>
+		| identifier "(" identifier ")" "??" char_lit   << ast.TakeUntilCharOrRest($0, $2, $5) >>
+		| identifier "(" identifier ")" Target          << ast.TakeUntil($0, $2, $4) >>
+		| "?" identifier "(" Action ")"                 << ast.Option($1, $3) >>
+		| identifier "(" identifier ")"                 << ast.TakeTheRest($0, $2) >>
+		| "$"                                           << ast.AtTheEnd() >>
+		;
+
+Target
+        : string_lit "[" ":" int_lit "]"                << ast.LimitedScopeStringTarget($0, $3) >>
+		| string_lit					                << ast.StringTarget($0) >>
+		| char_lit	 "[" ":" int_lit "]"                << ast.LimitedScopeCharTarget($0, $3) >>
+		| char_lit						                << ast.CharTarget($0) >>
+		;
