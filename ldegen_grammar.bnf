@@ -34,7 +34,7 @@ _lineComment : '#' {.} '\n' ;
 
 /* Syntax Part */
 
-														<<import ( "logparsergen/ast" )>>
+														<<import ( "github.com/DenisCheremisov/ldegen/ast" )>>
 
 
 Rules
@@ -72,7 +72,9 @@ AtomicAction
 
 Target
         : string_lit "[" ":" int_lit "]"                << ast.LimitedScopeStringTarget($0, $3) >>
+		| string_lit "[" int_lit ":" int_lit "]"        << ast.BoundedScopeStringTarget($0, $2, $4) >>
 		| string_lit					                << ast.StringTarget($0) >>
 		| char_lit	 "[" ":" int_lit "]"                << ast.LimitedScopeCharTarget($0, $3) >>
+		| char_lit	 "[" int_lit ":" int_lit "]"        << ast.BoundedScopeCharTarget($0, $2, $4) >>
 		| char_lit						                << ast.CharTarget($0) >>
 		;
