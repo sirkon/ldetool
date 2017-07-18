@@ -133,7 +133,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		33, // Target
+		34, // Target
 		
 	},
 	gotoRow{ // S14
@@ -194,7 +194,7 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		38, // Action
+		39, // Action
 		21, // AtomicAction
 		-1, // Target
 		
@@ -203,7 +203,7 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		39, // Action
+		40, // Action
 		21, // AtomicAction
 		-1, // Target
 		
@@ -212,7 +212,7 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		40, // Action
+		41, // Action
 		21, // AtomicAction
 		-1, // Target
 		
@@ -232,7 +232,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		46, // Target
+		48, // Target
 		
 	},
 	gotoRow{ // S25
@@ -347,8 +347,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		54, // Action
-		10, // AtomicAction
+		-1, // Action
+		-1, // AtomicAction
 		-1, // Target
 		
 	},
@@ -356,8 +356,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		-1, // Action
-		-1, // AtomicAction
+		58, // Action
+		10, // AtomicAction
 		-1, // Target
 		
 	},
@@ -473,8 +473,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		65, // Action
-		21, // AtomicAction
+		-1, // Action
+		-1, // AtomicAction
 		-1, // Target
 		
 	},
@@ -484,7 +484,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		66, // Target
+		-1, // Target
 		
 	},
 	gotoRow{ // S53
@@ -509,7 +509,7 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		69, // Action
+		71, // Action
 		21, // AtomicAction
 		-1, // Target
 		
@@ -520,7 +520,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		-1, // Target
+		73, // Target
 		
 	},
 	gotoRow{ // S57
@@ -599,8 +599,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		-1, // Action
-		-1, // AtomicAction
+		81, // Action
+		21, // AtomicAction
 		-1, // Target
 		
 	},
@@ -628,7 +628,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		84, // Target
+		-1, // Target
 		
 	},
 	gotoRow{ // S69
@@ -664,7 +664,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		-1, // Target
+		88, // Target
 		
 	},
 	gotoRow{ // S73
@@ -682,7 +682,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		-1, // Target
+		90, // Target
 		
 	},
 	gotoRow{ // S75
@@ -817,7 +817,7 @@ var gotoTab = gotoTable{
 		-1, // Rule
 		-1, // Action
 		-1, // AtomicAction
-		-1, // Target
+		101, // Target
 		
 	},
 	gotoRow{ // S90
@@ -956,6 +956,42 @@ var gotoTab = gotoTable{
 		
 	},
 	gotoRow{ // S105
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // AtomicAction
+		-1, // Target
+		
+	},
+	gotoRow{ // S106
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // AtomicAction
+		-1, // Target
+		
+	},
+	gotoRow{ // S107
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // AtomicAction
+		-1, // Target
+		
+	},
+	gotoRow{ // S108
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // AtomicAction
+		-1, // Target
+		
+	},
+	gotoRow{ // S109
 		-1, // S'
 		-1, // Rules
 		-1, // Rule

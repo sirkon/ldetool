@@ -1,64 +1,77 @@
 package gogen
 
-import (
-	"fmt"
-	"regexp"
-)
-
-// constNameFromContent generates name of the constant based on content
-func (g *Generator) constNameFromContent(value string) string {
-	w := NewMnemowriter()
-	for _, r := range []rune(value) {
-		w.WriteRune(r)
-	}
-	w.Flush()
-	res := w.String()
-
-	if ok, err := regexp.MatchString(`^\d.*$`, res); ok {
-		res = "const_" + res
-	} else if err != nil {
-		panic(err)
-	}
-	res = g.goish.Private(res)
-	newRes := res
-	i := 2
-	for {
-		if cst, ok := g.consts[newRes]; !ok || (cst == value) {
-			res = newRes
-			break
-		}
-		newRes = g.goish.Private(fmt.Sprintf("%s_case_%d", res, i))
-		i++
-	}
-	g.consts[res] = value
-	return res
-}
-
 // LookupString ...
 func (g *Generator) LookupString(anchor string) {
+	g.regVar("pos", "int")
+	g.regImport("", "bytes")
+
+	constName := g.constNameFromContent(anchor)
+	g.tc.MustExecute("lookup_string", g.body, TParams{
+		ConstName: constName,
+	})
+	g.lookupStringError(constName)
 }
 
 // LookupLimitedString ...
-func (g *Generator) LookupLimitedString(anchor string) {
-	panic("not implemented")
+func (g *Generator) LookupLimitedString(anchor string, upper int) {
+	g.regVar("pos", "int")
+	g.regImport("", "bytes")
+
+	constName := g.constNameFromContent(anchor)
+	g.tc.MustExecute("lookup_limited_string", g.body, TParams{
+		ConstName: constName,
+		Upper:     upper,
+	})
+	g.lookupLimitedStringError(constName, upper)
 }
 
 // LookupBoundedString ...
-func (g *Generator) LookupBoundedString(anchor string) {
-	panic("not implemented")
+func (g *Generator) LookupBoundedString(anchor string, lower, upper int) {
+	g.regVar("pos", "int")
+	g.regImport("", "bytes")
+
+	constName := g.constNameFromContent(anchor)
+	g.tc.MustExecute("lookup_bounded_string", g.body, TParams{
+		ConstName: constName,
+		Upper:     upper,
+		Lower:     lower,
+	})
+	g.lookupBoundedStringError(constName, lower, upper)
 }
 
 // LookupChar ...
-func (g *Generator) LookupChar(anchor string) {
-	panic("not implemented")
+func (g *Generator) LookupChar(char string) {
+	g.regVar("pos", "int")
+	g.regImport("", "bytes")
+
+	g.tc.MustExecute("lookup_char", g.body, TParams{
+		Char: char,
+	})
+	g.lookupCharError(char)
 }
 
 // LookupLimitedChar ...
-func (g *Generator) LookupLimitedChar(anchor string) {
-	panic("not implemented")
+func (g *Generator) LookupLimitedChar(char string, upper int) {
+	g.regVar("pos", "int")
+	g.regImport("", "bytes")
+
+	g.tc.MustExecute("lookup_limited_char", g.body, TParams{
+		Char:  char,
+		Upper: upper,
+	})
+	g.lookupLimitedCharError(char, upper)
 }
 
 // LookupBoundedChar ...
-func (g *Generator) LookupBoundedChar(anchor string) {
-	panic("not implemented")
+func (g *Generator) LookupBoundedChar(char string, lower, upper int) {
+	g.regVar("pos", "int")
+	g.regImport("", "bytes")
+
+	g.lookupPush("", lower, upper)
+	g.tc.MustExecute("lookup_bounded_char", g.body, TParams{
+		Char:  char,
+		Lower: lower,
+		Upper: upper,
+	})
+	g.lookupBoundedCharError(char, lower, upper)
 }

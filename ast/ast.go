@@ -63,12 +63,16 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 		res.End = &t
 	case Optional:
 		res.Option = &t
-	case Pass:
+	case PassUntil:
 		res.Pass = &t
 	case StartChar:
 		res.StartWithChar = &t
 	case StartString:
 		res.StartWithString = &t
+	case MayBeStartChar:
+		res.MayBeStartWithChar = &t
+	case MayBeStartString:
+		res.MayBeStartWithString = &t
 	case Take:
 		res.Take = &t
 	case TakeRest:
@@ -92,12 +96,16 @@ func Action(act Attrib) (attr Attrib, err error) {
 		res.End = &t
 	case Optional:
 		res.Option = &t
-	case Pass:
+	case PassUntil:
 		res.Pass = &t
 	case StartChar:
 		res.StartWithChar = &t
 	case StartString:
 		res.StartWithString = &t
+	case MayBeStartChar:
+		res.MayBeStartWithChar = &t
+	case MayBeStartString:
+		res.MayBeStartWithString = &t
 	case Take:
 		res.Take = &t
 	case TakeRest:
@@ -119,15 +127,17 @@ func MatchRequired(act Attrib) (attr Attrib, err error) {
 
 // ActionItem ...
 type ActionItem struct {
-	End             *AtEnd
-	Option          *Optional
-	Pass            *Pass
-	StartWithChar   *StartChar
-	StartWithString *StartString
-	Take            *Take
-	TakeRest        *TakeRest
-	TakeUntilOrRest *TakeUntilOrRest
-	PassFirst       *PassFixed
+	End                  *AtEnd
+	Option               *Optional
+	Pass                 *PassUntil
+	StartWithChar        *StartChar
+	StartWithString      *StartString
+	MayBeStartWithChar   *MayBeStartChar
+	MayBeStartWithString *MayBeStartString
+	Take                 *Take
+	TakeRest             *TakeRest
+	TakeUntilOrRest      *TakeUntilOrRest
+	PassFirst            *PassFixed
 }
 
 func (ai ActionItem) String() string {
@@ -142,6 +152,10 @@ func (ai ActionItem) String() string {
 		return fmt.Sprintf("Starts with character \033[1m%s\033[0m", ai.StartWithChar.Value)
 	case ai.StartWithString != nil:
 		return fmt.Sprintf("Starts with string \033[1m%s\033[0m", ai.StartWithString.Value)
+	case ai.MayBeStartWithChar != nil:
+		return fmt.Sprintf("Probably starts with character \033[1m%s\033[0m", ai.StartWithChar.Value)
+	case ai.MayBeStartWithString != nil:
+		return fmt.Sprintf("Probably with string \033[1m%s\033[0m", ai.StartWithString.Value)
 	case ai.Take != nil:
 		return fmt.Sprintf("Take until \033[1m%s\033[0m as \033[32m%s(%s)\033[0m",
 			ai.Take.Limit.Value, ai.Take.Field.Name, ai.Take.Field.Type)
@@ -153,6 +167,7 @@ func (ai ActionItem) String() string {
 			ai.TakeUntilOrRest.Limit.Value, ai.TakeUntilOrRest.Field.Name, ai.TakeUntilOrRest.Field.Type)
 	case ai.PassFirst != nil:
 		return fmt.Sprintf("Passing first %d letters", ai.PassFirst)
+
 	default:
 		panic("Must not happen!")
 	}

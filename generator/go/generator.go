@@ -2,8 +2,12 @@ package gogen
 
 import (
 	"bytes"
+	"io"
+	"sort"
 
+	"github.com/DenisCheremisov/gosrcfmt"
 	"github.com/DenisCheremisov/gotify"
+	"github.com/DenisCheremisov/ldegen/templatecache"
 	"github.com/DenisCheremisov/ldegen/token"
 )
 
@@ -13,90 +17,96 @@ type Name struct {
 	token *token.Token
 }
 
+// LookupItem keeps last lookup cooridinates
+type LookupItem struct {
+	Name  string
+	Lower int
+	Upper int
+}
+
 // Generator implementation of generator.Generator
 // for Go target
 type Generator struct {
-	consts map[string]string
-	fields map[string]Name
+	consts       map[string]string
+	constLengths map[string]string
+	fields       map[string]Name
+	vars         map[string]string
+	imports      map[string]string
 
 	namespaces  []string
-	lookupStack []string
+	lookupStack []LookupItem
 
 	serious bool
-	vars    map[string]string
 	goish   *gotify.Gotify
 
 	gravity []string
 	pos     int
 
-	body *bytes.Buffer
+	tc        *templatecache.TemplateCache
+	obj       *bytes.Buffer
+	body      *bytes.Buffer
+	opgetters *bytes.Buffer
+
+	dgen *DecoderGen
 }
 
 // NewGenerator constructor
-func NewGenerator(goish *gotify.Gotify) *Generator {
-	return &Generator{
+func NewGenerator(goish *gotify.Gotify, tc *templatecache.TemplateCache) *Generator {
+	res := &Generator{
 		consts:      map[string]string{},
 		fields:      map[string]Name{},
 		namespaces:  nil,
 		lookupStack: nil,
 
-		serious: false,
-		vars:    map[string]string{},
-		goish:   goish,
-		gravity: nil,
-		pos:     0,
-		body:    &bytes.Buffer{},
+		serious:   false,
+		vars:      map[string]string{},
+		goish:     goish,
+		gravity:   nil,
+		pos:       0,
+		obj:       &bytes.Buffer{},
+		body:      &bytes.Buffer{},
+		opgetters: &bytes.Buffer{},
+		tc:        tc,
 	}
+	res.dgen = &DecoderGen{g: res}
+	return res
 }
 
-func (g *Generator) PassFoundString(anchor string) {
-	panic("not implemented")
+// AddField ...
+func (g *Generator) AddField(name string, fieldType string, t *token.Token) {
+	goType := g.goType(fieldType)
+	g.tc.MustExecute("struct_field", g.obj, TParams{
+		Name: name,
+		Type: goType,
+	})
+	return
 }
 
-func (g *Generator) PassFoundChar() {
-	panic("not implemented")
-}
-
-func (g *Generator) PassBoundedFoundString(anchor string) {
-	panic("not implemented")
-}
-
-func (g *Generator) PassBoundedFoundChar(anchor string) {
-	panic("not implemented")
-}
-
+// PassN passes first N characters if they are there, otherwise signal a error
 func (g *Generator) PassN(n int) {
-	panic("not implemented")
+	g.tc.MustExecute("pass_n_items", g.body, TParams{})
 }
 
-func (g *Generator) HeadString(anchor string) {
-	panic("not implemented")
-}
-
-func (g *Generator) HeadChar(anchor string) {
-	panic("not implemented")
-}
-
-func (g *Generator) AddField(name string, fieldType string) {
-	panic("not implemented")
-}
-
-func (g *Generator) ConsumeField(name string) {
-	panic("not implemented")
-}
-
-func (g *Generator) OpenOptionalScope(name string) {
-	panic("not implemented")
-}
-
-func (g *Generator) ExitOptionalScope() {
-	panic("not implemented")
-}
-
+// Stress mismatches should be treated as serious errors
 func (g *Generator) Stress() {
-	panic("not implemented")
+	g.serious = true
 }
 
-func (g *Generator) Generate() error {
-	panic("not implemented")
+// Generate writes into io.Writer
+func (g *Generator) Generate(pkgName, parserName string, dest io.Writer) {
+	var imports ImportSeq
+	for name, path := range g.imports {
+		imports = append(imports, Import{Name: name, Path: path})
+	}
+	sort.Sort(imports)
+	buf := &bytes.Buffer{}
+	g.tc.MustExecute("parser_code", buf, ParserParams{
+		Imports:    imports,
+		Struct:     g.obj.String(),
+		Parser:     g.obj.String(),
+		Getters:    g.opgetters.String(),
+		ParserName: parserName,
+		PkgName:    pkgName,
+	})
+	gosrcfmt.FormatReader(dest, buf)
 }

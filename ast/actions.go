@@ -26,14 +26,34 @@ func StartsWithChar(target Attrib) (Attrib, error) {
 	return StartChar{Value: string(target.(*token.Token).Lit)}, nil
 }
 
-// Pass ...
-type Pass struct {
-	Limit Target
+// MayBeStartString ...
+type MayBeStartString struct {
+	Value string
+}
+
+// MayBeStartChar ...
+type MayBeStartChar struct {
+	Value string
+}
+
+// MayBeStartsWithString ...
+func MayBeStartsWithString(target Attrib) (Attrib, error) {
+	return MayBeStartString{Value: string(target.(*token.Token).Lit)}, nil
+}
+
+// MayBeStartsWithChar ...
+func MayBeStartsWithChar(target Attrib) (Attrib, error) {
+	return MayBeStartChar{Value: string(target.(*token.Token).Lit)}, nil
 }
 
 // PassUntil ...
-func PassUntil(target Attrib) (attr Attrib, err error) {
-	res := Pass{
+type PassUntil struct {
+	Limit Target
+}
+
+// PassUntilTarget ...
+func PassUntilTarget(target Attrib) (attr Attrib, err error) {
+	res := PassUntil{
 		Limit: target.(Target),
 	}
 	return res, nil
@@ -65,8 +85,8 @@ type Take struct {
 	Limit Target
 }
 
-// TakeUntil ...
-func TakeUntil(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
+// TakeUntilTarget ...
+func TakeUntilTarget(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
 	f := NewField(field.(*token.Token), fieldType.(*token.Token))
 	res := Take{
 		Field: f,
@@ -123,30 +143,12 @@ type TakeUntilOrRest struct {
 	Limit Target
 }
 
-// TakeUntilStringOrRest ...
-func TakeUntilStringOrRest(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
+// TakeUntilTargetOrRest ...
+func TakeUntilTargetOrRest(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
 	f := NewField(field.(*token.Token), fieldType.(*token.Token))
-	t, err := StringTarget(target)
-	if err != nil {
-		return
-	}
-	res := TakeUntilOrRest{
+	res := Take{
 		Field: f,
-		Limit: t.(Target),
-	}
-	return res, nil
-}
-
-// TakeUntilCharOrRest ...
-func TakeUntilCharOrRest(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
-	f := NewField(field.(*token.Token), fieldType.(*token.Token))
-	t, err := CharTarget(target)
-	if err != nil {
-		return
-	}
-	res := TakeUntilOrRest{
-		Field: f,
-		Limit: t.(Target),
+		Limit: target.(Target),
 	}
 	return res, nil
 }
