@@ -3,7 +3,7 @@ package generator
 import (
 	"io"
 
-	"github.com/DenisCheremisov/ldegen/token"
+	"github.com/glossina/ldegen/token"
 )
 
 // Generator describes methods needed of data lookup and extraction
