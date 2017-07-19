@@ -1,0 +1,19 @@
+package {{ .PkgName }}
+
+import (
+{{ range .Imports }}{{.Name}} "{{.Path}}"{{end}}
+)
+
+{{range $name, $value := .Consts }}var {{$name}} = {{$value}};{{end}}
+
+type {{.ParserName}} struct {
+{{.Struct}}
+}
+
+func (p *{{.ParserName}}) Parse(line []byte) {
+   {{ range .Vars }}var {{.Name}} {{.Type}};{{end}}
+   p.rest = line
+{{.Parser}}
+}
+
+{{.Getters}}

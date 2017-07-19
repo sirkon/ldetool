@@ -1,0 +1,8 @@
+
+// Looking for {{ .ConstValue }} and then pass it
+pos = bytes.Index(p.rest, {{ .ConstName }});
+if pos >= 0 {
+    p.rest = p.rest[pos + len({{.ConstName}}):]
+} else {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", {{.ConstName}}, string(p.rest)){{else}}nil{{end}};{{end}}
+}

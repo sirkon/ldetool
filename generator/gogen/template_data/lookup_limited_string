@@ -1,0 +1,11 @@
+
+// Looking for {{ .ConstValue }} in first {{.Upper}} symbols of the rest and then pass it
+if len(p.rest) < {{.Upper}} {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols of the rest while only %s left", len(p.rest)){{else}}nil{{end}};{{end}}
+}
+pos = bytes.Index(p.rest[:{{.Upper}}], {{ .ConstName }});
+if pos >= 0 {
+    p.rest = p.rest[pos + len({{.ConstName}}):]
+} else {
+{{if .Namespace }}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", {{.ConstName}}, string(p.rest[:{{.Upper}}])){{else}}nil{{end}};{{end}}
+}

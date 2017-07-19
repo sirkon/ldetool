@@ -6,19 +6,21 @@ package gogen
 
 // TParams describes template parameters
 type TParams struct {
-	ConstName string
-	Char      string
-	Upper     int
-	Lower     int
+	ConstName  string
+	ConstValue string
+	Char       string
+	Upper      int
+	Lower      int
 
 	Name string
 	Type string
 
-	Extra1  string
-	Gravity string
-	Serious bool
-	Dest    string
-	Decoder func(string, string) string
+	Namespace  string
+	ScopeLabel string
+	Gravity    string
+	Serious    bool
+	Dest       string
+	Decoder    func(string, string) string
 }
 
 // DParams describes parameters for decoder generators
@@ -58,9 +60,35 @@ func (is ImportSeq) Swap(i int, j int) {
 	is[i], is[j] = is[j], is[i]
 }
 
+// Var describes variable
+type Var struct {
+	Name string
+	Type string
+}
+
+// VarSeq is a slice of vars
+type VarSeq []Var
+
+// Len ...
+func (vs VarSeq) Len() int {
+	return len(vs)
+}
+
+// Less ...
+func (vs VarSeq) Less(i int, j int) bool {
+	return vs[i].Name < vs[j].Name
+}
+
+// Swap ...
+func (vs VarSeq) Swap(i int, j int) {
+	vs[i], vs[j] = vs[j], vs[i]
+}
+
 // ParserParams describes parameters for parser generation template
 type ParserParams struct {
 	Imports    ImportSeq
+	Consts     map[string]string
+	Vars       VarSeq
 	Struct     string
 	Parser     string
 	Getters    string

@@ -9,10 +9,14 @@ import (
 // Generator describes methods needed of data lookup and extraction
 type Generator interface {
 	// Data handlers
-	AddField(name string, fieldType string, t *token.Token) (accessName string)
+	AddField(name string, fieldType string, t *token.Token)
+	RegGravity(name string)
 
 	// Pass
 	PassN(n int)
+
+	//
+	AtEnd()
 
 	// Head
 	HeadString(anchor string)
@@ -49,7 +53,7 @@ type Generator interface {
 	TakeBeforeBoundedCharOrRest(name, fieldType, char string, lower, upper int)
 
 	// Optionals
-	OpenOptionalScope(name string)
+	OpenOptionalScope(name string, t *token.Token)
 	ExitOptionalScope() // We always know what scope we are in
 	CloseOptionalScope()
 

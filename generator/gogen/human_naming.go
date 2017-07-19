@@ -3,6 +3,7 @@ package gogen
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
 // Mnemowriter takes care of correct mnemonic (re)usage
@@ -102,6 +103,9 @@ func (m *Mnemowriter) Flush() error {
 // WriteRune writes a rune
 func (m *Mnemowriter) WriteRune(r rune) (n int, err error) {
 	rr := string(r)
+	if m.firstWrite && r == '"' || r == '\'' {
+		return 1, nil
+	}
 	if mnemonic, ok := m.characters[rr]; ok {
 		if rr == m.prevCharacter {
 			m.mnemonic = mnemonic.Plural
@@ -121,5 +125,11 @@ func (m *Mnemowriter) WriteRune(r rune) (n int, err error) {
 // String ...
 func (m *Mnemowriter) String() string {
 	_ = m.Flush()
-	return m.buf.String()
+	res := m.buf.String()
+	if strings.HasSuffix(res, "Quote") {
+		return res[:len(res)-5]
+	} else if strings.HasSuffix(res, "Apo") {
+		return res[:len(res)-3]
+	}
+	return res
 }

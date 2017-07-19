@@ -1,0 +1,2 @@
+{{.Name}} struct {
+   Valid bool;

@@ -7,32 +7,33 @@ import (
 	"github.com/DenisCheremisov/ldegen/ast"
 	"github.com/DenisCheremisov/ldegen/generator"
 	"github.com/DenisCheremisov/ldegen/token"
-	"github.com/DenisCheremisov/message"
 )
 
 // Builder creates target sources using Generator object
 type Builder struct {
 	pkgName   string
 	prevRules map[string]*token.Token
-	gFactory  func() generator.Generator
-	dFactory  func(pkgName, name string) io.Writer
+	gen       generator.Generator
+	dest      io.Writer
 }
 
 // NewBuilder consturcot
-func NewBuilder(pn string, dg func() generator.Generator, df func(name, pkg string) io.Writer) *Builder {
+func NewBuilder(pn string, g generator.Generator, d io.Writer) *Builder {
 	return &Builder{
 		prevRules: map[string]*token.Token{},
 		pkgName:   pn,
-		gFactory:  dg,
-		dFactory:  df,
+		gen:       g,
+		dest:      d,
 	}
 }
 
 // BuildRule builds shit from the data
-func (b *Builder) BuildRule(pkgName string, rule ast.RuleItem) error {
+func (b *Builder) BuildRule(rule ast.RuleItem) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
-			message.Critical(r)
+			var ok bool
+			if err, ok = r.(error); !ok {
+			}
 		}
 	}()
 	if t, ok := b.prevRules[rule.Name]; ok {
@@ -40,26 +41,31 @@ func (b *Builder) BuildRule(pkgName string, rule ast.RuleItem) error {
 			"%d: Rule `\033[1m%s\033[0m` has already been defined at line %d", rule.NameToken.Line, rule.Name, t.Line)
 	}
 	b.prevRules[rule.Name] = rule.NameToken
-	g := b.gFactory()
-	d := b.dFactory(b.pkgName, rule.Name)
-	generators := b.composeRules(g, &rule.Actions)
+	generators := b.composeRules(NewPrefix(), b.gen, &rule.Actions)
 	for _, item := range generators {
 		func() {
 			item()
 		}()
 	}
-	g.Generate(pkgName, rule.Name, d)
+	b.gen.Generate(b.pkgName, rule.Name, b.dest)
 	return nil
 }
 
-func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (generators []func()) {
+func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.ActionSequence) (generators []func()) {
 	if a == nil {
 		return
 	}
 	it := a.Head
+
+	// Set on stress
+	if a.ErrorOnMismatch {
+		g.Stress()
+	}
+
 	// TakeUntilOrRest
 	if it.TakeUntilOrRest != nil {
 		item := it.TakeUntilOrRest
+		g.RegGravity(gPrefix.Add(item.Field.Name).String())
 		g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
 		if item.Limit.Lower > 0 {
 			switch item.Limit.Type {
@@ -102,6 +108,7 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 	// TakeUntil
 	if it.Take != nil {
 		item := it.Take
+		g.RegGravity(gPrefix.Add(item.Field.Name).String())
 		g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
 		if item.Limit.Lower > 0 {
 			switch item.Limit.Type {
@@ -143,6 +150,7 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 
 	// TakeRest
 	if it.TakeRest != nil {
+		g.RegGravity(gPrefix.Add(it.TakeRest.Field.Name).String())
 		g.AddField(it.TakeRest.Field.Name, it.TakeRest.Field.Type, it.TakeRest.Field.NameToken)
 		generators = append(generators, func() {
 			g.TakeRest(it.TakeRest.Field.Name, it.TakeRest.Field.Type)
@@ -151,6 +159,7 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 
 	// Head string
 	if it.StartWithString != nil {
+		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
 			g.HeadString(it.StartWithString.Value)
 		})
@@ -158,6 +167,7 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 
 	// Head char
 	if it.StartWithChar != nil {
+		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
 			g.HeadString(it.StartWithChar.Value)
 		})
@@ -165,6 +175,7 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 
 	// Probably head string
 	if it.MayBeStartWithString != nil {
+		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
 			g.MayBeHeadString(it.MayBeStartWithString.Value)
 		})
@@ -172,6 +183,7 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 
 	// Probably head char
 	if it.MayBeStartWithChar != nil {
+		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
 			g.MayBeHeadChar(it.MayBeStartWithChar.Value)
 		})
@@ -179,6 +191,7 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 
 	// Passes first N symbols
 	if it.PassFirst != nil {
+		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
 			g.PassN(int(*it.PassFirst))
 		})
@@ -186,12 +199,13 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 
 	// Passes until
 	if it.Pass != nil {
+		g.RegGravity(gPrefix.String())
 		l := it.Pass.Limit
 		if l.Lower > 0 {
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupBoundedString(l.Value, l.Upper, l.Lower)
+					g.LookupBoundedString(l.Value, l.Lower, l.Upper)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
@@ -226,13 +240,21 @@ func (b *Builder) composeRules(g generator.Generator, a *ast.ActionSequence) (ge
 	// Optional area
 	if it.Option != nil {
 		generators = append(generators, func() {
-			g.OpenOptionalScope(it.Option.Name)
+			g.OpenOptionalScope(it.Option.Name, it.Option.NameToken)
 		})
-		generators = append(generators, b.composeRules(g, &it.Option.Actions)...)
+		generators = append(generators, b.composeRules(gPrefix.Add(it.Option.Name), g, &it.Option.Actions)...)
 		generators = append(generators, func() {
 			g.CloseOptionalScope()
 		})
 	}
 
-	return generators
+	// AtEnd
+	if it.End != nil {
+		g.RegGravity(gPrefix.String())
+		generators = append(generators, func() {
+			g.AtEnd()
+		})
+	}
+
+	return append(generators, b.composeRules(gPrefix, g, a.Tail)...)
 }

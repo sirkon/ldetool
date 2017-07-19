@@ -27,11 +27,10 @@ type LookupItem struct {
 // Generator implementation of generator.Generator
 // for Go target
 type Generator struct {
-	consts       map[string]string
-	constLengths map[string]string
-	fields       map[string]Name
-	vars         map[string]string
-	imports      map[string]string
+	consts  map[string]string
+	fields  map[string]Name
+	vars    map[string]string
+	imports map[string]string
 
 	namespaces  []string
 	lookupStack []LookupItem
@@ -55,6 +54,7 @@ func NewGenerator(goish *gotify.Gotify, tc *templatecache.TemplateCache) *Genera
 	res := &Generator{
 		consts:      map[string]string{},
 		fields:      map[string]Name{},
+		imports:     map[string]string{},
 		namespaces:  nil,
 		lookupStack: nil,
 
@@ -95,18 +95,39 @@ func (g *Generator) Stress() {
 // Generate writes into io.Writer
 func (g *Generator) Generate(pkgName, parserName string, dest io.Writer) {
 	var imports ImportSeq
-	for name, path := range g.imports {
+	for path, name := range g.imports {
 		imports = append(imports, Import{Name: name, Path: path})
 	}
 	sort.Sort(imports)
+
+	var vars VarSeq
+	for name, varType := range g.vars {
+		vars = append(vars, Var{Name: name, Type: varType})
+	}
+	sort.Sort(vars)
+
 	buf := &bytes.Buffer{}
 	g.tc.MustExecute("parser_code", buf, ParserParams{
 		Imports:    imports,
+		Consts:     g.consts,
+		Vars:       vars,
 		Struct:     g.obj.String(),
-		Parser:     g.obj.String(),
+		Parser:     g.body.String(),
 		Getters:    g.opgetters.String(),
 		ParserName: parserName,
 		PkgName:    pkgName,
 	})
 	gosrcfmt.FormatReader(dest, buf)
+}
+
+// RegGravity registers center of gravity
+func (g *Generator) RegGravity(name string) {
+	g.gravity = append(g.gravity, name)
+}
+
+// AtEnd checks if the rest is empty
+func (g *Generator) AtEnd() {
+	g.tc.MustExecute("at_end", g.body, TParams{
+		Serious: g.serious,
+	})
 }
