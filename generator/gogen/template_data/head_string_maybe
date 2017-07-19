@@ -1,0 +1,5 @@
+
+// Checks if the rest starts with {{.ConstValue}} and pass it if matched
+if pos := bytes.HasPrefix(p.rest, {{.ConstName}}); pos >= 0 {
+   p.rest = p.rest[len({{.ConstName}}):]
+}

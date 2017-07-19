@@ -132,23 +132,23 @@ var productionsTable = ProdTab {
 		},
 	},
 	ProdTabEntry{
-		String: `AtomicAction : "^" "??" string_lit	<< ast.MayBeStartsWithString(X[1]) >>`,
+		String: `AtomicAction : "^" "??" string_lit	<< ast.MayBeStartsWithString(X[2]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
 		Index: 11,
 		NumSymbols: 3,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return ast.MayBeStartsWithString(X[1])
+			return ast.MayBeStartsWithString(X[2])
 		},
 	},
 	ProdTabEntry{
-		String: `AtomicAction : "^" "??" char_lit	<< ast.MayBeStartsWithChar(X[1]) >>`,
+		String: `AtomicAction : "^" "??" char_lit	<< ast.MayBeStartsWithChar(X[2]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
 		Index: 12,
 		NumSymbols: 3,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return ast.MayBeStartsWithChar(X[1])
+			return ast.MayBeStartsWithChar(X[2])
 		},
 	},
 	ProdTabEntry{

@@ -1,0 +1,5 @@
+
+// Checks if the rest starts with {{.Char}} symbol and pass it if matched
+if len(p.rest) > 0 && p.rest[0] == {{.Char}} {
+   p.rest = p.rest[1:]
+}

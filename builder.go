@@ -169,7 +169,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.StartWithChar != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.HeadString(it.StartWithChar.Value)
+			g.HeadChar(it.StartWithChar.Value)
 		})
 	}
 

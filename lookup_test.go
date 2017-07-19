@@ -197,7 +197,7 @@ func TestOptionalLookupGeneration(t *testing.T) {
 	t.Log(data)
 }
 
-// test lookups
+// test lookups with optional stay here decision
 func TestIgnorableLookupGeneration(t *testing.T) {
 	data, err := compile(`rule = _ ?? "bound";`)
 	if err != nil {

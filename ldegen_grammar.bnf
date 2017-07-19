@@ -60,8 +60,8 @@ Action
 AtomicAction
         : "^" string_lit                                << ast.StartsWithString($1) >>
         | "^" char_lit                                  << ast.StartsWithChar($1) >>
-        | "^" "??" string_lit                           << ast.MayBeStartsWithString($1) >>
-        | "^" "??" char_lit                             << ast.MayBeStartsWithChar($1) >>
+        | "^" "??" string_lit                           << ast.MayBeStartsWithString($2) >>
+        | "^" "??" char_lit                             << ast.MayBeStartsWithChar($2) >>
         | "_" "[" int_lit ":" "]"                       << ast.PassFirst($2) >>
         | "_" Target                                    << ast.PassUntilTarget($1) >>
         | "_" "??" Target                               << ast.PassUntilTargetOrIgnore($2) >>
