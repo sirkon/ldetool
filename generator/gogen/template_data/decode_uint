@@ -1,0 +1,5 @@
+tmp = {{ .Source }}
+if tmpInt, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, {{ .Bits }}); err != nil {
+    return false, fmt.Errorf("Error parsing \033[1m{{ .Type }}\033[0m value for field \033[1m{{ .Dest }}\033[0m: %s", err)
+}
+p.{{.Dest}} = uint{{.Bits}}(tmpInt);

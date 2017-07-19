@@ -1,6 +1,9 @@
 package gogen
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 /* take_before_string
 if pos = bytes.Index(p.rest, {{ .ConstName }}); pos >= 0 {
@@ -160,10 +163,11 @@ func (g *Generator) TakeRest(name, fieldType string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
 
+	fmt.Println(g.fields)
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
 
-	g.tc.MustExecute("take_before_char", g.body, TParams{
+	g.tc.MustExecute("take_rest", g.body, TParams{
 		Name:       item.name,
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),

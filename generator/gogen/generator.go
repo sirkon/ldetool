@@ -75,6 +75,7 @@ func NewGenerator(goish *gotify.Gotify, tc *templatecache.TemplateCache) *Genera
 
 // AddField ...
 func (g *Generator) AddField(name string, fieldType string, t *token.Token) {
+	g.addField(g.namespaces, name, t)
 	goType := g.goType(fieldType)
 	g.tc.MustExecute("struct_field", g.obj, TParams{
 		Name: name,

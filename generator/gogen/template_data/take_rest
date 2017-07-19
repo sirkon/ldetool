@@ -1,0 +1,3 @@
+
+// Put the rest of the data into {{.Dest}}
+{{ call .Decoder "p.rest" .Dest }}

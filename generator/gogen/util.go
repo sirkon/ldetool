@@ -58,7 +58,7 @@ func (g *Generator) regVar(name, varType string) {
 	} else if err != nil {
 		panic(err)
 	}
-	if ok, err := regexp.MatchString(`^[a-zA-Z_][a-zA-Z0-9_]*$`, varType); !ok {
+	if ok, err := regexp.MatchString(`^(?:\[\])?[a-zA-Z_][a-zA-Z0-9_]*$`, varType); !ok {
 		panic(fmt.Errorf("Wrong variable type `\033[1m%s\033[0m`", varType))
 	} else if err != nil {
 		panic(err)

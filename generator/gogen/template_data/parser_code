@@ -1,7 +1,8 @@
 package {{ .PkgName }}
 
 import (
-{{ range .Imports }}{{.Name}} "{{.Path}}"{{end}}
+{{ range .Imports }}{{.Name}} "{{.Path}}"
+{{end}}
 )
 
 {{range $name, $value := .Consts }}var {{$name}} = {{$value}};{{end}}

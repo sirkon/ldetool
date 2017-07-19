@@ -34,5 +34,4 @@ func TestEnd(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(data)
-	panic(0)
 }
