@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"sort"
+	"strings"
 
 	"github.com/DenisCheremisov/gosrcfmt"
 	"github.com/DenisCheremisov/gotify"
@@ -84,7 +85,12 @@ func (g *Generator) AddField(name string, fieldType string, t *token.Token) {
 
 // PassN passes first N characters if they are there, otherwise signal a error
 func (g *Generator) PassN(n int) {
-	g.tc.MustExecute("pass_n_items", g.body, TParams{})
+	g.tc.MustExecute("pass_n_items", g.body, TParams{
+		Upper:      n,
+		Serious:    g.serious,
+		Namespace:  strings.Join(g.namespaces, "."),
+		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
+	})
 }
 
 // Stress mismatches should be treated as serious errors
