@@ -32,8 +32,6 @@ func TestHeadGeneration(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(data)
-
-	panic(0)
 }
 
 func TestMayBeHeadGeneration(t *testing.T) {
@@ -92,6 +90,4 @@ func TestPassFirstCharacters(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(data)
-
-	panic(0)
 }
