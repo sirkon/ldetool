@@ -1,0 +1,9 @@
+
+// Looking for {{ .Char }} symbol in first {{.Upper}} symbols of the rest and then pass it if found
+if len(p.rest) < {{.Upper}} {
+{{ if .Namespace }}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols of the rest while only %s left", len(p.rest)){{else}}nil{{end}};{{end}}
+}
+pos = bytes.IndexByte(p.rest[:{{.Upper}}], {{ .Char }});
+if pos >= 0 {
+    p.rest = p.rest[pos + 1:]
+}

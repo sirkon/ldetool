@@ -196,3 +196,78 @@ func TestOptionalLookupGeneration(t *testing.T) {
 	}
 	t.Log(data)
 }
+
+// test lookups
+func TestIgnorableLookupGeneration(t *testing.T) {
+	data, err := compile(`rule = _ ?? "bound";`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! _ ?? "bound";`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = _ ?? "bound"[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! _ ?? "bound"[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = _ ?? "bound"[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! _ ?? "bound"[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = _ ?? '@';`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! _ ?? '@';`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = _ ?? '@'[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! _ ?? '@'[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = _ ?? '@'[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! _ ?? '@'[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+}

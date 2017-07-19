@@ -59,6 +59,19 @@ func PassUntilTarget(target Attrib) (attr Attrib, err error) {
 	return res, nil
 }
 
+// PassUntilOrIgnore ...
+type PassUntilOrIgnore struct {
+	Limit Target
+}
+
+// PassUntilTargetOrIgnore ...
+func PassUntilTargetOrIgnore(target Attrib) (attr Attrib, err error) {
+	res := PassUntilOrIgnore{
+		Limit: target.(Target),
+	}
+	return res, nil
+}
+
 // Field ...
 type Field struct {
 	Name string
@@ -153,7 +166,7 @@ func TakeUntilTargetOrRest(field Attrib, fieldType Attrib, target Attrib) (attr 
 	return res, nil
 }
 
-// PassFixed ...
+// PasFsixed ...
 type PassFixed int
 
 // PassFirst ...

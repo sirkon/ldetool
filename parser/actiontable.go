@@ -160,23 +160,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(19),		/* $, reduce: AtomicAction */
-			reduce(19),		/* identifier, reduce: AtomicAction */
+			reduce(20),		/* $, reduce: AtomicAction */
+			reduce(20),		/* identifier, reduce: AtomicAction */
 			nil,		/* = */
-			reduce(19),		/* ;, reduce: AtomicAction */
-			reduce(19),		/* (, reduce: AtomicAction */
+			reduce(20),		/* ;, reduce: AtomicAction */
+			reduce(20),		/* (, reduce: AtomicAction */
 			nil,		/* ) */
-			reduce(19),		/* stress, reduce: AtomicAction */
-			reduce(19),		/* ^, reduce: AtomicAction */
+			reduce(20),		/* stress, reduce: AtomicAction */
+			reduce(20),		/* ^, reduce: AtomicAction */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(19),		/* _, reduce: AtomicAction */
+			reduce(20),		/* _, reduce: AtomicAction */
 			nil,		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(19),		/* ?, reduce: AtomicAction */
+			reduce(20),		/* ?, reduce: AtomicAction */
 			
 		},
 	},
@@ -338,9 +338,9 @@ var actionTab = actionTable{
 			nil,		/* ^ */
 			shift(31),		/* string_lit */
 			shift(32),		/* char_lit */
-			nil,		/* ?? */
+			shift(33),		/* ?? */
 			nil,		/* _ */
-			shift(33),		/* [ */
+			shift(34),		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
@@ -353,7 +353,7 @@ var actionTab = actionTable{
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
 			nil,		/* $ */
-			shift(35),		/* identifier */
+			shift(36),		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
@@ -377,7 +377,7 @@ var actionTab = actionTable{
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
 			nil,		/* $ */
-			shift(36),		/* identifier */
+			shift(37),		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
@@ -424,23 +424,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(19),		/* $, reduce: AtomicAction */
-			reduce(19),		/* identifier, reduce: AtomicAction */
+			reduce(20),		/* $, reduce: AtomicAction */
+			reduce(20),		/* identifier, reduce: AtomicAction */
 			nil,		/* = */
 			nil,		/* ; */
-			reduce(19),		/* (, reduce: AtomicAction */
-			reduce(19),		/* ), reduce: AtomicAction */
-			reduce(19),		/* stress, reduce: AtomicAction */
-			reduce(19),		/* ^, reduce: AtomicAction */
+			reduce(20),		/* (, reduce: AtomicAction */
+			reduce(20),		/* ), reduce: AtomicAction */
+			reduce(20),		/* stress, reduce: AtomicAction */
+			reduce(20),		/* ^, reduce: AtomicAction */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(19),		/* _, reduce: AtomicAction */
+			reduce(20),		/* _, reduce: AtomicAction */
 			nil,		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(19),		/* ?, reduce: AtomicAction */
+			reduce(20),		/* ?, reduce: AtomicAction */
 			
 		},
 	},
@@ -452,7 +452,7 @@ var actionTab = actionTable{
 			nil,		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
-			shift(37),		/* ( */
+			shift(38),		/* ( */
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
@@ -477,7 +477,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			shift(38),		/* ) */
+			shift(39),		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -576,9 +576,9 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
-			shift(42),		/* string_lit */
-			shift(43),		/* char_lit */
-			shift(44),		/* ?? */
+			shift(43),		/* string_lit */
+			shift(44),		/* char_lit */
+			shift(45),		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
 			nil,		/* int_lit */
@@ -600,11 +600,11 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
-			shift(45),		/* string_lit */
-			shift(46),		/* char_lit */
-			nil,		/* ?? */
+			shift(46),		/* string_lit */
+			shift(47),		/* char_lit */
+			shift(48),		/* ?? */
 			nil,		/* _ */
-			shift(47),		/* [ */
+			shift(49),		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
@@ -617,7 +617,7 @@ var actionTab = actionTable{
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
 			nil,		/* $ */
-			shift(49),		/* identifier */
+			shift(51),		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
@@ -744,8 +744,8 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
-			shift(50),		/* string_lit */
-			shift(51),		/* char_lit */
+			shift(52),		/* string_lit */
+			shift(53),		/* char_lit */
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
@@ -760,23 +760,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(22),		/* $, reduce: Target */
-			reduce(22),		/* identifier, reduce: Target */
+			reduce(23),		/* $, reduce: Target */
+			reduce(23),		/* identifier, reduce: Target */
 			nil,		/* = */
-			reduce(22),		/* ;, reduce: Target */
-			reduce(22),		/* (, reduce: Target */
+			reduce(23),		/* ;, reduce: Target */
+			reduce(23),		/* (, reduce: Target */
 			nil,		/* ) */
-			reduce(22),		/* stress, reduce: Target */
-			reduce(22),		/* ^, reduce: Target */
+			reduce(23),		/* stress, reduce: Target */
+			reduce(23),		/* ^, reduce: Target */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(22),		/* _, reduce: Target */
-			shift(52),		/* [ */
+			reduce(23),		/* _, reduce: Target */
+			shift(54),		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(22),		/* ?, reduce: Target */
+			reduce(23),		/* ?, reduce: Target */
 			
 		},
 	},
@@ -784,27 +784,51 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(25),		/* $, reduce: Target */
-			reduce(25),		/* identifier, reduce: Target */
+			reduce(26),		/* $, reduce: Target */
+			reduce(26),		/* identifier, reduce: Target */
 			nil,		/* = */
-			reduce(25),		/* ;, reduce: Target */
-			reduce(25),		/* (, reduce: Target */
+			reduce(26),		/* ;, reduce: Target */
+			reduce(26),		/* (, reduce: Target */
 			nil,		/* ) */
-			reduce(25),		/* stress, reduce: Target */
-			reduce(25),		/* ^, reduce: Target */
+			reduce(26),		/* stress, reduce: Target */
+			reduce(26),		/* ^, reduce: Target */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(25),		/* _, reduce: Target */
-			shift(53),		/* [ */
+			reduce(26),		/* _, reduce: Target */
+			shift(55),		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(25),		/* ?, reduce: Target */
+			reduce(26),		/* ?, reduce: Target */
 			
 		},
 	},
 	actionRow{ // S33
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			shift(31),		/* string_lit */
+			shift(32),		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S34
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -821,14 +845,14 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			shift(54),		/* int_lit */
+			shift(57),		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
 		},
 	},
-	actionRow{ // S34
+	actionRow{ // S35
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -852,30 +876,6 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S35
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			shift(55),		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
 	actionRow{ // S36
 		canRecover: false,
 		actions: [numSymbols]action{
@@ -884,8 +884,8 @@ var actionTab = actionTable{
 			nil,		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
-			nil,		/* ( */
-			shift(56),		/* ) */
+			shift(58),		/* ( */
+			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -901,54 +901,6 @@ var actionTab = actionTable{
 		},
 	},
 	actionRow{ // S37
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			shift(57),		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S38
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			shift(6),		/* $ */
-			shift(7),		/* identifier */
-			nil,		/* = */
-			reduce(5),		/* ;, reduce: Action */
-			shift(9),		/* ( */
-			nil,		/* ) */
-			shift(11),		/* stress */
-			shift(12),		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			shift(13),		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			shift(14),		/* ? */
-			
-		},
-	},
-	actionRow{ // S39
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -972,6 +924,54 @@ var actionTab = actionTable{
 			
 		},
 	},
+	actionRow{ // S38
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			shift(60),		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S39
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			shift(6),		/* $ */
+			shift(7),		/* identifier */
+			nil,		/* = */
+			reduce(5),		/* ;, reduce: Action */
+			shift(9),		/* ( */
+			nil,		/* ) */
+			shift(11),		/* stress */
+			shift(12),		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			shift(13),		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			shift(14),		/* ? */
+			
+		},
+	},
 	actionRow{ // S40
 		canRecover: false,
 		actions: [numSymbols]action{
@@ -981,7 +981,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			reduce(6),		/* ), reduce: Action */
+			shift(62),		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -1005,7 +1005,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			reduce(8),		/* ), reduce: Action */
+			reduce(6),		/* ), reduce: Action */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -1021,6 +1021,30 @@ var actionTab = actionTable{
 		},
 	},
 	actionRow{ // S42
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			reduce(8),		/* ), reduce: Action */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S43
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1044,7 +1068,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S43
+	actionRow{ // S44
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1068,7 +1092,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S44
+	actionRow{ // S45
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1080,8 +1104,8 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
-			shift(60),		/* string_lit */
-			shift(61),		/* char_lit */
+			shift(63),		/* string_lit */
+			shift(64),		/* char_lit */
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
@@ -1089,30 +1113,6 @@ var actionTab = actionTable{
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S45
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			reduce(22),		/* $, reduce: Target */
-			reduce(22),		/* identifier, reduce: Target */
-			nil,		/* = */
-			nil,		/* ; */
-			reduce(22),		/* (, reduce: Target */
-			reduce(22),		/* ), reduce: Target */
-			reduce(22),		/* stress, reduce: Target */
-			reduce(22),		/* ^, reduce: Target */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			reduce(22),		/* _, reduce: Target */
-			shift(62),		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			reduce(22),		/* ?, reduce: Target */
 			
 		},
 	},
@@ -1120,27 +1120,75 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(25),		/* $, reduce: Target */
-			reduce(25),		/* identifier, reduce: Target */
+			reduce(23),		/* $, reduce: Target */
+			reduce(23),		/* identifier, reduce: Target */
 			nil,		/* = */
 			nil,		/* ; */
-			reduce(25),		/* (, reduce: Target */
-			reduce(25),		/* ), reduce: Target */
-			reduce(25),		/* stress, reduce: Target */
-			reduce(25),		/* ^, reduce: Target */
+			reduce(23),		/* (, reduce: Target */
+			reduce(23),		/* ), reduce: Target */
+			reduce(23),		/* stress, reduce: Target */
+			reduce(23),		/* ^, reduce: Target */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(25),		/* _, reduce: Target */
-			shift(63),		/* [ */
+			reduce(23),		/* _, reduce: Target */
+			shift(65),		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(25),		/* ?, reduce: Target */
+			reduce(23),		/* ?, reduce: Target */
 			
 		},
 	},
 	actionRow{ // S47
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(26),		/* $, reduce: Target */
+			reduce(26),		/* identifier, reduce: Target */
+			nil,		/* = */
+			nil,		/* ; */
+			reduce(26),		/* (, reduce: Target */
+			reduce(26),		/* ), reduce: Target */
+			reduce(26),		/* stress, reduce: Target */
+			reduce(26),		/* ^, reduce: Target */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(26),		/* _, reduce: Target */
+			shift(66),		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(26),		/* ?, reduce: Target */
+			
+		},
+	},
+	actionRow{ // S48
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			shift(46),		/* string_lit */
+			shift(47),		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S49
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1157,14 +1205,14 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			shift(64),		/* int_lit */
+			shift(68),		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
 		},
 	},
-	actionRow{ // S48
+	actionRow{ // S50
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1188,7 +1236,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S49
+	actionRow{ // S51
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1196,7 +1244,7 @@ var actionTab = actionTable{
 			nil,		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
-			shift(65),		/* ( */
+			shift(69),		/* ( */
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
@@ -1212,7 +1260,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S50
+	actionRow{ // S52
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1236,7 +1284,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S51
+	actionRow{ // S53
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1260,54 +1308,6 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S52
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			shift(66),		/* int_lit */
-			shift(67),		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S53
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			shift(68),		/* int_lit */
-			shift(69),		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
 	actionRow{ // S54
 		canRecover: false,
 		actions: [numSymbols]action{
@@ -1325,14 +1325,86 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
-			shift(70),		/* : */
+			shift(70),		/* int_lit */
+			shift(71),		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
 		},
 	},
 	actionRow{ // S55
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			shift(72),		/* int_lit */
+			shift(73),		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S56
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(15),		/* $, reduce: AtomicAction */
+			reduce(15),		/* identifier, reduce: AtomicAction */
+			nil,		/* = */
+			reduce(15),		/* ;, reduce: AtomicAction */
+			reduce(15),		/* (, reduce: AtomicAction */
+			nil,		/* ) */
+			reduce(15),		/* stress, reduce: AtomicAction */
+			reduce(15),		/* ^, reduce: AtomicAction */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(15),		/* _, reduce: AtomicAction */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(15),		/* ?, reduce: AtomicAction */
+			
+		},
+	},
+	actionRow{ // S57
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			shift(74),		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S58
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1356,31 +1428,31 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S56
+	actionRow{ // S59
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(18),		/* $, reduce: AtomicAction */
-			reduce(18),		/* identifier, reduce: AtomicAction */
+			reduce(19),		/* $, reduce: AtomicAction */
+			reduce(19),		/* identifier, reduce: AtomicAction */
 			nil,		/* = */
-			reduce(18),		/* ;, reduce: AtomicAction */
-			reduce(18),		/* (, reduce: AtomicAction */
+			reduce(19),		/* ;, reduce: AtomicAction */
+			reduce(19),		/* (, reduce: AtomicAction */
 			nil,		/* ) */
-			reduce(18),		/* stress, reduce: AtomicAction */
-			reduce(18),		/* ^, reduce: AtomicAction */
+			reduce(19),		/* stress, reduce: AtomicAction */
+			reduce(19),		/* ^, reduce: AtomicAction */
 			shift(31),		/* string_lit */
 			shift(32),		/* char_lit */
-			shift(72),		/* ?? */
-			reduce(18),		/* _, reduce: AtomicAction */
+			shift(76),		/* ?? */
+			reduce(19),		/* _, reduce: AtomicAction */
 			nil,		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(18),		/* ?, reduce: AtomicAction */
+			reduce(19),		/* ?, reduce: AtomicAction */
 			
 		},
 	},
-	actionRow{ // S57
+	actionRow{ // S60
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1389,7 +1461,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			shift(74),		/* ) */
+			shift(78),		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -1404,7 +1476,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S58
+	actionRow{ // S61
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1428,7 +1500,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S59
+	actionRow{ // S62
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1452,7 +1524,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S60
+	actionRow{ // S63
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1476,7 +1548,7 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S61
+	actionRow{ // S64
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -1500,99 +1572,27 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S62
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			shift(76),		/* int_lit */
-			shift(77),		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S63
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			shift(78),		/* int_lit */
-			shift(79),		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S64
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			shift(80),		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
 	actionRow{ // S65
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			shift(17),		/* $ */
-			shift(18),		/* identifier */
+			nil,		/* $ */
+			nil,		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
-			shift(20),		/* ( */
+			nil,		/* ( */
 			nil,		/* ) */
-			shift(22),		/* stress */
-			shift(23),		/* ^ */
+			nil,		/* stress */
+			nil,		/* ^ */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			shift(24),		/* _ */
+			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
+			shift(80),		/* int_lit */
+			shift(81),		/* : */
 			nil,		/* ] */
-			shift(25),		/* ? */
+			nil,		/* ? */
 			
 		},
 	},
@@ -1613,8 +1613,8 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
-			shift(82),		/* : */
+			shift(82),		/* int_lit */
+			shift(83),		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
@@ -1624,23 +1624,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
+			reduce(15),		/* $, reduce: AtomicAction */
+			reduce(15),		/* identifier, reduce: AtomicAction */
 			nil,		/* = */
 			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
+			reduce(15),		/* (, reduce: AtomicAction */
+			reduce(15),		/* ), reduce: AtomicAction */
+			reduce(15),		/* stress, reduce: AtomicAction */
+			reduce(15),		/* ^, reduce: AtomicAction */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			nil,		/* _ */
+			reduce(15),		/* _, reduce: AtomicAction */
 			nil,		/* [ */
-			shift(83),		/* int_lit */
+			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			nil,		/* ? */
+			reduce(15),		/* ?, reduce: AtomicAction */
 			
 		},
 	},
@@ -1672,23 +1672,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
+			shift(17),		/* $ */
+			shift(18),		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
-			nil,		/* ( */
+			shift(20),		/* ( */
 			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
+			shift(22),		/* stress */
+			shift(23),		/* ^ */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			nil,		/* _ */
+			shift(24),		/* _ */
 			nil,		/* [ */
-			shift(85),		/* int_lit */
+			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			nil,		/* ? */
+			shift(25),		/* ? */
 			
 		},
 	},
@@ -1710,8 +1710,8 @@ var actionTab = actionTable{
 			nil,		/* _ */
 			nil,		/* [ */
 			nil,		/* int_lit */
-			nil,		/* : */
-			shift(86),		/* ] */
+			shift(86),		/* : */
+			nil,		/* ] */
 			nil,		/* ? */
 			
 		},
@@ -1725,7 +1725,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			shift(87),		/* ) */
+			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -1733,7 +1733,7 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
+			shift(87),		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
@@ -1752,13 +1752,13 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
-			shift(31),		/* string_lit */
-			shift(32),		/* char_lit */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
 			nil,		/* int_lit */
-			nil,		/* : */
+			shift(88),		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
@@ -1768,23 +1768,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(15),		/* $, reduce: AtomicAction */
-			reduce(15),		/* identifier, reduce: AtomicAction */
+			nil,		/* $ */
+			nil,		/* identifier */
 			nil,		/* = */
-			reduce(15),		/* ;, reduce: AtomicAction */
-			reduce(15),		/* (, reduce: AtomicAction */
+			nil,		/* ; */
+			nil,		/* ( */
 			nil,		/* ) */
-			reduce(15),		/* stress, reduce: AtomicAction */
-			reduce(15),		/* ^, reduce: AtomicAction */
+			nil,		/* stress */
+			nil,		/* ^ */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(15),		/* _, reduce: AtomicAction */
+			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
+			shift(89),		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(15),		/* ?, reduce: AtomicAction */
+			nil,		/* ? */
 			
 		},
 	},
@@ -1792,23 +1792,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(18),		/* $, reduce: AtomicAction */
-			reduce(18),		/* identifier, reduce: AtomicAction */
+			nil,		/* $ */
+			nil,		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
-			reduce(18),		/* (, reduce: AtomicAction */
-			reduce(18),		/* ), reduce: AtomicAction */
-			reduce(18),		/* stress, reduce: AtomicAction */
-			reduce(18),		/* ^, reduce: AtomicAction */
-			shift(45),		/* string_lit */
-			shift(46),		/* char_lit */
-			shift(89),		/* ?? */
-			reduce(18),		/* _, reduce: AtomicAction */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
 			nil,		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
-			nil,		/* ] */
-			reduce(18),		/* ?, reduce: AtomicAction */
+			shift(90),		/* ] */
+			nil,		/* ? */
 			
 		},
 	},
@@ -1821,7 +1821,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			reduce(4),		/* ), reduce: Action */
+			shift(91),		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -1848,13 +1848,13 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
+			shift(31),		/* string_lit */
+			shift(32),		/* char_lit */
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
 			nil,		/* int_lit */
-			shift(91),		/* : */
+			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
@@ -1864,23 +1864,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
+			reduce(16),		/* $, reduce: AtomicAction */
+			reduce(16),		/* identifier, reduce: AtomicAction */
 			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
+			reduce(16),		/* ;, reduce: AtomicAction */
+			reduce(16),		/* (, reduce: AtomicAction */
 			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
+			reduce(16),		/* stress, reduce: AtomicAction */
+			reduce(16),		/* ^, reduce: AtomicAction */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			nil,		/* _ */
+			reduce(16),		/* _, reduce: AtomicAction */
 			nil,		/* [ */
-			shift(92),		/* int_lit */
+			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			nil,		/* ? */
+			reduce(16),		/* ?, reduce: AtomicAction */
 			
 		},
 	},
@@ -1888,23 +1888,23 @@ var actionTab = actionTable{
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
+			reduce(19),		/* $, reduce: AtomicAction */
+			reduce(19),		/* identifier, reduce: AtomicAction */
 			nil,		/* = */
 			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
+			reduce(19),		/* (, reduce: AtomicAction */
+			reduce(19),		/* ), reduce: AtomicAction */
+			reduce(19),		/* stress, reduce: AtomicAction */
+			reduce(19),		/* ^, reduce: AtomicAction */
+			shift(46),		/* string_lit */
+			shift(47),		/* char_lit */
+			shift(93),		/* ?? */
+			reduce(19),		/* _, reduce: AtomicAction */
 			nil,		/* [ */
 			nil,		/* int_lit */
-			shift(93),		/* : */
+			nil,		/* : */
 			nil,		/* ] */
-			nil,		/* ? */
+			reduce(19),		/* ?, reduce: AtomicAction */
 			
 		},
 	},
@@ -1917,7 +1917,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			nil,		/* ) */
+			reduce(4),		/* ), reduce: Action */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -1925,7 +1925,7 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			shift(94),		/* int_lit */
+			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
@@ -1950,8 +1950,8 @@ var actionTab = actionTable{
 			nil,		/* _ */
 			nil,		/* [ */
 			nil,		/* int_lit */
-			nil,		/* : */
-			shift(95),		/* ] */
+			shift(95),		/* : */
+			nil,		/* ] */
 			nil,		/* ? */
 			
 		},
@@ -1965,7 +1965,7 @@ var actionTab = actionTable{
 			nil,		/* = */
 			nil,		/* ; */
 			nil,		/* ( */
-			shift(96),		/* ) */
+			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
 			nil,		/* string_lit */
@@ -1973,7 +1973,7 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
+			shift(96),		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
@@ -1997,8 +1997,8 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			shift(97),		/* int_lit */
-			nil,		/* : */
+			nil,		/* int_lit */
+			shift(97),		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
@@ -2021,9 +2021,9 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
+			shift(98),		/* int_lit */
 			nil,		/* : */
-			shift(98),		/* ] */
+			nil,		/* ] */
 			nil,		/* ? */
 			
 		},
@@ -2045,14 +2045,62 @@ var actionTab = actionTable{
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			shift(99),		/* int_lit */
+			nil,		/* int_lit */
+			nil,		/* : */
+			shift(99),		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S85
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			shift(100),		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
 			
 		},
 	},
-	actionRow{ // S85
+	actionRow{ // S86
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			shift(101),		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S87
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2071,12 +2119,60 @@ var actionTab = actionTable{
 			nil,		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
-			shift(100),		/* ] */
+			shift(102),		/* ] */
 			nil,		/* ? */
 			
 		},
 	},
-	actionRow{ // S86
+	actionRow{ // S88
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			shift(103),		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S89
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			shift(104),		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S90
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2100,7 +2196,31 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S87
+	actionRow{ // S91
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(18),		/* $, reduce: AtomicAction */
+			reduce(18),		/* identifier, reduce: AtomicAction */
+			nil,		/* = */
+			reduce(18),		/* ;, reduce: AtomicAction */
+			reduce(18),		/* (, reduce: AtomicAction */
+			nil,		/* ) */
+			reduce(18),		/* stress, reduce: AtomicAction */
+			reduce(18),		/* ^, reduce: AtomicAction */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(18),		/* _, reduce: AtomicAction */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(18),		/* ?, reduce: AtomicAction */
+			
+		},
+	},
+	actionRow{ // S92
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2124,126 +2244,6 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S88
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			reduce(16),		/* $, reduce: AtomicAction */
-			reduce(16),		/* identifier, reduce: AtomicAction */
-			nil,		/* = */
-			reduce(16),		/* ;, reduce: AtomicAction */
-			reduce(16),		/* (, reduce: AtomicAction */
-			nil,		/* ) */
-			reduce(16),		/* stress, reduce: AtomicAction */
-			reduce(16),		/* ^, reduce: AtomicAction */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			reduce(16),		/* _, reduce: AtomicAction */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			reduce(16),		/* ?, reduce: AtomicAction */
-			
-		},
-	},
-	actionRow{ // S89
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			shift(45),		/* string_lit */
-			shift(46),		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S90
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			reduce(15),		/* $, reduce: AtomicAction */
-			reduce(15),		/* identifier, reduce: AtomicAction */
-			nil,		/* = */
-			nil,		/* ; */
-			reduce(15),		/* (, reduce: AtomicAction */
-			reduce(15),		/* ), reduce: AtomicAction */
-			reduce(15),		/* stress, reduce: AtomicAction */
-			reduce(15),		/* ^, reduce: AtomicAction */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			reduce(15),		/* _, reduce: AtomicAction */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			reduce(15),		/* ?, reduce: AtomicAction */
-			
-		},
-	},
-	actionRow{ // S91
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			shift(102),		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S92
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			shift(103),		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
 	actionRow{ // S93
 		canRecover: false,
 		actions: [numSymbols]action{
@@ -2256,12 +2256,12 @@ var actionTab = actionTable{
 			nil,		/* ) */
 			nil,		/* stress */
 			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
+			shift(46),		/* string_lit */
+			shift(47),		/* char_lit */
 			nil,		/* ?? */
 			nil,		/* _ */
 			nil,		/* [ */
-			shift(104),		/* int_lit */
+			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
 			nil,		/* ? */
@@ -2269,174 +2269,6 @@ var actionTab = actionTable{
 		},
 	},
 	actionRow{ // S94
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			shift(105),		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S95
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			reduce(13),		/* $, reduce: AtomicAction */
-			reduce(13),		/* identifier, reduce: AtomicAction */
-			nil,		/* = */
-			nil,		/* ; */
-			reduce(13),		/* (, reduce: AtomicAction */
-			reduce(13),		/* ), reduce: AtomicAction */
-			reduce(13),		/* stress, reduce: AtomicAction */
-			reduce(13),		/* ^, reduce: AtomicAction */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			reduce(13),		/* _, reduce: AtomicAction */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			reduce(13),		/* ?, reduce: AtomicAction */
-			
-		},
-	},
-	actionRow{ // S96
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			reduce(17),		/* $, reduce: AtomicAction */
-			reduce(17),		/* identifier, reduce: AtomicAction */
-			nil,		/* = */
-			nil,		/* ; */
-			reduce(17),		/* (, reduce: AtomicAction */
-			reduce(17),		/* ), reduce: AtomicAction */
-			reduce(17),		/* stress, reduce: AtomicAction */
-			reduce(17),		/* ^, reduce: AtomicAction */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			reduce(17),		/* _, reduce: AtomicAction */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			reduce(17),		/* ?, reduce: AtomicAction */
-			
-		},
-	},
-	actionRow{ // S97
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			shift(106),		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S98
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			reduce(20),		/* $, reduce: Target */
-			reduce(20),		/* identifier, reduce: Target */
-			nil,		/* = */
-			reduce(20),		/* ;, reduce: Target */
-			reduce(20),		/* (, reduce: Target */
-			nil,		/* ) */
-			reduce(20),		/* stress, reduce: Target */
-			reduce(20),		/* ^, reduce: Target */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			reduce(20),		/* _, reduce: Target */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			reduce(20),		/* ?, reduce: Target */
-			
-		},
-	},
-	actionRow{ // S99
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			nil,		/* $ */
-			nil,		/* identifier */
-			nil,		/* = */
-			nil,		/* ; */
-			nil,		/* ( */
-			nil,		/* ) */
-			nil,		/* stress */
-			nil,		/* ^ */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			nil,		/* _ */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			shift(107),		/* ] */
-			nil,		/* ? */
-			
-		},
-	},
-	actionRow{ // S100
-		canRecover: false,
-		actions: [numSymbols]action{
-			nil,		/* INVALID */
-			reduce(23),		/* $, reduce: Target */
-			reduce(23),		/* identifier, reduce: Target */
-			nil,		/* = */
-			reduce(23),		/* ;, reduce: Target */
-			reduce(23),		/* (, reduce: Target */
-			nil,		/* ) */
-			reduce(23),		/* stress, reduce: Target */
-			reduce(23),		/* ^, reduce: Target */
-			nil,		/* string_lit */
-			nil,		/* char_lit */
-			nil,		/* ?? */
-			reduce(23),		/* _, reduce: Target */
-			nil,		/* [ */
-			nil,		/* int_lit */
-			nil,		/* : */
-			nil,		/* ] */
-			reduce(23),		/* ?, reduce: Target */
-			
-		},
-	},
-	actionRow{ // S101
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2460,7 +2292,31 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S102
+	actionRow{ // S95
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			shift(106),		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S96
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2479,36 +2335,36 @@ var actionTab = actionTable{
 			nil,		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
-			shift(108),		/* ] */
+			shift(107),		/* ] */
 			nil,		/* ? */
 			
 		},
 	},
-	actionRow{ // S103
+	actionRow{ // S97
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(20),		/* $, reduce: Target */
-			reduce(20),		/* identifier, reduce: Target */
+			nil,		/* $ */
+			nil,		/* identifier */
 			nil,		/* = */
 			nil,		/* ; */
-			reduce(20),		/* (, reduce: Target */
-			reduce(20),		/* ), reduce: Target */
-			reduce(20),		/* stress, reduce: Target */
-			reduce(20),		/* ^, reduce: Target */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(20),		/* _, reduce: Target */
+			nil,		/* _ */
 			nil,		/* [ */
-			nil,		/* int_lit */
+			shift(108),		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(20),		/* ?, reduce: Target */
+			nil,		/* ? */
 			
 		},
 	},
-	actionRow{ // S104
+	actionRow{ // S98
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2532,31 +2388,79 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S105
+	actionRow{ // S99
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
-			reduce(23),		/* $, reduce: Target */
-			reduce(23),		/* identifier, reduce: Target */
+			reduce(13),		/* $, reduce: AtomicAction */
+			reduce(13),		/* identifier, reduce: AtomicAction */
 			nil,		/* = */
 			nil,		/* ; */
-			reduce(23),		/* (, reduce: Target */
-			reduce(23),		/* ), reduce: Target */
-			reduce(23),		/* stress, reduce: Target */
-			reduce(23),		/* ^, reduce: Target */
+			reduce(13),		/* (, reduce: AtomicAction */
+			reduce(13),		/* ), reduce: AtomicAction */
+			reduce(13),		/* stress, reduce: AtomicAction */
+			reduce(13),		/* ^, reduce: AtomicAction */
 			nil,		/* string_lit */
 			nil,		/* char_lit */
 			nil,		/* ?? */
-			reduce(23),		/* _, reduce: Target */
+			reduce(13),		/* _, reduce: AtomicAction */
 			nil,		/* [ */
 			nil,		/* int_lit */
 			nil,		/* : */
 			nil,		/* ] */
-			reduce(23),		/* ?, reduce: Target */
+			reduce(13),		/* ?, reduce: AtomicAction */
 			
 		},
 	},
-	actionRow{ // S106
+	actionRow{ // S100
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(18),		/* $, reduce: AtomicAction */
+			reduce(18),		/* identifier, reduce: AtomicAction */
+			nil,		/* = */
+			nil,		/* ; */
+			reduce(18),		/* (, reduce: AtomicAction */
+			reduce(18),		/* ), reduce: AtomicAction */
+			reduce(18),		/* stress, reduce: AtomicAction */
+			reduce(18),		/* ^, reduce: AtomicAction */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(18),		/* _, reduce: AtomicAction */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(18),		/* ?, reduce: AtomicAction */
+			
+		},
+	},
+	actionRow{ // S101
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			shift(110),		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S102
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2580,7 +2484,31 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S107
+	actionRow{ // S103
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			shift(111),		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S104
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2604,7 +2532,55 @@ var actionTab = actionTable{
 			
 		},
 	},
-	actionRow{ // S108
+	actionRow{ // S105
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(17),		/* $, reduce: AtomicAction */
+			reduce(17),		/* identifier, reduce: AtomicAction */
+			nil,		/* = */
+			nil,		/* ; */
+			reduce(17),		/* (, reduce: AtomicAction */
+			reduce(17),		/* ), reduce: AtomicAction */
+			reduce(17),		/* stress, reduce: AtomicAction */
+			reduce(17),		/* ^, reduce: AtomicAction */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(17),		/* _, reduce: AtomicAction */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(17),		/* ?, reduce: AtomicAction */
+			
+		},
+	},
+	actionRow{ // S106
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			shift(112),		/* ] */
+			nil,		/* ? */
+			
+		},
+	},
+	actionRow{ // S107
 		canRecover: false,
 		actions: [numSymbols]action{
 			nil,		/* INVALID */
@@ -2625,6 +2601,30 @@ var actionTab = actionTable{
 			nil,		/* : */
 			nil,		/* ] */
 			reduce(21),		/* ?, reduce: Target */
+			
+		},
+	},
+	actionRow{ // S108
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			nil,		/* $ */
+			nil,		/* identifier */
+			nil,		/* = */
+			nil,		/* ; */
+			nil,		/* ( */
+			nil,		/* ) */
+			nil,		/* stress */
+			nil,		/* ^ */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			nil,		/* _ */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			shift(113),		/* ] */
+			nil,		/* ? */
 			
 		},
 	},
@@ -2649,6 +2649,102 @@ var actionTab = actionTable{
 			nil,		/* : */
 			nil,		/* ] */
 			reduce(24),		/* ?, reduce: Target */
+			
+		},
+	},
+	actionRow{ // S110
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(22),		/* $, reduce: Target */
+			reduce(22),		/* identifier, reduce: Target */
+			nil,		/* = */
+			reduce(22),		/* ;, reduce: Target */
+			reduce(22),		/* (, reduce: Target */
+			nil,		/* ) */
+			reduce(22),		/* stress, reduce: Target */
+			reduce(22),		/* ^, reduce: Target */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(22),		/* _, reduce: Target */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(22),		/* ?, reduce: Target */
+			
+		},
+	},
+	actionRow{ // S111
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(25),		/* $, reduce: Target */
+			reduce(25),		/* identifier, reduce: Target */
+			nil,		/* = */
+			reduce(25),		/* ;, reduce: Target */
+			reduce(25),		/* (, reduce: Target */
+			nil,		/* ) */
+			reduce(25),		/* stress, reduce: Target */
+			reduce(25),		/* ^, reduce: Target */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(25),		/* _, reduce: Target */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(25),		/* ?, reduce: Target */
+			
+		},
+	},
+	actionRow{ // S112
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(22),		/* $, reduce: Target */
+			reduce(22),		/* identifier, reduce: Target */
+			nil,		/* = */
+			nil,		/* ; */
+			reduce(22),		/* (, reduce: Target */
+			reduce(22),		/* ), reduce: Target */
+			reduce(22),		/* stress, reduce: Target */
+			reduce(22),		/* ^, reduce: Target */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(22),		/* _, reduce: Target */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(22),		/* ?, reduce: Target */
+			
+		},
+	},
+	actionRow{ // S113
+		canRecover: false,
+		actions: [numSymbols]action{
+			nil,		/* INVALID */
+			reduce(25),		/* $, reduce: Target */
+			reduce(25),		/* identifier, reduce: Target */
+			nil,		/* = */
+			nil,		/* ; */
+			reduce(25),		/* (, reduce: Target */
+			reduce(25),		/* ), reduce: Target */
+			reduce(25),		/* stress, reduce: Target */
+			reduce(25),		/* ^, reduce: Target */
+			nil,		/* string_lit */
+			nil,		/* char_lit */
+			nil,		/* ?? */
+			reduce(25),		/* _, reduce: Target */
+			nil,		/* [ */
+			nil,		/* int_lit */
+			nil,		/* : */
+			nil,		/* ] */
+			reduce(25),		/* ?, reduce: Target */
 			
 		},
 	},

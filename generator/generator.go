@@ -31,6 +31,12 @@ type Generator interface {
 	LookupChar(anchor string)
 	LookupLimitedChar(anchor string, upper int)
 	LookupBoundedChar(anchor string, lower, upper int)
+	LookupStringOrIgnore(anchor string)
+	LookupLimitedStringOrIgnore(anchor string, upper int)
+	LookupBoundedStringOrIgnore(anchor string, lower, upper int)
+	LookupCharOrIgnore(anchor string)
+	LookupLimitedCharOrIgnore(anchor string, upper int)
+	LookupBoundedCharOrIgnore(anchor string, lower, upper int)
 
 	// Takes
 	// Take before anchor (string or character)

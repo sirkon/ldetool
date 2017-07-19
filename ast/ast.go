@@ -65,6 +65,8 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 		res.Option = &t
 	case PassUntil:
 		res.Pass = &t
+	case PassUntilOrIgnore:
+		res.PassOrIgnore = &t
 	case StartChar:
 		res.StartWithChar = &t
 	case StartString:
@@ -98,6 +100,8 @@ func Action(act Attrib) (attr Attrib, err error) {
 		res.Option = &t
 	case PassUntil:
 		res.Pass = &t
+	case PassUntilOrIgnore:
+		res.PassOrIgnore = &t
 	case StartChar:
 		res.StartWithChar = &t
 	case StartString:
@@ -130,6 +134,7 @@ type ActionItem struct {
 	End                  *AtEnd
 	Option               *Optional
 	Pass                 *PassUntil
+	PassOrIgnore         *PassUntilOrIgnore
 	StartWithChar        *StartChar
 	StartWithString      *StartString
 	MayBeStartWithChar   *MayBeStartChar
@@ -148,6 +153,8 @@ func (ai ActionItem) String() string {
 		return fmt.Sprintf("Option %s", ai.Option.Name)
 	case ai.Pass != nil:
 		return fmt.Sprintf("Pass until \033[1m%s\033[0m", ai.Pass.Limit.Value)
+	case ai.PassOrIgnore != nil:
+		return fmt.Sprintf("Pass until or ignore \033[1m%s\033[0m", ai.Pass.Limit.Value)
 	case ai.StartWithChar != nil:
 		return fmt.Sprintf("Starts with character \033[1m%s\033[0m", ai.StartWithChar.Value)
 	case ai.StartWithString != nil:

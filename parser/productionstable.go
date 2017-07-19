@@ -172,10 +172,20 @@ var productionsTable = ProdTab {
 		},
 	},
 	ProdTabEntry{
-		String: `AtomicAction : identifier "(" identifier ")" Target	<< ast.TakeUntilTarget(X[0], X[2], X[5]) >>`,
+		String: `AtomicAction : "_" "??" Target	<< ast.PassUntilTargetOrIgnore(X[2]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
 		Index: 15,
+		NumSymbols: 3,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.PassUntilTargetOrIgnore(X[2])
+		},
+	},
+	ProdTabEntry{
+		String: `AtomicAction : identifier "(" identifier ")" Target	<< ast.TakeUntilTarget(X[0], X[2], X[5]) >>`,
+		Id: "AtomicAction",
+		NTType: 4,
+		Index: 16,
 		NumSymbols: 5,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.TakeUntilTarget(X[0], X[2], X[5])
@@ -185,7 +195,7 @@ var productionsTable = ProdTab {
 		String: `AtomicAction : identifier "(" identifier ")" "??" Target	<< ast.TakeUntilTargetOrRest(X[0], X[2], X[6]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
-		Index: 16,
+		Index: 17,
 		NumSymbols: 6,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.TakeUntilTargetOrRest(X[0], X[2], X[6])
@@ -195,7 +205,7 @@ var productionsTable = ProdTab {
 		String: `AtomicAction : "?" identifier "(" Action ")"	<< ast.Option(X[1], X[3]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
-		Index: 17,
+		Index: 18,
 		NumSymbols: 5,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.Option(X[1], X[3])
@@ -205,7 +215,7 @@ var productionsTable = ProdTab {
 		String: `AtomicAction : identifier "(" identifier ")"	<< ast.TakeTheRest(X[0], X[2]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
-		Index: 18,
+		Index: 19,
 		NumSymbols: 4,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.TakeTheRest(X[0], X[2])
@@ -215,7 +225,7 @@ var productionsTable = ProdTab {
 		String: `AtomicAction : "$"	<< ast.AtTheEnd() >>`,
 		Id: "AtomicAction",
 		NTType: 4,
-		Index: 19,
+		Index: 20,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.AtTheEnd()
@@ -225,7 +235,7 @@ var productionsTable = ProdTab {
 		String: `Target : string_lit "[" ":" int_lit "]"	<< ast.LimitedScopeStringTarget(X[0], X[3]) >>`,
 		Id: "Target",
 		NTType: 5,
-		Index: 20,
+		Index: 21,
 		NumSymbols: 5,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.LimitedScopeStringTarget(X[0], X[3])
@@ -235,7 +245,7 @@ var productionsTable = ProdTab {
 		String: `Target : string_lit "[" int_lit ":" int_lit "]"	<< ast.BoundedScopeStringTarget(X[0], X[2], X[4]) >>`,
 		Id: "Target",
 		NTType: 5,
-		Index: 21,
+		Index: 22,
 		NumSymbols: 6,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.BoundedScopeStringTarget(X[0], X[2], X[4])
@@ -245,7 +255,7 @@ var productionsTable = ProdTab {
 		String: `Target : string_lit	<< ast.StringTarget(X[0]) >>`,
 		Id: "Target",
 		NTType: 5,
-		Index: 22,
+		Index: 23,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.StringTarget(X[0])
@@ -255,7 +265,7 @@ var productionsTable = ProdTab {
 		String: `Target : char_lit "[" ":" int_lit "]"	<< ast.LimitedScopeCharTarget(X[0], X[3]) >>`,
 		Id: "Target",
 		NTType: 5,
-		Index: 23,
+		Index: 24,
 		NumSymbols: 5,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.LimitedScopeCharTarget(X[0], X[3])
@@ -265,7 +275,7 @@ var productionsTable = ProdTab {
 		String: `Target : char_lit "[" int_lit ":" int_lit "]"	<< ast.BoundedScopeCharTarget(X[0], X[2], X[4]) >>`,
 		Id: "Target",
 		NTType: 5,
-		Index: 24,
+		Index: 25,
 		NumSymbols: 6,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.BoundedScopeCharTarget(X[0], X[2], X[4])
@@ -275,7 +285,7 @@ var productionsTable = ProdTab {
 		String: `Target : char_lit	<< ast.CharTarget(X[0]) >>`,
 		Id: "Target",
 		NTType: 5,
-		Index: 25,
+		Index: 26,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.CharTarget(X[0])

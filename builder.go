@@ -237,6 +237,46 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 		}
 	}
 
+	// Passes until
+	if it.PassOrIgnore != nil {
+		g.RegGravity(gPrefix.String())
+		l := it.PassOrIgnore.Limit
+		if l.Lower > 0 {
+			switch l.Type {
+			case ast.String:
+				generators = append(generators, func() {
+					g.LookupBoundedStringOrIgnore(l.Value, l.Lower, l.Upper)
+				})
+			case ast.Char:
+				generators = append(generators, func() {
+					g.LookupBoundedCharOrIgnore(l.Value, l.Lower, l.Upper)
+				})
+			}
+		} else if l.Upper > 0 {
+			switch l.Type {
+			case ast.String:
+				generators = append(generators, func() {
+					g.LookupLimitedStringOrIgnore(l.Value, l.Upper)
+				})
+			case ast.Char:
+				generators = append(generators, func() {
+					g.LookupLimitedCharOrIgnore(l.Value, l.Upper)
+				})
+			}
+		} else {
+			switch l.Type {
+			case ast.String:
+				generators = append(generators, func() {
+					g.LookupStringOrIgnore(l.Value)
+				})
+			case ast.Char:
+				generators = append(generators, func() {
+					g.LookupCharOrIgnore(l.Value)
+				})
+			}
+		}
+	}
+
 	// Optional area
 	if it.Option != nil {
 		generators = append(generators, func() {

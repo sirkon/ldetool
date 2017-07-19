@@ -1,0 +1,6 @@
+
+// Looking for {{ .Char }} symbol and then pass it if found
+pos = bytes.IndexByte(p.rest, {{ .Char }});
+if pos >= 0 {
+    p.rest = p.rest[pos + 1:]
+}
