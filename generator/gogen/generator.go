@@ -6,10 +6,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/DenisCheremisov/gosrcfmt"
-	"github.com/DenisCheremisov/gotify"
-	"github.com/DenisCheremisov/ldegen/templatecache"
-	"github.com/DenisCheremisov/ldegen/token"
+	"github.com/glossina/gosrcfmt"
+	"github.com/glossina/gotify"
+	"github.com/glossina/ldegen/templatecache"
+	"github.com/glossina/ldegen/token"
 )
 
 // Name provides a link between token and string

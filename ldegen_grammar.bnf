@@ -34,7 +34,7 @@ _lineComment : '#' {.} '\n' ;
 
 /* Syntax Part */
 
-                                                        <<import ( "github.com/DenisCheremisov/ldegen/ast" )>>
+                                                        <<import ( "github.com/glossina/ldegen/ast" )>>
 
 
 Rules

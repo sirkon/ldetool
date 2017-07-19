@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"unicode/utf8"
 
-	// "github.com/DenisCheremisov/ldegen/util"
-	"github.com/DenisCheremisov/ldegen/token"
+	// "github.com/glossina/ldegen/util"
+	"github.com/glossina/ldegen/token"
 )
 
 const(

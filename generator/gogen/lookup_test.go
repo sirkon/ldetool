@@ -3,7 +3,7 @@ package gogen
 import (
 	"testing"
 
-	"github.com/DenisCheremisov/gotify"
+	"github.com/glossina/gotify"
 	"github.com/stretchr/testify/require"
 )
 

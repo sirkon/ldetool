@@ -3,7 +3,7 @@
 
 package parser
 
-import ( "github.com/DenisCheremisov/ldegen/ast" )
+import ( "github.com/glossina/ldegen/ast" )
 
 type (
 	//TODO: change type and variable names to be consistent with other tables

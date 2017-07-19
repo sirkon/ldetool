@@ -3,7 +3,7 @@ package ast
 import (
 	"strconv"
 
-	"github.com/DenisCheremisov/ldegen/token"
+	"github.com/glossina/ldegen/token"
 )
 
 // StartString ...

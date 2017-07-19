@@ -3,7 +3,7 @@ package gogen
 import (
 	"strings"
 
-	"github.com/DenisCheremisov/ldegen/token"
+	"github.com/glossina/ldegen/token"
 )
 
 // OpenOptionalScope ...

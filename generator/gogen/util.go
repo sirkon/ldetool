@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/DenisCheremisov/ldegen/token"
+	"github.com/glossina/ldegen/token"
 )
 
 func (g *Generator) lookupPush(name string, lower, upper int) {

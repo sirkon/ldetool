@@ -7,7 +7,7 @@ import(
 	"bytes"
 	"fmt"
 	
-	"github.com/DenisCheremisov/ldegen/token"
+	"github.com/glossina/ldegen/token"
 )
 
 type ErrorSymbol interface {
