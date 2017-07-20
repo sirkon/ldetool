@@ -34,9 +34,12 @@ type DParams struct {
 
 // GParams describes paramers for optional values
 type GParams struct {
-	Access string
-	Name   string
-	Type   string
+	Accesses   []string
+	Access     string
+	LongName   string
+	Name       string
+	Type       string
+	ParserName string
 }
 
 // Import desribes package import

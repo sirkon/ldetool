@@ -8,11 +8,11 @@ import (
 
 // OpenOptionalScope ...
 func (g *Generator) OpenOptionalScope(name string, t *token.Token) {
-	g.addField(g.namespaces, name, t)
 	g.namespaces = append(g.namespaces, name)
 	g.tc.MustExecute("open_option", g.obj, TParams{
 		Name: name,
 	})
+	g.addField(g.namespaces, name, t)
 }
 
 // ExitOptionalScope ...

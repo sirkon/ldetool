@@ -27,3 +27,31 @@ func TestTakeRest(t *testing.T) {
 	}
 	t.Log(data)
 }
+
+func TestTakeBeforeString(t *testing.T) {
+	data, err := compile(`rule = Date(int8) ' ';`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! Date(int8) ' ';`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  Data(int64) ' ');`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  ?Opt2 (Data(int64) ' '));`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	panic(0)
+}

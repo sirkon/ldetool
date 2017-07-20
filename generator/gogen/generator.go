@@ -47,11 +47,13 @@ type Generator struct {
 	body      *bytes.Buffer
 	opgetters *bytes.Buffer
 
+	parserName string
+
 	dgen *DecoderGen
 }
 
 // NewGenerator constructor
-func NewGenerator(goish *gotify.Gotify, tc *templatecache.TemplateCache) *Generator {
+func NewGenerator(parserName string, goish *gotify.Gotify, tc *templatecache.TemplateCache) *Generator {
 	res := &Generator{
 		consts:      map[string]string{},
 		fields:      map[string]Name{},
@@ -59,15 +61,16 @@ func NewGenerator(goish *gotify.Gotify, tc *templatecache.TemplateCache) *Genera
 		namespaces:  nil,
 		lookupStack: nil,
 
-		serious:   false,
-		vars:      map[string]string{},
-		goish:     goish,
-		gravity:   nil,
-		pos:       0,
-		obj:       &bytes.Buffer{},
-		body:      &bytes.Buffer{},
-		opgetters: &bytes.Buffer{},
-		tc:        tc,
+		serious:    false,
+		vars:       map[string]string{},
+		goish:      goish,
+		gravity:    nil,
+		pos:        0,
+		obj:        &bytes.Buffer{},
+		body:       &bytes.Buffer{},
+		opgetters:  &bytes.Buffer{},
+		tc:         tc,
+		parserName: parserName,
 	}
 	res.dgen = &DecoderGen{g: res}
 	return res
@@ -100,7 +103,7 @@ func (g *Generator) Stress() {
 }
 
 // Generate writes into io.Writer
-func (g *Generator) Generate(pkgName, parserName string, dest io.Writer) {
+func (g *Generator) Generate(pkgName string, dest io.Writer) {
 	var imports ImportSeq
 	for path, name := range g.imports {
 		imports = append(imports, Import{Name: name, Path: path})
@@ -121,7 +124,7 @@ func (g *Generator) Generate(pkgName, parserName string, dest io.Writer) {
 		Struct:     g.obj.String(),
 		Parser:     g.body.String(),
 		Getters:    g.opgetters.String(),
-		ParserName: parserName,
+		ParserName: g.parserName,
 		PkgName:    pkgName,
 	})
 	gosrcfmt.FormatReader(dest, buf)

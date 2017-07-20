@@ -19,10 +19,18 @@ func (g *Generator) getterGen(name, fieldType string) {
 		return
 	}
 	goType := g.goType(fieldType)
+	accesses := []string{}
+	for i := 1; i <= len(g.namespaces); i++ {
+		accesses = append(accesses, strings.Join(g.namespaces[:i], "."))
+	}
+
 	g.tc.MustExecute("getter", g.opgetters, GParams{
-		Access: strings.Join(g.namespaces, "."),
-		Name:   name,
-		Type:   goType,
+		Accesses:   accesses,
+		Access:     strings.Join(g.namespaces, "."),
+		LongName:   g.goish.Public(strings.Join(append(g.namespaces, name), "_")),
+		ParserName: g.parserName,
+		Name:       name,
+		Type:       goType,
 	})
 }
 

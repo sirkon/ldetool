@@ -8,7 +8,7 @@ import (
 )
 
 func TestConstNameFromContent(t *testing.T) {
-	g := NewGenerator(gotify.New(nil), nil)
+	g := NewGenerator("", gotify.New(nil), nil)
 	require.Equal(t, "const12", g.constNameFromContent("12"))
 	require.Equal(t, "const12", g.constNameFromContent("12"))
 	require.Equal(t, "done200", g.constNameFromContent("Done 200"))

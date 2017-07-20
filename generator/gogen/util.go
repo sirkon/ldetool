@@ -114,7 +114,7 @@ func (g *Generator) goType(inputType string) string {
 		"string":  "[]byte",
 	}[inputType]
 	if !ok {
-		panic(fmt.Sprintf("Unsupported type `\033[1m%s\033[0m", inputType))
+		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m", inputType))
 	}
 	return goTypeName
 }
@@ -134,7 +134,7 @@ func (g *Generator) decoderGen(inputType string) func(string, string) string {
 		"string":  g.dgen.String,
 	}[inputType]
 	if !ok {
-		panic(fmt.Sprintf("Unsupported type `\033[1m%s\033[0m", inputType))
+		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m", inputType))
 	}
 	return tmpl
 }

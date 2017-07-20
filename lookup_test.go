@@ -40,7 +40,7 @@ func compile(input string) (string, error) {
 	gopath := os.Getenv("GOPATH")
 	root := filepath.Join(gopath, "src/github.com/glossina/ldegen/generator/gogen/template_data")
 	tc := templatecache.NewFS(root)
-	gen := gogen.NewGenerator(gotify.New(nil), tc)
+	gen := gogen.NewGenerator(res.Name, gotify.New(nil), tc)
 	buf := &bytes.Buffer{}
 	b := NewBuilder("main", gen, buf)
 	err = b.BuildRule(res)

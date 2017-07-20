@@ -67,5 +67,5 @@ type Generator interface {
 	Stress()
 
 	// Generate code
-	Generate(pkgName, parserName string, dest io.Writer)
+	Generate(pkgName string, dest io.Writer)
 }

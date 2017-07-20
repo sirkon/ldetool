@@ -182,23 +182,23 @@ var productionsTable = ProdTab {
 		},
 	},
 	ProdTabEntry{
-		String: `AtomicAction : identifier "(" identifier ")" Target	<< ast.TakeUntilTarget(X[0], X[2], X[5]) >>`,
+		String: `AtomicAction : identifier "(" identifier ")" Target	<< ast.TakeUntilTarget(X[0], X[2], X[4]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
 		Index: 16,
 		NumSymbols: 5,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return ast.TakeUntilTarget(X[0], X[2], X[5])
+			return ast.TakeUntilTarget(X[0], X[2], X[4])
 		},
 	},
 	ProdTabEntry{
-		String: `AtomicAction : identifier "(" identifier ")" "??" Target	<< ast.TakeUntilTargetOrRest(X[0], X[2], X[6]) >>`,
+		String: `AtomicAction : identifier "(" identifier ")" "??" Target	<< ast.TakeUntilTargetOrRest(X[0], X[2], X[5]) >>`,
 		Id: "AtomicAction",
 		NTType: 4,
 		Index: 17,
 		NumSymbols: 6,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
-			return ast.TakeUntilTargetOrRest(X[0], X[2], X[6])
+			return ast.TakeUntilTargetOrRest(X[0], X[2], X[5])
 		},
 	},
 	ProdTabEntry{

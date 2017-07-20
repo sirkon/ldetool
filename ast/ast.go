@@ -57,8 +57,6 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 	tail := next.(ActionSequence)
 	res := ActionItem{}
 	switch t := act.(type) {
-	default:
-		err = fmt.Errorf("Unsupported action object %T", act)
 	case AtEnd:
 		res.End = &t
 	case Optional:
@@ -83,6 +81,8 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 		res.PassFirst = &t
 	case ActionSequence:
 		return fasten(t, tail), nil
+	default:
+		err = fmt.Errorf("Unsupported action object %T", act)
 	}
 	return ActionSequence{Head: res, Tail: &tail}, nil
 
@@ -92,8 +92,6 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 func Action(act Attrib) (attr Attrib, err error) {
 	res := ActionItem{}
 	switch t := act.(type) {
-	default:
-		err = fmt.Errorf("Unsupported action object %T", act)
 	case AtEnd:
 		res.End = &t
 	case Optional:
@@ -118,6 +116,8 @@ func Action(act Attrib) (attr Attrib, err error) {
 		res.TakeUntilOrRest = &t
 	case PassFixed:
 		res.PassFirst = &t
+	default:
+		err = fmt.Errorf("Unsupported action object %T", act)
 	}
 	return ActionSequence{Head: res, Tail: nil}, nil
 }
