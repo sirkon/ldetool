@@ -1,0 +1,13 @@
+
+// Put data before {{ .ConstValue }} into {{ .Dest }} with limited to {{.Lower}}..{{.Upper}} symbols boundary lookup or everything to the very rest if not found
+if len(p.rest) < {{.Upper}} {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols to bound value for {{.Dest}} of the rest while only %d left", len(p.rest)){{else}}nil{{end}};{{end}}
+}
+if pos = bytes.Index(p.rest[{{.Lower}}:{{.Upper}}], {{ .ConstName }}); pos >= 0 {
+  tmp = p.rest[:pos+{{.Lower}}]
+  p.rest = p.rest[pos+{{.Lower}}+len({{.ConstName}}):]
+} else {
+  tmp = p.rest
+  p.rest = p.rest[len(p.rest):]
+}
+{{ call .Decoder "tmp"  .Dest }}

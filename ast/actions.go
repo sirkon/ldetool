@@ -159,14 +159,14 @@ type TakeUntilOrRest struct {
 // TakeUntilTargetOrRest ...
 func TakeUntilTargetOrRest(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
 	f := NewField(field.(*token.Token), fieldType.(*token.Token))
-	res := Take{
+	res := TakeUntilOrRest{
 		Field: f,
 		Limit: target.(Target),
 	}
 	return res, nil
 }
 
-// PasFsixed ...
+// PassFixed ...
 type PassFixed int
 
 // PassFirst ...

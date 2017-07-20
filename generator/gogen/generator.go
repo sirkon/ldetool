@@ -49,7 +49,8 @@ type Generator struct {
 
 	parserName string
 
-	dgen *DecoderGen
+	dgen         *DecoderGen
+	tmpSuspected bool
 }
 
 // NewGenerator constructor
@@ -140,4 +141,14 @@ func (g *Generator) AtEnd() {
 	g.tc.MustExecute("at_end", g.body, TParams{
 		Serious: g.serious,
 	})
+}
+
+// TmpOn sets tmpSuspected state to on
+func (g *Generator) TmpOn() {
+	g.tmpSuspected = true
+}
+
+// TmpOff sets tmpSuspected state to off
+func (g *Generator) TmpOff() {
+	g.tmpSuspected = false
 }

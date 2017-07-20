@@ -4,7 +4,7 @@ if len(p.rest) < {{.Upper}} {
 {{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols to bound value for {{.Dest}} of the rest while only %d left", len(p.rest)){{else}}nil{{end}};{{end}}
 }
 if pos = bytes.IndexByte(p.rest[{{.Lower}}:{{.Upper}}], {{ .Char }}); pos >= 0 {
-   {{ if ne .Type "[]byte" }}tmp = p.rest[:{{.Lower}}+pos]
+   {{ if .UseTmp }}tmp = p.rest[:{{.Lower}}+pos]
      {{ call .Decoder "tmp"  .Dest }}{{else}} {{ call .Decoder ( printf "p.rest[:%d+pos]" .Lower )  .Dest }}{{end}}
   p.rest = p.rest[pos+{{.Lower}}+1:]
 } else {

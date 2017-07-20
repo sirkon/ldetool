@@ -19,6 +19,7 @@ type TParams struct {
 	ScopeLabel string
 	Gravity    string
 	Serious    bool
+	UseTmp     bool
 	Dest       string
 	Decoder    func(string, string) string
 }

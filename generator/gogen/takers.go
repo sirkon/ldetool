@@ -38,6 +38,9 @@ func (g *Generator) getterGen(name, fieldType string) {
 func (g *Generator) TakeBeforeString(name, fieldType, anchor string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	if g.tmpSuspectancy(fieldType) {
+		g.regVar("tmp", "[]byte")
+	}
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -49,6 +52,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string) {
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
+		UseTmp:     g.tmpSuspected,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -61,6 +65,9 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string) {
 func (g *Generator) TakeBeforeLimitedString(name, fieldType, anchor string, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	if g.tmpSuspectancy(fieldType) {
+		g.regVar("tmp", "[]byte")
+	}
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -72,6 +79,7 @@ func (g *Generator) TakeBeforeLimitedString(name, fieldType, anchor string, uppe
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
+		UseTmp:     g.tmpSuspected,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -85,6 +93,9 @@ func (g *Generator) TakeBeforeLimitedString(name, fieldType, anchor string, uppe
 func (g *Generator) TakeBeforeBoundedString(name, fieldType, anchor string, lower int, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	if g.tmpSuspectancy(fieldType) {
+		g.regVar("tmp", "[]byte")
+	}
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -96,6 +107,7 @@ func (g *Generator) TakeBeforeBoundedString(name, fieldType, anchor string, lowe
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
+		UseTmp:     g.tmpSuspected,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -110,6 +122,9 @@ func (g *Generator) TakeBeforeBoundedString(name, fieldType, anchor string, lowe
 func (g *Generator) TakeBeforeChar(name, fieldType, char string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	if g.tmpSuspectancy(fieldType) {
+		g.regVar("tmp", "[]byte")
+	}
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -119,6 +134,7 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string) {
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
+		UseTmp:     g.tmpSuspected,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -131,6 +147,9 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string) {
 func (g *Generator) TakeBeforeLimitedChar(name, fieldType, char string, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	if g.tmpSuspectancy(fieldType) {
+		g.regVar("tmp", "[]byte")
+	}
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -140,6 +159,7 @@ func (g *Generator) TakeBeforeLimitedChar(name, fieldType, char string, upper in
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
+		UseTmp:     g.tmpSuspected,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -153,6 +173,9 @@ func (g *Generator) TakeBeforeLimitedChar(name, fieldType, char string, upper in
 func (g *Generator) TakeBeforeBoundedChar(name, fieldType, char string, lower int, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	if g.tmpSuspectancy(fieldType) {
+		g.regVar("tmp", "[]byte")
+	}
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -162,6 +185,7 @@ func (g *Generator) TakeBeforeBoundedChar(name, fieldType, char string, lower in
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
+		UseTmp:     g.tmpSuspected,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -185,6 +209,7 @@ func (g *Generator) TakeRest(name, fieldType string) {
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
+		UseTmp:     g.tmpSuspected,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -197,6 +222,7 @@ func (g *Generator) TakeRest(name, fieldType string) {
 func (g *Generator) TakeBeforeStringOrRest(name, fieldType, anchor string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	g.regVar("tmp", "[]byte")
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -219,6 +245,7 @@ func (g *Generator) TakeBeforeStringOrRest(name, fieldType, anchor string) {
 func (g *Generator) TakeBeforeLimitedStringOrRest(name, fieldType, anchor string, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	g.regVar("tmp", "[]byte")
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -242,6 +269,7 @@ func (g *Generator) TakeBeforeLimitedStringOrRest(name, fieldType, anchor string
 func (g *Generator) TakeBeforeBoundedStringOrRest(name, fieldType, anchor string, lower int, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	g.regVar("tmp", "[]byte")
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -266,6 +294,7 @@ func (g *Generator) TakeBeforeBoundedStringOrRest(name, fieldType, anchor string
 func (g *Generator) TakeBeforeCharOrRest(name, fieldType, char string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	g.regVar("tmp", "[]byte")
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -286,6 +315,7 @@ func (g *Generator) TakeBeforeCharOrRest(name, fieldType, char string) {
 func (g *Generator) TakeBeforeLimitedCharOrRest(name, fieldType, char string, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	g.regVar("tmp", "[]byte")
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
@@ -307,6 +337,7 @@ func (g *Generator) TakeBeforeLimitedCharOrRest(name, fieldType, char string, up
 func (g *Generator) TakeBeforeBoundedCharOrRest(name, fieldType, char string, lower int, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
+	g.regVar("tmp", "[]byte")
 
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)

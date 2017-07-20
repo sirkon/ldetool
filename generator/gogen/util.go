@@ -114,7 +114,7 @@ func (g *Generator) goType(inputType string) string {
 		"string":  "[]byte",
 	}[inputType]
 	if !ok {
-		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m", inputType))
+		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))
 	}
 	return goTypeName
 }
@@ -134,9 +134,30 @@ func (g *Generator) decoderGen(inputType string) func(string, string) string {
 		"string":  g.dgen.String,
 	}[inputType]
 	if !ok {
-		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m", inputType))
+		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))
 	}
 	return tmpl
+}
+
+func (g *Generator) tmpSuspectancy(inputType string) bool {
+	suspected, ok := map[string]bool{
+		"int8":    true,
+		"int16":   true,
+		"int32":   true,
+		"int64":   true,
+		"uint8":   true,
+		"uint16":  true,
+		"uint32":  true,
+		"uint64":  true,
+		"float32": true,
+		"float64": true,
+		"string":  false,
+	}[inputType]
+	if !ok {
+		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))
+	}
+	g.tmpSuspected = suspected
+	return suspected
 }
 
 func (g *Generator) addField(namespace []string, name string, t *token.Token) string {

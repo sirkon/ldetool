@@ -1,0 +1,10 @@
+
+// Put data before {{ .ConstValue }} into {{ .Dest }} if found otherwise take to the end
+if pos = bytes.Index(p.rest, {{ .ConstName }}); pos >= 0 {
+  tmp = p.rest[:pos]
+  p.rest = p.rest[pos+len({{.ConstName}}):]
+} else {
+  tmp = p.rest
+  p.rest = p.rest[len(p.rest):]
+}
+{{ call .Decoder "tmp"  .Dest }}

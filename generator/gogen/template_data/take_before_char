@@ -1,7 +1,7 @@
 
 // Put data before {{ .Char }} into {{ .Dest }}
 if pos = bytes.IndexByte(p.rest, {{ .Char }}); pos >= 0 {
-  {{ if ne .Type "[]byte" }}tmp = p.rest[:pos]
+  {{ if .UseTmp }}tmp = p.rest[:pos]
   {{ call .Decoder "tmp"  .Dest }}{{else}}{{ call .Decoder "p.rest[:pos]"  .Dest }}{{end}}
   {{ call .Decoder "tmp"  .Dest }}
   p.rest = p.rest[pos+1:]

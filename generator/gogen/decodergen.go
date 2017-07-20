@@ -20,7 +20,6 @@ func (dg *DecoderGen) Int8(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpInt", "int64")
 
 	buf := &bytes.Buffer{}
@@ -38,7 +37,6 @@ func (dg *DecoderGen) Int16(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpInt", "int64")
 
 	buf := &bytes.Buffer{}
@@ -56,7 +54,6 @@ func (dg *DecoderGen) Int32(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpInt", "int64")
 
 	buf := &bytes.Buffer{}
@@ -74,7 +71,6 @@ func (dg *DecoderGen) Int64(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpUint", "uint64")
 
 	buf := &bytes.Buffer{}
@@ -92,7 +88,6 @@ func (dg *DecoderGen) Uint8(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpUint", "uint64")
 
 	buf := &bytes.Buffer{}
@@ -110,7 +105,6 @@ func (dg *DecoderGen) Uint16(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpUint", "uint64")
 
 	buf := &bytes.Buffer{}
@@ -128,7 +122,6 @@ func (dg *DecoderGen) Uint32(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpUint", "uint64")
 
 	buf := &bytes.Buffer{}
@@ -146,7 +139,6 @@ func (dg *DecoderGen) Uint64(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpUint", "uint64")
 
 	buf := &bytes.Buffer{}
@@ -164,7 +156,6 @@ func (dg *DecoderGen) Float32(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpUint", "float64")
 
 	buf := &bytes.Buffer{}
@@ -182,7 +173,6 @@ func (dg *DecoderGen) Float64(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmp", "[]byte")
 	dg.g.regVar("tmpUint", "float64")
 
 	buf := &bytes.Buffer{}
@@ -198,6 +188,7 @@ func (dg *DecoderGen) Float64(src, dest string) string {
 // String decoder
 func (dg *DecoderGen) String(src, dest string) string {
 	buf := &bytes.Buffer{}
+	dg.g.TmpOff()
 	dg.g.tc.MustExecute("decode_string", buf, DParams{
 		Source: src,
 		Dest:   dest,

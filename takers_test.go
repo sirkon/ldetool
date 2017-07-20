@@ -105,7 +105,6 @@ func TestTakeBeforeStringBounded(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(data)
-
 }
 
 func TestTakeBeforeChar(t *testing.T) {
@@ -184,6 +183,160 @@ func TestTakeBeforeBoundedChar(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(data)
+}
 
-	panic(0)
+func TestTakeBeforeStringOrRest(t *testing.T) {
+	data, err := compile(`rule = Date(int8) ?? "border";`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! Date(int8) ?? "border";`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  Data(int64) ?? "border");`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  ?Opt2 (Data(int64) ?? "border"));`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+}
+
+func TestTakeBeforeLimitedStringOrRest(t *testing.T) {
+	data, err := compile(`rule = Date(int8) ?? "border"[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! Date(int8) ?? "border"[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  Data(int64) ?? "border"[:40]);`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  ?Opt2 (Data(int64) ?? "border"[:40]));`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+}
+
+func TestTakeBeforeBoundedStringOrRest(t *testing.T) {
+	data, err := compile(`rule = Date(int8) ?? "border"[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! Date(int8) ?? "border"[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  Data(int64) ?? "border"[12:40]);`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  ?Opt2 (Data(int64) ?? "border"[12:40]));`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+}
+
+func TestTakeBeforeCharOrRest(t *testing.T) {
+	data, err := compile(`rule = Date(int8) ?? ' ';`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! Date(int8) ?? ' ';`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  Data(int64) ?? ' ');`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  ?Opt2 (Data(string) ?? ' '));`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+}
+
+func TestTakeBeforeLimitedCharOrRest(t *testing.T) {
+	data, err := compile(`rule = Date(int8) ?? ' '[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! Date(int8) ?? ' '[:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  Data(int64) ?? ' '[:40]);`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  ?Opt2 (Data(string) ?? ' '[:40]));`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+}
+
+func TestTakeBeforeBoundedCharOrRest(t *testing.T) {
+	data, err := compile(`rule = Date(int8) ?? ' '[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ! Date(int8) ?? ' '[12:40];`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  Data(int64) ?? ' '[12:40]);`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
+
+	data, err = compile(`rule = ?Opt(  ?Opt2 (Data(string) ?? ' '[12:40]));`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(data)
 }
