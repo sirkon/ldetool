@@ -1,7 +1,6 @@
 package gogen
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -201,7 +200,6 @@ func (g *Generator) TakeRest(name, fieldType string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
 
-	fmt.Println(g.fields)
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
 

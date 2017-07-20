@@ -21,6 +21,7 @@ func (dg *DecoderGen) Int8(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpInt", "int64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_int", buf, DParams{
@@ -38,6 +39,7 @@ func (dg *DecoderGen) Int16(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpInt", "int64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_int", buf, DParams{
@@ -55,6 +57,7 @@ func (dg *DecoderGen) Int32(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpInt", "int64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_int", buf, DParams{
@@ -72,6 +75,7 @@ func (dg *DecoderGen) Int64(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpUint", "uint64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_int", buf, DParams{
@@ -89,6 +93,7 @@ func (dg *DecoderGen) Uint8(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpUint", "uint64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_uint", buf, DParams{
@@ -106,6 +111,7 @@ func (dg *DecoderGen) Uint16(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpUint", "uint64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_uint", buf, DParams{
@@ -123,6 +129,7 @@ func (dg *DecoderGen) Uint32(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpUint", "uint64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_uint", buf, DParams{
@@ -140,6 +147,7 @@ func (dg *DecoderGen) Uint64(src, dest string) string {
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
 	dg.g.regVar("tmpUint", "uint64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_uint", buf, DParams{
@@ -156,7 +164,8 @@ func (dg *DecoderGen) Float32(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmpUint", "float64")
+	dg.g.regVar("tmpFloat", "float64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_float", buf, DParams{
@@ -173,7 +182,8 @@ func (dg *DecoderGen) Float64(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmpUint", "float64")
+	dg.g.regVar("tmpFloat", "float64")
+	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}
 	dg.g.tc.MustExecute("decode_float", buf, DParams{

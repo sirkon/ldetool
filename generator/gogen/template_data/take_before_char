@@ -3,7 +3,6 @@
 if pos = bytes.IndexByte(p.rest, {{ .Char }}); pos >= 0 {
   {{ if .UseTmp }}tmp = p.rest[:pos]
   {{ call .Decoder "tmp"  .Dest }}{{else}}{{ call .Decoder "p.rest[:pos]"  .Dest }}{{end}}
-  {{ call .Decoder "tmp"  .Dest }}
   p.rest = p.rest[pos+1:]
 } else {
 {{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field {{.Dest}}", {{.Char}}, string(p.rest)){{else}}nil{{end}};{{end}}

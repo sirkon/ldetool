@@ -8,13 +8,15 @@ import (
 {{range $name, $value := .Consts }}var {{$name}} = {{$value}};{{end}}
 
 type {{.ParserName}} struct {
+rest []byte
 {{.Struct}}
 }
 
-func (p *{{.ParserName}}) Parse(line []byte) {
+func (p *{{.ParserName}}) Parse(line []byte) (bool, error) {
    {{ range .Vars }}var {{.Name}} {{.Type}};{{end}}
    p.rest = line
 {{.Parser}}
+return true, nil
 }
 
 {{.Getters}}
