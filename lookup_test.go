@@ -9,6 +9,7 @@ import (
 
 	"github.com/glossina/gotify"
 	"github.com/glossina/ldegen/ast"
+	"github.com/glossina/ldegen/builder"
 	"github.com/glossina/ldegen/generator/gogen"
 	"github.com/glossina/ldegen/lexer"
 	"github.com/glossina/ldegen/parser"
@@ -42,7 +43,7 @@ func compile(input string) (string, error) {
 	tc := templatecache.NewFS(root)
 	gen := gogen.NewGenerator(res.Name, gotify.New(nil), tc)
 	buf := &bytes.Buffer{}
-	b := NewBuilder("main", gen, buf)
+	b := builder.NewBuilder("main", gen, buf)
 	err = b.BuildRule(res)
 	return buf.String(), err
 }
