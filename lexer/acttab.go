@@ -6,7 +6,7 @@ package lexer
 import(
 	"fmt"
 
-	"github.com/glossina/ldegen/token"
+	"github.com/glossina/ldetool/token"
 )
 
 type ActionTable [NumStates] ActionRow

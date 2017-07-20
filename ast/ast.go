@@ -3,7 +3,7 @@ package ast
 import (
 	"fmt"
 
-	"github.com/glossina/ldegen/token"
+	"github.com/glossina/ldetool/token"
 )
 
 // Attrib ...

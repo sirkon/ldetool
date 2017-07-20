@@ -1,6 +1,6 @@
 package main
 
-//go:generate gocc ldegen_grammar.bnf
+//go:generate gocc lde_grammar.bnf
 
 import (
 	"os"
@@ -8,17 +8,17 @@ import (
 	"github.com/urfave/cli"
 
 	// These are for testing reasons
-	_ "github.com/glossina/ldegen/errors"
-	_ "github.com/glossina/ldegen/lexer"
-	_ "github.com/glossina/ldegen/parser"
-	_ "github.com/glossina/ldegen/token"
-	_ "github.com/glossina/ldegen/util"
+	_ "github.com/glossina/ldetool/errors"
+	_ "github.com/glossina/ldetool/lexer"
+	_ "github.com/glossina/ldetool/parser"
+	_ "github.com/glossina/ldetool/token"
+	_ "github.com/glossina/ldetool/util"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Usage = "Text data extraction Go source code generator"
-	app.UsageText = "ldegen [--code-source <path:>]"
+	app.UsageText = "ldetool [--code-source <path:>]"
 	app.Commands = []cli.Command{
 		cli.Command{
 			Name:  "generate",

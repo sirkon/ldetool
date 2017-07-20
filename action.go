@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/glossina/ldegen/templatecache"
+	"github.com/glossina/ldetool/templatecache"
 	"github.com/urfave/cli"
 )
 

@@ -7,8 +7,8 @@ import(
 	"bytes"
 	"fmt"
 
-	parseError "github.com/glossina/ldegen/errors"
-	"github.com/glossina/ldegen/token"
+	parseError "github.com/glossina/ldetool/errors"
+	"github.com/glossina/ldetool/token"
 )
 
 const (

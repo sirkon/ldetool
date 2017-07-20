@@ -1,4 +1,4 @@
-# ldegen means line data extraction generator
+# ldetool means line data extraction tool
 
 ### Preamble
 
@@ -33,7 +33,7 @@ This is a possible way:
 #### Syntax for extraction of needed data for these particular lines
 
 ```perl
-line = 
+line =
   _ ' '                                  # Pass to the space (x20) character
   Time(string) ']'                       # Take everything as a record for Time right to ']' character
   ^" FETCH_EVENTS "                      # Current rest must starts with " FETCH_EVENTS " string
@@ -52,7 +52,7 @@ And what would like to have from it:
 * Error messages should be helpful, i.e. mismatch cases must be easy to spot via error messages.
 * Extracted data must be accessible via names (using struct fields)
 * Unneccessary allocations should be avoided. For instance, when scanning logs we use []byte buffer as a temporary storage. Usually these fields only needed within the lifetime of current line, so extracted substrings better be []byte themselves
-  
+
 And this is example of generated code produced by closed source version of the utility. It is not ready to be released yet because of crappy code. We don't need crappy code in open source :)
 ```go
 package main

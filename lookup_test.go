@@ -8,12 +8,12 @@ import (
 	"testing"
 
 	"github.com/glossina/gotify"
-	"github.com/glossina/ldegen/ast"
-	"github.com/glossina/ldegen/builder"
-	"github.com/glossina/ldegen/generator/gogen"
-	"github.com/glossina/ldegen/lexer"
-	"github.com/glossina/ldegen/parser"
-	"github.com/glossina/ldegen/templatecache"
+	"github.com/glossina/ldetool/ast"
+	"github.com/glossina/ldetool/builder"
+	"github.com/glossina/ldetool/generator/gogen"
+	"github.com/glossina/ldetool/lexer"
+	"github.com/glossina/ldetool/parser"
+	"github.com/glossina/ldetool/templatecache"
 )
 
 func parse(input string) (res ast.RuleItem, err error) {
@@ -39,7 +39,7 @@ func compile(input string) (string, error) {
 		return "", err
 	}
 	gopath := os.Getenv("GOPATH")
-	root := filepath.Join(gopath, "src/github.com/glossina/ldegen/generator/gogen/template_data")
+	root := filepath.Join(gopath, "src/github.com/glossina/ldetool/generator/gogen/template_data")
 	tc := templatecache.NewFS(root)
 	gen := gogen.NewGenerator(res.Name, gotify.New(nil), tc)
 	buf := &bytes.Buffer{}

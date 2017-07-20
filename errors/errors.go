@@ -7,7 +7,7 @@ import(
 	"bytes"
 	"fmt"
 	
-	"github.com/glossina/ldegen/token"
+	"github.com/glossina/ldetool/token"
 )
 
 type ErrorSymbol interface {

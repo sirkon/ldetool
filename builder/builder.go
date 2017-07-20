@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/glossina/ldegen/ast"
-	"github.com/glossina/ldegen/generator"
-	"github.com/glossina/ldegen/token"
+	"github.com/glossina/ldetool/ast"
+	"github.com/glossina/ldetool/generator"
+	"github.com/glossina/ldetool/token"
 )
 
 // Builder creates target sources using Generator object

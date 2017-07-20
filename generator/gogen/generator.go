@@ -8,8 +8,8 @@ import (
 
 	"github.com/glossina/gosrcfmt"
 	"github.com/glossina/gotify"
-	"github.com/glossina/ldegen/templatecache"
-	"github.com/glossina/ldegen/token"
+	"github.com/glossina/ldetool/templatecache"
+	"github.com/glossina/ldetool/token"
 )
 
 // Name provides a link between token and string

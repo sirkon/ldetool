@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/glossina/ldegen/token"
+	"github.com/glossina/ldetool/token"
 )
 
 // TokenError printer
