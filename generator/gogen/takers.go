@@ -47,6 +47,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string) {
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
@@ -69,6 +70,7 @@ func (g *Generator) TakeBeforeLimitedString(name, fieldType, anchor string, uppe
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
@@ -92,6 +94,7 @@ func (g *Generator) TakeBeforeBoundedString(name, fieldType, anchor string, lowe
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
@@ -114,6 +117,7 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string) {
 	g.tc.MustExecute("take_before_char", g.body, TParams{
 		Char:       char,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
@@ -134,6 +138,7 @@ func (g *Generator) TakeBeforeLimitedChar(name, fieldType, char string, upper in
 	g.tc.MustExecute("take_before_limited_char", g.body, TParams{
 		Char:       char,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
@@ -152,9 +157,10 @@ func (g *Generator) TakeBeforeBoundedChar(name, fieldType, char string, lower in
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
 
-	g.tc.MustExecute("take_before_bounded_string", g.body, TParams{
+	g.tc.MustExecute("take_before_bounded_char", g.body, TParams{
 		Char:       char,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
@@ -177,6 +183,7 @@ func (g *Generator) TakeRest(name, fieldType string) {
 
 	g.tc.MustExecute("take_rest", g.body, TParams{
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Serious:    g.serious,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
@@ -200,6 +207,7 @@ func (g *Generator) TakeBeforeStringOrRest(name, fieldType, anchor string) {
 		ConstValue: anchor,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Dest:       item.name,
 		Decoder:    method,
 		Namespace:  strings.Join(g.namespaces, "."),
@@ -220,6 +228,7 @@ func (g *Generator) TakeBeforeLimitedStringOrRest(name, fieldType, anchor string
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -242,6 +251,7 @@ func (g *Generator) TakeBeforeBoundedStringOrRest(name, fieldType, anchor string
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -260,9 +270,10 @@ func (g *Generator) TakeBeforeCharOrRest(name, fieldType, char string) {
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
 
-	g.tc.MustExecute("take_before_string_or_rest", g.body, TParams{
+	g.tc.MustExecute("take_before_char_or_rest", g.body, TParams{
 		Char:       char,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -279,9 +290,10 @@ func (g *Generator) TakeBeforeLimitedCharOrRest(name, fieldType, char string, up
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
 
-	g.tc.MustExecute("take_before_limited_string_or_rest", g.body, TParams{
+	g.tc.MustExecute("take_before_limited_char_or_rest", g.body, TParams{
 		Char:       char,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Dest:       item.name,
 		Decoder:    method,
@@ -299,9 +311,10 @@ func (g *Generator) TakeBeforeBoundedCharOrRest(name, fieldType, char string, lo
 	item := g.fields[name]
 	method := g.decoderGen(fieldType)
 
-	g.tc.MustExecute("take_before_bounded_string_or_rest", g.body, TParams{
+	g.tc.MustExecute("take_before_bounded_char_or_rest", g.body, TParams{
 		Char:       char,
 		Name:       item.name,
+		Type:       g.goType(fieldType),
 		Dest:       item.name,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 		Decoder:    method,

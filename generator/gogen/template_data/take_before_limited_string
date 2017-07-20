@@ -1,0 +1,12 @@
+
+// Put data before {{ .ConstValue }} into {{ .Dest }} with limited to {{.Upper}} symbols boundary lookup
+if len(p.rest) < {{.Upper}} {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols to bound value for {{.Dest}} of the rest while only %d left", len(p.rest)){{else}}nil{{end}};{{end}}
+}
+if pos = bytes.Index(p.rest[:{{.Upper}}], {{ .ConstName }}); pos >= 0 {
+  {{ if ne .Type "[]byte" }}tmp = p.rest[:pos]
+  {{ call .Decoder "tmp"  .Dest }}{{else}}{{ call .Decoder "p.rest[:pos]"  .Dest }}{{end}}
+  p.rest = p.rest[pos+len({{.ConstName}}):]
+} else {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field {{.Dest}}", {{.ConstName}}, string(p.rest[:{{.Upper}}])){{else}}nil{{end}};{{end}}
+}

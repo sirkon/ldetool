@@ -1,8 +1,8 @@
 
 // Get{{.LongName}} retrieves optional value for {{.LongName}}.Name
 func (p *{{.ParserName}}) Get{{.LongName}}() (res {{.Type}}) {
-	 {{ range $index, $data := .Accesses }}if !p.{{$data}}.Valid {
-	 return
-	 };{{end}}
+	 if {{ range $index, $data := .Accesses }}{{ if $index }}||{{end}}!p.{{$data}}.Valid{{end}} {
+  	 return
+	 };
 	 return p.{{.Access}}.{{.Name}}
 }

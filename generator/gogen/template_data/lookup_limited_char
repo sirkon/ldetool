@@ -1,7 +1,7 @@
 
 // Looking for {{ .Char }} symbol in first {{.Upper}} symbols of the rest and then pass it
 if len(p.rest) < {{.Upper}} {
-{{ if .Namespace }}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols of the rest while only %s left", len(p.rest)){{else}}nil{{end}};{{end}}
+{{ if .Namespace }}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols of the rest while only %d left", len(p.rest)){{else}}nil{{end}};{{end}}
 }
 pos = bytes.IndexByte(p.rest[:{{.Upper}}], {{ .Char }});
 if pos >= 0 {

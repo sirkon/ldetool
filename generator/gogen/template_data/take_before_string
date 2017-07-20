@@ -1,0 +1,9 @@
+
+// Put data before {{ .ConstValue }} into {{ .Dest }}
+if pos = bytes.Index(p.rest, {{ .ConstName }}); pos >= 0 {
+  {{ if ne .Type "[]byte" }}tmp = p.rest[:pos]
+  {{ call .Decoder "tmp"  .Dest }}{{else}}{{ call .Decoder "p.rest[:pos]"  .Dest }}{{end}}
+  p.rest = p.rest[pos+len({{.ConstName}}):]
+} else {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field {{.Dest}}", {{.ConstName}}, string(p.rest)){{else}}nil{{end}};{{end}}
+}
