@@ -1,2 +1,3 @@
 ;p.{{.Name}} = true
-{{.ScopeLabel}}:
+{{ if .WasAbandoned }}{{.ScopeLabel}}:
+{{end}}

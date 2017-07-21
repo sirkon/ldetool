@@ -117,3 +117,8 @@ func (tc *TemplateCache) Dump(dest io.Writer) error {
 	enc := json.NewEncoder(dest)
 	return enc.Encode(tc.rawdata)
 }
+
+// RawData returns raw template data
+func (tc *TemplateCache) RawData() map[string]string {
+	return tc.rawdata
+}

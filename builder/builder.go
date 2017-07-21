@@ -1,53 +1,60 @@
 package builder
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/glossina/ldetool/ast"
 	"github.com/glossina/ldetool/generator"
-	"github.com/glossina/ldetool/token"
 )
 
 // Builder creates target sources using Generator object
 type Builder struct {
-	pkgName   string
-	prevRules map[string]*token.Token
-	gen       generator.Generator
-	dest      io.Writer
+	pkgName      string
+	gen          generator.Generator
+	dest         io.Writer
+	recoverPanic bool
 }
 
 // NewBuilder consturcot
 func NewBuilder(pn string, g generator.Generator, d io.Writer) *Builder {
 	return &Builder{
-		prevRules: map[string]*token.Token{},
-		pkgName:   pn,
-		gen:       g,
-		dest:      d,
+		pkgName:      pn,
+		gen:          g,
+		dest:         d,
+		recoverPanic: true,
 	}
+}
+
+// DontRecover tells not to recover panics
+func (b *Builder) DontRecover() {
+	b.recoverPanic = false
 }
 
 // BuildRule builds shit from the data
 func (b *Builder) BuildRule(rule ast.RuleItem) (err error) {
 	defer func() {
-		if r := recover(); r != nil {
-			var ok bool
-			if err, ok = r.(error); !ok {
-				panic(r)
+		if b.recoverPanic {
+			if r := recover(); r != nil {
+				var ok bool
+				if err, ok = r.(error); !ok {
+					panic(r)
+				}
 			}
 		}
 	}()
-	if t, ok := b.prevRules[rule.Name]; ok {
-		return fmt.Errorf(
-			"%d: Rule `\033[1m%s\033[0m` has already been defined at line %d", rule.NameToken.Line, rule.Name, t.Line)
-	}
-	b.prevRules[rule.Name] = rule.NameToken
+	b.gen.UseRule(rule.Name, rule.NameToken)
 	generators := b.composeRules(NewPrefix(), b.gen, &rule.Actions)
 	for _, item := range generators {
 		func() {
 			item()
 		}()
 	}
+	b.gen.Push()
+	return nil
+}
+
+// Build full source file
+func (b *Builder) Build() (err error) {
 	b.gen.Generate(b.pkgName, b.dest)
 	return nil
 }

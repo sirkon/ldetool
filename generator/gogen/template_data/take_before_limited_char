@@ -8,5 +8,5 @@ if pos = bytes.IndexByte(p.rest[:{{.Upper}}], {{ .Char }}); pos >= 0 {
   {{ call .Decoder "tmp"  .Dest }}{{else}}{{ call .Decoder "p.rest[:pos]"  .Dest }}{{end}}
   p.rest = p.rest[pos+1:]
 } else {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field {{.Dest}}", {{.Char}}, string(p.rest[:{{.Upper}}])){{else}}nil{{end}};{{end}}
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field {{.Dest}}", {{.Char}}, string(p.rest[:{{.Upper}}])){{else}}nil{{end}};{{end}}
 }

@@ -15,13 +15,14 @@ type TParams struct {
 	Name string
 	Type string
 
-	Namespace  string
-	ScopeLabel string
-	Gravity    string
-	Serious    bool
-	UseTmp     bool
-	Dest       string
-	Decoder    func(string, string) string
+	Namespace    string
+	ScopeLabel   string
+	Gravity      string
+	Serious      bool
+	UseTmp       bool
+	Dest         string
+	Decoder      func(string, string) string
+	WasAbandoned bool
 }
 
 // DParams describes parameters for decoder generators

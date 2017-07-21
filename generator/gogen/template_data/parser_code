@@ -1,22 +1,15 @@
 package {{ .PkgName }}
 
-import (
+{{ if .Imports }}import (
 {{ range .Imports }}{{.Name}} "{{.Path}}"
 {{end}}
-)
+){{end}}
 
-{{range $name, $value := .Consts }}var {{$name}} = {{$value}};{{end}}
+{{range $name, $value := .Consts }}var {{$name}} = []byte({{$value}});{{end}}
 
-type {{.ParserName}} struct {
-rest []byte
+
 {{.Struct}}
-}
 
-func (p *{{.ParserName}}) Parse(line []byte) (bool, error) {
-   {{ range .Vars }}var {{.Name}} {{.Type}};{{end}}
-   p.rest = line
 {{.Parser}}
-return true, nil
-}
 
 {{.Getters}}

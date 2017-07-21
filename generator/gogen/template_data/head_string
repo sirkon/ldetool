@@ -1,6 +1,6 @@
 
 // Checks if the rest starts with {{.ConstValue}} and pass it
-if pos := bytes.HasPrefix(p.rest, {{.ConstName}}); pos >= 0 {
+if bytes.HasPrefix(p.rest, {{.ConstName}}) {
    p.rest = p.rest[len({{.ConstName}}):]
 } else {
 {{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("The rest (\033[1m%s\033[0m) doesn't start with `\033[1m%s\033[0m`", string(p.rest), {{.ConstName}}){{else}}nil{{end}};{{end}}

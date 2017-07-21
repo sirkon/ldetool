@@ -174,3 +174,18 @@ func (g *Generator) addField(namespace []string, name string, t *token.Token) st
 	}
 	return namespaced
 }
+
+func (g *Generator) getAccessName() string {
+	return strings.Join(g.namespaces, ".")
+}
+
+func (g *Generator) abandon() {
+	if len(g.namespaces) > 0 {
+		g.scopeAbandoned[g.getAccessName()] = true
+	}
+}
+
+func (g *Generator) abandoned() bool {
+	_, ok := g.scopeAbandoned[g.getAccessName()]
+	return ok
+}

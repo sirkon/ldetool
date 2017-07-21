@@ -30,6 +30,7 @@ func newMnemonic(sing, pl string) mnemonic {
 // NewMnemowriter constructor
 func NewMnemowriter() *Mnemowriter {
 	var specialCharacters = map[string]mnemonic{
+		" ":  newMnemonic("space", "spaces"),
 		";":  newMnemonic("scolon", "scolons"),
 		":":  newMnemonic("colon", "colons"),
 		".":  newMnemonic("dot", "dots"),
@@ -130,6 +131,9 @@ func (m *Mnemowriter) String() string {
 		return res[:len(res)-5]
 	} else if strings.HasSuffix(res, "Apo") {
 		return res[:len(res)-3]
+	}
+	if len(res) == 0 {
+		return "constValue"
 	}
 	return res
 }

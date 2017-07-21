@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/glossina/gotify"
 	"github.com/glossina/ldetool/ast"
@@ -22,10 +23,11 @@ func generateAction(c *cli.Context) (err error) {
 	if len(path) != 0 {
 		tc = templatecache.NewFS(path)
 	} else {
-		return cli.NewExitError("Dumped cache usage is not implemented yet, use --codes-source parameter", 1)
+		tc = templatecache.NewMap(staticTemplatesData)
 	}
 
-	input, err := ioutil.ReadFile(c.Args()[0])
+	inputSource := c.Args()[0]
+	input, err := ioutil.ReadFile(inputSource)
 	if err != nil {
 		return cli.NewExitError(err, 1)
 	}
@@ -47,25 +49,33 @@ func generateAction(c *cli.Context) (err error) {
 	}
 	formatDict := getDict(c)
 
-	for _, rule := range rules {
-		gen := gogen.NewGenerator(rule.Name, gotify.New(formatDict), tc)
-		fname := fmt.Sprintf("%s_parser.go", rule.Name)
-		dest, err := os.Create(fname)
-		if err != nil {
-			return err
+	fname := fmt.Sprintf("%s_lde.go", strings.Replace(inputSource, ".", "_", -1))
+	dest, err := os.Create(fname)
+	if err != nil {
+		message.Fatal(err)
+	}
+	defer func() {
+		if nerr := dest.Close(); nerr != nil {
+			message.Error(nerr)
 		}
-		defer func() {
-			if nerr := dest.Close(); nerr != nil {
-				message.Fatal(nerr)
+		if err != nil {
+			if nerr := os.Remove(fname); nerr != nil {
+				message.Warning(nerr)
 			}
-		}()
-		b := builder.NewBuilder(c.String("package"), gen, dest)
+		}
+	}()
+	gen := gogen.NewGenerator(gotify.New(formatDict), tc)
+	b := builder.NewBuilder(c.String("package"), gen, dest)
+	for _, rule := range rules {
 		err = b.BuildRule(rule)
 		if err != nil {
 			return err
 		}
-		message.Infof("Rule `\033[1m%s\033[0m` translated into %s", rule.Name, fname)
+		if err != nil {
+			return err
+		}
+		message.Infof("Rule `\033[1m%s\033[0m` translated", rule.Name)
 	}
-
+	err = b.Build()
 	return
 }

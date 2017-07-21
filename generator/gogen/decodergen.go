@@ -74,7 +74,7 @@ func (dg *DecoderGen) Int64(src, dest string) string {
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "unsafe")
 	dg.g.regImport("", "fmt")
-	dg.g.regVar("tmpUint", "uint64")
+	dg.g.regVar("tmpInt", "int64")
 	dg.g.regVar("err", "error")
 
 	buf := &bytes.Buffer{}

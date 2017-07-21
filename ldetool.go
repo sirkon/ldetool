@@ -1,6 +1,7 @@
 package main
 
 //go:generate gocc lde_grammar.bnf
+//go:generate ldetool sync --code-source generator/gogen/template_data --package main static_template_data.go
 
 import (
 	"os"
@@ -13,6 +14,7 @@ import (
 	_ "github.com/glossina/ldetool/parser"
 	_ "github.com/glossina/ldetool/token"
 	_ "github.com/glossina/ldetool/util"
+	"github.com/glossina/message"
 )
 
 func main() {
@@ -27,7 +29,7 @@ func main() {
 				cli.StringFlag{
 					Name:  "code-source",
 					Value: "",
-					Usage: "path for templates folder, the template cache will use file system if set",
+					Usage: "path for templates folder, template cache will use file system if set",
 				},
 				cli.StringFlag{
 					Name:  "yaml-dict",
@@ -61,6 +63,39 @@ func main() {
 				return nil
 			},
 		},
+
+		cli.Command{
+			Name:  "sync",
+			Usage: "save templates into Go source code format to ease usage and installations",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "code-source",
+					Value: "",
+					Usage: "path of templates folder to copy data from",
+				},
+				cli.StringFlag{
+					Name:  "package",
+					Value: "",
+					Usage: "Package name for generated files",
+				},
+			},
+			UsageText: "ldetool sync --code-source <path> --package <package name> <file name>",
+			Before: func(c *cli.Context) error {
+				if len(c.String("code-source")) == 0 {
+					return cli.NewExitError("code-source parameter is required", 1)
+				}
+				if len(c.String("package")) == 0 {
+					return cli.NewExitError("package parameter is required", 1)
+				}
+				if c.NArg() > 1 {
+					return cli.NewExitError("only one file name to write in is allowed", 1)
+				}
+				return nil
+			},
+			Action: syncAction,
+		},
 	}
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		message.Critical(err)
+	}
 }

@@ -4,5 +4,5 @@ pos = bytes.IndexByte(p.rest, {{ .Char }});
 if pos >= 0 {
     p.rest = p.rest[pos + 1:]
 } else {
-{{ if .Namespace }}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", {{.Char}}, string(p.rest)){{else}}nil{{end}};{{end}}
+{{ if .Namespace }}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m`", {{.Char}}, string(p.rest)){{else}}nil{{end}};{{end}}
 }

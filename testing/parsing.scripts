@@ -11,3 +11,127 @@ decoders =
 	Float32(float32) ' '
 	Float64(float64) ' '
 	String(string) ' ';
+
+decodersLimited =
+	Int8(int8) ' '[:8]
+	Int16(int16) ' '[:8]
+	Int32(int32) ' '[:8]
+	Int64(int64) ' '[:8]
+	Uint8(uint8) ' '[:8]
+	Uint16(uint16) ' '[:8]
+	Uint32(uint32) ' '[:8]
+	Uint64(uint64) ' '[:8]
+	Float32(float32) ' '[:8]
+	Float64(float64) ' '[:8]
+	String(string) ' '[:8];
+
+decodersBounded =
+	Int64(int64) ' '[8:16];
+
+
+decodersString =
+	Int8(int8) " "
+	Int16(int16) " "
+	Int32(int32) " "
+	Int64(int64) " "
+	Uint8(uint8) " "
+	Uint16(uint16) " "
+	Uint32(uint32) " "
+	Uint64(uint64) " "
+	Float32(float32) " "
+	Float64(float64) " "
+	String(string) " ";
+
+decodersLimitedString =
+	Int8(int8) " "[:8]
+	Int16(int16) " "[:8]
+	Int32(int32) " "[:8]
+	Int64(int64) " "[:8]
+	Uint8(uint8) " "[:8]
+	Uint16(uint16) " "[:8]
+	Uint32(uint32) " "[:8]
+	Uint64(uint64) " "[:8]
+	Float32(float32) " "[:8]
+	Float64(float64) " "[:8]
+	String(string) " "[:8];
+
+decodersBoundedString =
+	Float64(float64) " "[8:16];
+
+decodersStress = !
+	Int8(int8) ' '
+	Int16(int16) ' '
+	Int32(int32) ' '
+	Int64(int64) ' '
+	Uint8(uint8) ' '
+	Uint16(uint16) ' '
+	Uint32(uint32) ' '
+	Uint64(uint64) ' '
+	Float32(float32) ' '
+	Float64(float64) ' '
+	String(string) ' ';
+
+decodersLimitedStress = !
+	Int8(int8) ' '[:8]
+	Int16(int16) ' '[:8]
+	Int32(int32) ' '[:8]
+	Int64(int64) ' '[:8]
+	Uint8(uint8) ' '[:8]
+	Uint16(uint16) ' '[:8]
+	Uint32(uint32) ' '[:8]
+	Uint64(uint64) ' '[:8]
+	Float32(float32) ' '[:8]
+	Float64(float64) ' '[:8]
+	String(string) ' '[:8];
+
+decodersBoundedStress =	!
+	Int64(int64) ' '[8:16];
+
+
+decodersStringStress = !
+	Int8(int8) " "
+	Int16(int16) " "
+	Int32(int32) " "
+	Int64(int64) " "
+	Uint8(uint8) " "
+	Uint16(uint16) " "
+	Uint32(uint32) " "
+	Uint64(uint64) " "
+	Float32(float32) " "
+	Float64(float64) " "
+	String(string) " ";
+
+decodersLimitedStringStress = !
+	Int8(int8) " "[:8]
+	Int16(int16) " "[:8]
+	Int32(int32) " "[:8]
+	Int64(int64) " "[:8]
+	Uint8(uint8) " "[:8]
+	Uint16(uint16) " "[:8]
+	Uint32(uint32) " "[:8]
+	Uint64(uint64) " "[:8]
+	Float32(float32) " "[:8]
+	Float64(float64) " "[:8]
+	String(string) " "[:8];
+
+decodersBoundedStringStress = !
+	Float64(float64) " "[8:16];
+
+
+decoderOptionals =
+	Int8(int8) ' '
+	?Head (^"head=" Data(string) ' ')
+	^"end";
+
+decoderOptionalsStress = !
+	Int8(int8) ' '
+	?Head (^"head=" Data(string) ' ')
+	^"end";
+
+decoderBranching =
+	^??"start "
+	?Head (^??"head=" Data(string) ?? ' ');
+
+decoderBranchingStress = !
+	^??"start "
+	?Head (^??"head=" Data(string) ?? ' ');

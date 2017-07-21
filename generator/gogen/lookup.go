@@ -8,13 +8,14 @@ func (g *Generator) LookupString(anchor string) {
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
-	g.tc.MustExecute("lookup_string", g.body, TParams{
+	g.tc.MustExecute("lookup_string", g.curBody, TParams{
 		ConstName:  constName,
 		ConstValue: anchor,
 		Serious:    g.serious,
 		Namespace:  strings.Join(g.namespaces, "."),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 	})
+	g.abandon()
 }
 
 // LookupLimitedString ...
@@ -23,7 +24,7 @@ func (g *Generator) LookupLimitedString(anchor string, upper int) {
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
-	g.tc.MustExecute("lookup_limited_string", g.body, TParams{
+	g.tc.MustExecute("lookup_limited_string", g.curBody, TParams{
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -31,6 +32,7 @@ func (g *Generator) LookupLimitedString(anchor string, upper int) {
 		Namespace:  strings.Join(g.namespaces, "."),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 	})
+	g.abandon()
 }
 
 // LookupBoundedString ...
@@ -39,7 +41,7 @@ func (g *Generator) LookupBoundedString(anchor string, lower, upper int) {
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
-	g.tc.MustExecute("lookup_bounded_string", g.body, TParams{
+	g.tc.MustExecute("lookup_bounded_string", g.curBody, TParams{
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -48,6 +50,7 @@ func (g *Generator) LookupBoundedString(anchor string, lower, upper int) {
 		Namespace:  strings.Join(g.namespaces, "."),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 	})
+	g.abandon()
 }
 
 // LookupChar ...
@@ -55,12 +58,13 @@ func (g *Generator) LookupChar(char string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
 
-	g.tc.MustExecute("lookup_char", g.body, TParams{
+	g.tc.MustExecute("lookup_char", g.curBody, TParams{
 		Char:       char,
 		Serious:    g.serious,
 		Namespace:  strings.Join(g.namespaces, "."),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 	})
+	g.abandon()
 }
 
 // LookupLimitedChar ...
@@ -68,13 +72,14 @@ func (g *Generator) LookupLimitedChar(char string, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
 
-	g.tc.MustExecute("lookup_limited_char", g.body, TParams{
+	g.tc.MustExecute("lookup_limited_char", g.curBody, TParams{
 		Char:       char,
 		Upper:      upper,
 		Serious:    g.serious,
 		Namespace:  strings.Join(g.namespaces, "."),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 	})
+	g.abandon()
 }
 
 // LookupBoundedChar ...
@@ -83,7 +88,7 @@ func (g *Generator) LookupBoundedChar(char string, lower, upper int) {
 	g.regImport("", "bytes")
 
 	g.lookupPush("", lower, upper)
-	g.tc.MustExecute("lookup_bounded_char", g.body, TParams{
+	g.tc.MustExecute("lookup_bounded_char", g.curBody, TParams{
 		Char:       char,
 		Lower:      lower,
 		Upper:      upper,
@@ -91,6 +96,7 @@ func (g *Generator) LookupBoundedChar(char string, lower, upper int) {
 		Namespace:  strings.Join(g.namespaces, "."),
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
 	})
+	g.abandon()
 }
 
 // LookupStringOrIgnore ...
@@ -99,7 +105,7 @@ func (g *Generator) LookupStringOrIgnore(anchor string) {
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
-	g.tc.MustExecute("lookup_string_noerror", g.body, TParams{
+	g.tc.MustExecute("lookup_string_noerror", g.curBody, TParams{
 		ConstName:  constName,
 		ConstValue: anchor,
 		Serious:    g.serious,
@@ -114,7 +120,7 @@ func (g *Generator) LookupLimitedStringOrIgnore(anchor string, upper int) {
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
-	g.tc.MustExecute("lookup_limited_string_noerror", g.body, TParams{
+	g.tc.MustExecute("lookup_limited_string_noerror", g.curBody, TParams{
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -130,7 +136,7 @@ func (g *Generator) LookupBoundedStringOrIgnore(anchor string, lower, upper int)
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
-	g.tc.MustExecute("lookup_bounded_string_noerror", g.body, TParams{
+	g.tc.MustExecute("lookup_bounded_string_noerror", g.curBody, TParams{
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -146,7 +152,7 @@ func (g *Generator) LookupCharOrIgnore(char string) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
 
-	g.tc.MustExecute("lookup_char_noerror", g.body, TParams{
+	g.tc.MustExecute("lookup_char_noerror", g.curBody, TParams{
 		Char:       char,
 		Serious:    g.serious,
 		Namespace:  strings.Join(g.namespaces, "."),
@@ -159,7 +165,7 @@ func (g *Generator) LookupLimitedCharOrIgnore(char string, upper int) {
 	g.regVar("pos", "int")
 	g.regImport("", "bytes")
 
-	g.tc.MustExecute("lookup_limited_char_noerror", g.body, TParams{
+	g.tc.MustExecute("lookup_limited_char_noerror", g.curBody, TParams{
 		Char:       char,
 		Upper:      upper,
 		Serious:    g.serious,
@@ -174,7 +180,7 @@ func (g *Generator) LookupBoundedCharOrIgnore(char string, lower, upper int) {
 	g.regImport("", "bytes")
 
 	g.lookupPush("", lower, upper)
-	g.tc.MustExecute("lookup_bounded_char_noerror", g.body, TParams{
+	g.tc.MustExecute("lookup_bounded_char_noerror", g.curBody, TParams{
 		Char:       char,
 		Lower:      lower,
 		Upper:      upper,
