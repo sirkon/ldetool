@@ -12,7 +12,7 @@ And here is the [benchmark code](https://github.com/glossina/ldetool/blob/master
 go get github.com/glossina/message
 go get github.com/youtube/vitess/go/cgzip
 ```
-Compile and both:
+Compile both and make preparations:
 ```bash
 go install columngen
 go install main
