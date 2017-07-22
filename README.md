@@ -31,6 +31,7 @@ This is a possible way:
 * There should be a possibility to put subsequences of these operations into optional groups.
 
 #### Syntax for extraction of needed data for these particular lines
+See [more details](TOOL_RULES.md) on parsing rules
 
 ```perl
 line =
