@@ -7,7 +7,7 @@ There's a traditional solution for this kind of tasks: regular expression with c
 1. Syntax. Hard to debug and read.
 2. Speed. While simple non-capturing regular expressions can be speedy, they quickly becomes slow as the complexity of the regular expression grows
 3. They are overpowered. In our experience with log processing we are not looking for patterns within the line. We just need to find some substring, then take everthing between this substring and the next comma as a number, or a string without allocation, just pointing at the fragment extracted from the line. It may cost us additional CPU time to parse and allocate on capture. Not a good thing when we have billions of lines to process.
-4. Go regular expressions are slow. Go regular expressions with group capture are even slower.
+4. Go regular expressions are slow. Go regular expressions with group capture are even slower. Read basic explanation on performance [here](PERFORMANCE.md)
 
 ### Proposal
 
