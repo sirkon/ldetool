@@ -54,7 +54,7 @@ And what would like to have from it:
 * Unneccessary allocations should be avoided. For instance, when scanning logs we use []byte buffer as a temporary storage. Usually these fields only needed within the lifetime of current line, so extracted substrings better be []byte themselves, not strings
 
 And now use ldetool:
-1. Save rule for [line][#syntax-for-extraction-of-needed-data-for-these-particular-lines] into parsing.scripts file
+1. Save rule for [line](#syntax-for-extraction-of-needed-data-for-these-particular-lines) into parsing.scripts file
 2. Generate parsing_scripts_lde.go file using
     ```bash
 	ldetool generate --package main parsing.scripts
@@ -65,7 +65,7 @@ And now use ldetool:
 
 	import (
 	   ....
-    )
+        )
 
 	var countryEq = []byte("country=")
 	var ....
@@ -90,8 +90,16 @@ And now use ldetool:
 	func (p *line) Parse(line []byte) (bool, error) {
 	    ....
 	}
+	
+        func (p *line) GetHiddenValue() (res uint8) {
+		if !p.Hidden.Valid {
+			return
+		}
+		return p.Hidden.Value
+        }
 
-	```
+
+        ```
 
 We have done all preparations. Now use generated line parser.
 
