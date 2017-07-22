@@ -53,6 +53,9 @@ func (g *Generator) constNameFromContent(value string) string {
 
 // regVar registers variable of the given type
 func (g *Generator) regVar(name, varType string) {
+	if name == "p.rest" {
+		return
+	}
 	if ok, err := regexp.MatchString(`^[a-zA-Z_][a-zA-Z0-9_]*$`, name); !ok {
 		panic(fmt.Errorf("Wrong variable name `\033[1m%s\033[0m`", name))
 	} else if err != nil {
@@ -163,16 +166,20 @@ func (g *Generator) tmpSuspectancy(inputType string) bool {
 func (g *Generator) addField(namespace []string, name string, t *token.Token) string {
 	namespace = append(namespace, name)
 	namespaced := strings.Join(namespace, ".")
-	if ppp, ok := g.fields[name]; ok {
+	if ppp, ok := g.fields[g.fullName(name)]; ok {
 		panic(fmt.Sprintf(
 			"Field `\033[1m%s\033[0m` redefiniton, previously declared at (%d, %d)",
 			name, ppp.token.Line, ppp.token.Column))
 	}
-	g.fields[name] = Name{
+	g.fields[g.fullName(name)] = Name{
 		name:  namespaced,
 		token: t,
 	}
 	return namespaced
+}
+
+func (g *Generator) fullName(name string) string {
+	return strings.Join(append(g.namespaces, name), "")
 }
 
 func (g *Generator) getAccessName() string {
@@ -188,4 +195,18 @@ func (g *Generator) abandon() {
 func (g *Generator) abandoned() bool {
 	_, ok := g.scopeAbandoned[g.getAccessName()]
 	return ok
+}
+
+func (g *Generator) curRestVar() string {
+	if len(g.namespaces) == 0 {
+		return "p.rest"
+	}
+	return g.goish.Private(strings.Join(g.namespaces, "_") + "_rest")
+}
+
+func (g *Generator) prevRestVar() string {
+	if len(g.namespaces) <= 1 {
+		return "p.rest"
+	}
+	return g.goish.Private(strings.Join(g.namespaces[:len(g.namespaces)-1], "_") + "_rest")
 }

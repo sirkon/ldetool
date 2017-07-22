@@ -1,7 +1,7 @@
 
 // Checks if the rest starts with {{.Char}} symbol and pass it
-if len(p.rest) > 0 && p.rest[0] == {{.Char}} {
-   p.rest = p.rest[1:]
+if len({{.Rest}}) > 0 && {{.Rest}}[0] == {{.Char}} {
+   {{.Rest}} = {{.Rest}}[1:]
 } else {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("The rest (\033[1m%s\033[0m) doesn't start with `\033[1m%s\033[0m`", string(p.rest), {{.Char}}){{else}}nil{{end}};{{end}}
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("The rest (\033[1m%s\033[0m) doesn't start with `\033[1m%s\033[0m`", string({{.Rest}}), {{.Char}}){{else}}nil{{end}};{{end}}
 }

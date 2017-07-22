@@ -112,6 +112,7 @@ func (g *Generator) AddField(name string, fieldType string, t *token.Token) {
 // PassN passes first N characters if they are there, otherwise signal a error
 func (g *Generator) PassN(n int) {
 	g.tc.MustExecute("pass_n_items", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Upper:      n,
 		Serious:    g.serious,
 		Namespace:  strings.Join(g.namespaces, "."),
@@ -149,7 +150,7 @@ func (g *Generator) Push() {
 	if len(g.parserName) == 0 {
 		panic(fmt.Errorf("No rule has been set up to push it now"))
 	}
-	g.tc.MustExecute("struct_body", g.obj, ParserParams{
+	g.tc.MustExecute("struct_body", g.body, ParserParams{
 		Struct:     g.curObj.String(),
 		ParserName: g.parserName,
 	})
@@ -166,6 +167,8 @@ func (g *Generator) Push() {
 		Vars:       vars,
 	})
 	g.curBody.Reset()
+	_, _ = io.Copy(g.body, g.opgetters)
+	g.opgetters.Reset()
 
 	g.serious = false
 	g.lookupStack = nil

@@ -5,10 +5,12 @@ import "strings"
 // LookupString ...
 func (g *Generator) LookupString(anchor string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("lookup_string", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Serious:    g.serious,
@@ -21,10 +23,12 @@ func (g *Generator) LookupString(anchor string) {
 // LookupLimitedString ...
 func (g *Generator) LookupLimitedString(anchor string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("lookup_limited_string", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -38,10 +42,12 @@ func (g *Generator) LookupLimitedString(anchor string, upper int) {
 // LookupBoundedString ...
 func (g *Generator) LookupBoundedString(anchor string, lower, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("lookup_bounded_string", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -56,9 +62,11 @@ func (g *Generator) LookupBoundedString(anchor string, lower, upper int) {
 // LookupChar ...
 func (g *Generator) LookupChar(char string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	g.tc.MustExecute("lookup_char", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Serious:    g.serious,
 		Namespace:  strings.Join(g.namespaces, "."),
@@ -70,9 +78,11 @@ func (g *Generator) LookupChar(char string) {
 // LookupLimitedChar ...
 func (g *Generator) LookupLimitedChar(char string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	g.tc.MustExecute("lookup_limited_char", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Upper:      upper,
 		Serious:    g.serious,
@@ -85,10 +95,12 @@ func (g *Generator) LookupLimitedChar(char string, upper int) {
 // LookupBoundedChar ...
 func (g *Generator) LookupBoundedChar(char string, lower, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	g.lookupPush("", lower, upper)
 	g.tc.MustExecute("lookup_bounded_char", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Lower:      lower,
 		Upper:      upper,
@@ -102,10 +114,12 @@ func (g *Generator) LookupBoundedChar(char string, lower, upper int) {
 // LookupStringOrIgnore ...
 func (g *Generator) LookupStringOrIgnore(anchor string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("lookup_string_noerror", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Serious:    g.serious,
@@ -117,10 +131,12 @@ func (g *Generator) LookupStringOrIgnore(anchor string) {
 // LookupLimitedStringOrIgnore ...
 func (g *Generator) LookupLimitedStringOrIgnore(anchor string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("lookup_limited_string_noerror", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -133,10 +149,12 @@ func (g *Generator) LookupLimitedStringOrIgnore(anchor string, upper int) {
 // LookupBoundedStringOrIgnore ...
 func (g *Generator) LookupBoundedStringOrIgnore(anchor string, lower, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("lookup_bounded_string_noerror", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Upper:      upper,
@@ -150,9 +168,11 @@ func (g *Generator) LookupBoundedStringOrIgnore(anchor string, lower, upper int)
 // LookupCharOrIgnore ...
 func (g *Generator) LookupCharOrIgnore(char string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	g.tc.MustExecute("lookup_char_noerror", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Serious:    g.serious,
 		Namespace:  strings.Join(g.namespaces, "."),
@@ -163,9 +183,11 @@ func (g *Generator) LookupCharOrIgnore(char string) {
 // LookupLimitedCharOrIgnore ...
 func (g *Generator) LookupLimitedCharOrIgnore(char string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	g.tc.MustExecute("lookup_limited_char_noerror", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Upper:      upper,
 		Serious:    g.serious,
@@ -177,10 +199,12 @@ func (g *Generator) LookupLimitedCharOrIgnore(char string, upper int) {
 // LookupBoundedCharOrIgnore ...
 func (g *Generator) LookupBoundedCharOrIgnore(char string, lower, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
 	g.lookupPush("", lower, upper)
 	g.tc.MustExecute("lookup_bounded_char_noerror", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Lower:      lower,
 		Upper:      upper,

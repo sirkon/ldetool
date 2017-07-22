@@ -1,7 +1,7 @@
 
 // Checks if the rest starts with {{.ConstValue}} and pass it
-if bytes.HasPrefix(p.rest, {{.ConstName}}) {
-   p.rest = p.rest[len({{.ConstName}}):]
+if bytes.HasPrefix({{.Rest}}, {{.ConstName}}) {
+   {{.Rest}} = {{.Rest}}[len({{.ConstName}}):]
 } else {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("The rest (\033[1m%s\033[0m) doesn't start with `\033[1m%s\033[0m`", string(p.rest), {{.ConstName}}){{else}}nil{{end}};{{end}}
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("The rest (\033[1m%s\033[0m) doesn't start with `\033[1m%s\033[0m`", string({{.Rest}}), {{.ConstName}}){{else}}nil{{end}};{{end}}
 }

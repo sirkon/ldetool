@@ -15,6 +15,8 @@ type TParams struct {
 	Name string
 	Type string
 
+	Rest         string
+	PRest        string
 	Namespace    string
 	ScopeLabel   string
 	Gravity      string

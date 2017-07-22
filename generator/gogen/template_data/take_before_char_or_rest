@@ -1,10 +1,10 @@
 
 // Put data before {{ .Char }} into {{ .Dest }} if found otherwise take to the end
-if pos = bytes.IndexByte(p.rest, {{ .Char }}); pos >= 0 {
-  tmp = p.rest[:pos]
-  p.rest = p.rest[pos+1:]
+if pos = bytes.IndexByte({{.Rest}}, {{ .Char }}); pos >= 0 {
+  tmp = {{.Rest}}[:pos]
+  {{.Rest}} = {{.Rest}}[pos+1:]
 } else {
-  tmp = p.rest
-  p.rest = p.rest[len(p.rest):]
+  tmp = {{.Rest}}
+  {{.Rest}} = {{.Rest}}[len({{.Rest}}):]
 }
 {{ call .Decoder "tmp"  .Dest }}

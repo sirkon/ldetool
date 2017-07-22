@@ -1,11 +1,11 @@
 
 // Looking for {{ .ConstValue }} from {{.Lower}} until {{.Upper}} symbols of the rest and then pass it
-if len(p.rest) < {{.Upper}} {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in {{.Lower}}..%d-th symbols of the rest while only %d left", {{.Upper}}, len(p.rest)){{else}}nil{{end}};{{end}}
+if len({{.Rest}}) < {{.Upper}} {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in {{.Lower}}..%d-th symbols of the rest while only %d left", {{.Upper}}, len({{.Rest}})){{else}}nil{{end}};{{end}}
 }
-pos = bytes.Index(p.rest[{{.Lower}}:{{.Upper}}], {{ .ConstName }});
+pos = bytes.Index({{.Rest}}[{{.Lower}}:{{.Upper}}], {{ .ConstName }});
 if pos >= 0 {
-    p.rest = p.rest[pos + {{.Lower}} + len({{.ConstName}}):]
+    {{.Rest}} = {{.Rest}}[pos + {{.Lower}} + len({{.ConstName}}):]
 } else {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", {{.ConstName}}, string(p.rest[{{.Lower}}:{{.Upper}}])){{else}}nil{{end}};{{end}}
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", {{.ConstName}}, string({{.Rest}}[{{.Lower}}:{{.Upper}}])){{else}}nil{{end}};{{end}}
 }

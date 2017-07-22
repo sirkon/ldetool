@@ -1,9 +1,9 @@
 
 // Looking for {{ .ConstValue }} in first {{.Upper}} symbols of the rest and then pass it if found
-if len(p.rest) < {{.Upper}} {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols of the rest while only %s left", len(p.rest)){{else}}nil{{end}};{{end}}
+if len({{.Rest}}) < {{.Upper}} {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols of the rest while only %s left", len({{.Rest}})){{else}}nil{{end}};{{end}}
 }
-pos = bytes.Index(p.rest[:{{.Upper}}], {{ .ConstName }});
+pos = bytes.Index({{.Rest}}[:{{.Upper}}], {{ .ConstName }});
 if pos >= 0 {
-    p.rest = p.rest[pos + len({{.ConstName}}):]
+    {{.Rest}} = {{.Rest}}[pos + len({{.ConstName}}):]
 }

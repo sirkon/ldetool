@@ -40,16 +40,18 @@ func (g *Generator) getterGen(name, fieldType string) {
 // TakeBeforeString ...
 func (g *Generator) TakeBeforeString(name, fieldType, anchor string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	if g.tmpSuspectancy(fieldType) {
 		g.regVar("tmp", "[]byte")
 	}
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("take_before_string", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
@@ -68,16 +70,18 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string) {
 // TakeBeforeLimitedString ...
 func (g *Generator) TakeBeforeLimitedString(name, fieldType, anchor string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	if g.tmpSuspectancy(fieldType) {
 		g.regVar("tmp", "[]byte")
 	}
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("take_before_limited_string", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
@@ -97,16 +101,18 @@ func (g *Generator) TakeBeforeLimitedString(name, fieldType, anchor string, uppe
 // TakeBeforeBoundedString ...
 func (g *Generator) TakeBeforeBoundedString(name, fieldType, anchor string, lower int, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	if g.tmpSuspectancy(fieldType) {
 		g.regVar("tmp", "[]byte")
 	}
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("take_before_bounded_string", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
@@ -127,15 +133,17 @@ func (g *Generator) TakeBeforeBoundedString(name, fieldType, anchor string, lowe
 // TakeBeforeChar ...
 func (g *Generator) TakeBeforeChar(name, fieldType, char string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	if g.tmpSuspectancy(fieldType) {
 		g.regVar("tmp", "[]byte")
 	}
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	g.tc.MustExecute("take_before_char", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Name:       item.name,
 		Type:       g.goType(fieldType),
@@ -153,15 +161,17 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string) {
 // TakeBeforeLimitedChar ...
 func (g *Generator) TakeBeforeLimitedChar(name, fieldType, char string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	if g.tmpSuspectancy(fieldType) {
 		g.regVar("tmp", "[]byte")
 	}
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	g.tc.MustExecute("take_before_limited_char", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Name:       item.name,
 		Type:       g.goType(fieldType),
@@ -180,15 +190,17 @@ func (g *Generator) TakeBeforeLimitedChar(name, fieldType, char string, upper in
 // TakeBeforeBoundedChar ...
 func (g *Generator) TakeBeforeBoundedChar(name, fieldType, char string, lower int, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	if g.tmpSuspectancy(fieldType) {
 		g.regVar("tmp", "[]byte")
 	}
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	g.tc.MustExecute("take_before_bounded_char", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Name:       item.name,
 		Type:       g.goType(fieldType),
@@ -208,12 +220,14 @@ func (g *Generator) TakeBeforeBoundedChar(name, fieldType, char string, lower in
 // TakeRest ...
 func (g *Generator) TakeRest(name, fieldType string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	g.tc.MustExecute("take_rest", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Name:       item.name,
 		Type:       g.goType(fieldType),
 		Serious:    g.serious,
@@ -229,14 +243,16 @@ func (g *Generator) TakeRest(name, fieldType string) {
 // TakeBeforeStringOrRest ...
 func (g *Generator) TakeBeforeStringOrRest(name, fieldType, anchor string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	g.regVar("tmp", "[]byte")
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("take_before_string_or_rest", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
@@ -252,14 +268,16 @@ func (g *Generator) TakeBeforeStringOrRest(name, fieldType, anchor string) {
 // TakeBeforeLimitedStringOrRest ...
 func (g *Generator) TakeBeforeLimitedStringOrRest(name, fieldType, anchor string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	g.regVar("tmp", "[]byte")
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("take_before_limited_string_or_rest", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
@@ -276,14 +294,16 @@ func (g *Generator) TakeBeforeLimitedStringOrRest(name, fieldType, anchor string
 // TakeBeforeBoundedStringOrRest ...
 func (g *Generator) TakeBeforeBoundedStringOrRest(name, fieldType, anchor string, lower int, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	g.regVar("tmp", "[]byte")
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	constName := g.constNameFromContent(anchor)
 	g.tc.MustExecute("take_before_bounded_string_or_rest", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		ConstName:  constName,
 		ConstValue: anchor,
 		Name:       item.name,
@@ -301,13 +321,15 @@ func (g *Generator) TakeBeforeBoundedStringOrRest(name, fieldType, anchor string
 // TakeBeforeCharOrRest ...
 func (g *Generator) TakeBeforeCharOrRest(name, fieldType, char string) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	g.regVar("tmp", "[]byte")
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	g.tc.MustExecute("take_before_char_or_rest", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Name:       item.name,
 		Type:       g.goType(fieldType),
@@ -322,13 +344,15 @@ func (g *Generator) TakeBeforeCharOrRest(name, fieldType, char string) {
 // TakeBeforeLimitedCharOrRest ...
 func (g *Generator) TakeBeforeLimitedCharOrRest(name, fieldType, char string, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	g.regVar("tmp", "[]byte")
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	g.tc.MustExecute("take_before_limited_char_or_rest", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Name:       item.name,
 		Type:       g.goType(fieldType),
@@ -344,13 +368,15 @@ func (g *Generator) TakeBeforeLimitedCharOrRest(name, fieldType, char string, up
 // TakeBeforeBoundedCharOrRest ...
 func (g *Generator) TakeBeforeBoundedCharOrRest(name, fieldType, char string, lower int, upper int) {
 	g.regVar("pos", "int")
+	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 	g.regVar("tmp", "[]byte")
 
-	item := g.fields[name]
+	item := g.fields[g.fullName(name)]
 	method := g.decoderGen(fieldType)
 
 	g.tc.MustExecute("take_before_bounded_char_or_rest", g.curBody, TParams{
+		Rest:       g.curRestVar(),
 		Char:       char,
 		Name:       item.name,
 		Type:       g.goType(fieldType),

@@ -1,9 +1,9 @@
 
 // Put data before {{ .ConstValue }} into {{ .Dest }}
-if pos = bytes.Index(p.rest, {{ .ConstName }}); pos >= 0 {
-  {{ if .UseTmp }}tmp = p.rest[:pos]
-  {{ call .Decoder "tmp"  .Dest }}{{else}}{{ call .Decoder "p.rest[:pos]"  .Dest }}{{end}}
-  p.rest = p.rest[pos+len({{.ConstName}}):]
+if pos = bytes.Index({{.Rest}}, {{ .ConstName }}); pos >= 0 {
+  {{ if .UseTmp }}tmp = {{.Rest}}[:pos]
+  {{ call .Decoder "tmp"  .Dest }}{{else}}{{ call .Decoder ( printf "%s[:pos]" .Rest )  .Dest }}{{end}}
+  {{.Rest}} = {{.Rest}}[pos+len({{.ConstName}}):]
 } else {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field {{.Dest}}", {{.ConstName}}, string(p.rest)){{else}}nil{{end}};{{end}}
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field {{.Dest}}", {{.ConstName}}, string({{.Rest}})){{else}}nil{{end}};{{end}}
 }

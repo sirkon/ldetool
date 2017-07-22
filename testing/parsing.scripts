@@ -135,3 +135,7 @@ decoderBranching =
 decoderBranchingStress = !
 	^??"start "
 	?Head (^??"head=" Data(string) ?? ' ');
+
+doubleOpts = !
+	?Head(^"head=" Data(string) ??' ')
+	?Rest(^"rest=" Data(string) ??' ');

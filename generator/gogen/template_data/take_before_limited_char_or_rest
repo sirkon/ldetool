@@ -1,13 +1,13 @@
 
 // Put data before {{ .Char }} into {{ .Dest }} with limited to {{.Upper}} symbols boundary lookup or everything to the very rest if not found
-if len(p.rest) < {{.Upper}} {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols to bound value for {{.Dest}} of the rest while only %d left", len(p.rest)){{else}}nil{{end}};{{end}}
+if len({{.Rest}}) < {{.Upper}} {
+{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in first {{.Upper}} symbols to bound value for {{.Dest}} of the rest while only %d left", len({{.Rest}})){{else}}nil{{end}};{{end}}
 }
-if pos = bytes.IndexByte(p.rest[:{{.Upper}}], {{ .Char }}); pos >= 0 {
-  tmp = p.rest[:pos]
-  p.rest = p.rest[pos+1:]
+if pos = bytes.IndexByte({{.Rest}}[:{{.Upper}}], {{ .Char }}); pos >= 0 {
+  tmp = {{.Rest}}[:pos]
+  {{.Rest}} = {{.Rest}}[pos+1:]
 } else {
-  tmp = p.rest
-  p.rest = p.rest[len(p.rest):]
+  tmp = {{.Rest}}
+  {{.Rest}} = {{.Rest}}[len({{.Rest}}):]
 }
 {{ call .Decoder "tmp"  .Dest }}

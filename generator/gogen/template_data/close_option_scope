@@ -1,3 +1,4 @@
 ;p.{{.Name}} = true
+{{.PRest}} = {{.Rest}}
 {{ if .WasAbandoned }}{{.ScopeLabel}}:
 {{end}}

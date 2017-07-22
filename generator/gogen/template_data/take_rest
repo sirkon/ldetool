@@ -1,4 +1,4 @@
 
 // Put the rest of the data into {{.Dest}}
-{{ call .Decoder "p.rest" .Dest }}
-p.rest = p.rest[len(p.rest):]
+{{ call .Decoder (printf "%s" .Rest) .Dest }}
+{{.Rest}} = {{.Rest}}[len({{.Rest}}):]
