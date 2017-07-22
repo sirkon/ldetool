@@ -81,7 +81,7 @@ And now use ldetool:
 		Hidden   struct {
 			Valid bool
 			Value uint8
-        }
+		}
 		UserAgent []byte
 		Country   []byte
 	}
@@ -90,7 +90,7 @@ And now use ldetool:
 	func (p *line) Parse(line []byte) (bool, error) {
 	    ....
 	}
-	
+
 	func (p *line) GetHiddenValue() (res uint8) {
 		if !p.Hidden.Valid {
 			return
