@@ -10,10 +10,11 @@
 	 ```
 	 1234abcd
 	 ```
+
       Then the rule
-	  ```perl
-	  _[4:]
-	  ```
+	 ```perl
+	 _[4:]
+	 ```
 	  will change the rest into
 	  ```
 	  abcd
