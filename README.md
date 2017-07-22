@@ -91,15 +91,15 @@ And now use ldetool:
 	    ....
 	}
 	
-        func (p *line) GetHiddenValue() (res uint8) {
+	func (p *line) GetHiddenValue() (res uint8) {
 		if !p.Hidden.Valid {
 			return
 		}
 		return p.Hidden.Value
-        }
+	}
 
 
-        ```
+    ```
 
 We have done all preparations. Now use generated line parser.
 
