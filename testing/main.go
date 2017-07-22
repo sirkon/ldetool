@@ -1,3 +1,3 @@
 package ldetesting
 
-//go:generate ldetool generate --code-source ../generator/gogen/template_data --package ldetesting parsing.scripts
+//go:generate ldetool generate --package ldetesting parsing.scripts
