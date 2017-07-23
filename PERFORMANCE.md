@@ -150,9 +150,13 @@ sys	0m3,444s
 Not that bad as I expected, still 6.5 times slower and, probably the most important, it was a bit easier to write LDE rule than a regexp
 ```perl
 parser =
-	Name(string) '|'
-	_ '|'
-	_ '|'
-	_ '|'
-	Count(string) '|';
+    Name(string) '|'     # Take a text until | into Name as a string ([]byte, actually), then pass |
+    _ '|'                # We are at the start of column 2, find | and pass it
+    _ '|'                # find | and pass it to go at column 4
+    _ '|'                # find | and pass again
+    Count(string) '|';   # take the content of 5th column right to the | and exit
+```
+vs
+```
+^([^|]*)\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|.*$
 ```
