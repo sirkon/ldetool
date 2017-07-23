@@ -146,3 +146,13 @@ sys	0m3,444s
 |-------|-----------|
 |zcat|15.5%|
 |regmain|97%|
+
+Not that bad as I expected, still 6.5 times slower and, probably the most important, it was a bit easier to write LDE rule than a regexp
+```perl
+parser =
+	Name(string) '|'
+	_ '|'
+	_ '|'
+	_ '|'
+	Count(string) '|';
+```
