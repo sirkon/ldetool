@@ -61,7 +61,7 @@ The bottleneck for Go version is data decompression.
 |utility|CPU usage %|
 |-------|-----------|
 |zcat|95%|
-|gawk|60%|
+|main|60%|
 
 #### Will try sed
 ```
