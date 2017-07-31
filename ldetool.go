@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	app := cli.NewApp()xo
+	app := cli.NewApp()
 	app.Usage = "Text data extraction Go source code generator"
 	app.UsageText = "ldetool [--code-source <path:>]"
 	app.Commands = []cli.Command{
