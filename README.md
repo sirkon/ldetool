@@ -41,7 +41,7 @@ line =
   ^"first=" First(uint8) ' '             # The rest must starts with "first=" characters, then take the rest until ' ' as uint8
                                          # under the name of First
   ^"format=" Format(string) ' '          # Take format id
-  ^"responseTime" Duration(string) ' '   # Take mandatory response time
+  ^"responseTime=" Duration(string) ' '   # Take mandatory response time
   ?Hidden (^"hidden=" Value(uint8) ' ')  # Optionally look for "hidden=\d+"
   ^"user_agent=\"" UserAgent(string) '"' # User agent data
   ^"country=" Country(string) ?? ' ';    # Take data as country to the rest or right to the first space character
@@ -65,6 +65,12 @@ And now use ldetool:
 	package main // We set the package name to main in the call of the utility
 
 	import (
+    rule =
+        _ '\t'    # pass all characters until TAB inclusively
+        Key(int) '\t'
+        Value(int) '\t';
+
+
 	   ....
         )
 
