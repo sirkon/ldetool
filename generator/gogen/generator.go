@@ -7,10 +7,10 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/glossina/gosrcfmt"
-	"github.com/glossina/gotify"
-	"github.com/glossina/ldetool/templatecache"
-	"github.com/glossina/ldetool/token"
+	"github.com/sirkon/gosrcfmt"
+	"github.com/sirkon/gotify"
+	"github.com/sirkon/ldetool/templatecache"
+	"github.com/sirkon/ldetool/token"
 )
 
 // Name provides a link between token and string

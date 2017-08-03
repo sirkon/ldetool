@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/glossina/ldetool/templatecache"
+	"github.com/sirkon/ldetool/templatecache"
 	"github.com/stretchr/testify/require"
 )
 

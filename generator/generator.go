@@ -3,7 +3,7 @@ package generator
 import (
 	"io"
 
-	"github.com/glossina/ldetool/token"
+	"github.com/sirkon/ldetool/token"
 )
 
 // Generator describes methods needed of data lookup and extraction

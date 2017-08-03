@@ -34,7 +34,7 @@ _lineComment : '#' {.} '\n' ;
 
 /* Syntax Part */
 
-                                                        <<import ( "github.com/glossina/ldetool/ast" )>>
+                                                        <<import ( "github.com/sirkon/ldetool/ast" )>>
 
 
 Rules

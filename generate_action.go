@@ -6,14 +6,14 @@ import (
 	"os"
 	"strings"
 
-	"github.com/glossina/gotify"
-	"github.com/glossina/ldetool/ast"
-	"github.com/glossina/ldetool/builder"
-	"github.com/glossina/ldetool/generator/gogen"
-	"github.com/glossina/ldetool/lexer"
-	"github.com/glossina/ldetool/parser"
-	"github.com/glossina/ldetool/templatecache"
-	"github.com/glossina/message"
+	"github.com/sirkon/gotify"
+	"github.com/sirkon/ldetool/ast"
+	"github.com/sirkon/ldetool/builder"
+	"github.com/sirkon/ldetool/generator/gogen"
+	"github.com/sirkon/ldetool/lexer"
+	"github.com/sirkon/ldetool/parser"
+	"github.com/sirkon/ldetool/templatecache"
+	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
 

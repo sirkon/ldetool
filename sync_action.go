@@ -8,8 +8,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/glossina/ldetool/templatecache"
-	"github.com/glossina/message"
+	"github.com/sirkon/ldetool/templatecache"
+	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
 

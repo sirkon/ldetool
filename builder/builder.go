@@ -3,8 +3,8 @@ package builder
 import (
 	"io"
 
-	"github.com/glossina/ldetool/ast"
-	"github.com/glossina/ldetool/generator"
+	"github.com/sirkon/ldetool/ast"
+	"github.com/sirkon/ldetool/generator"
 )
 
 // Builder creates target sources using Generator object

@@ -9,12 +9,12 @@ import (
 	"github.com/urfave/cli"
 
 	// These are for testing reasons
-	_ "github.com/glossina/ldetool/errors"
-	_ "github.com/glossina/ldetool/lexer"
-	_ "github.com/glossina/ldetool/parser"
-	_ "github.com/glossina/ldetool/token"
-	_ "github.com/glossina/ldetool/util"
-	"github.com/glossina/message"
+	_ "github.com/sirkon/ldetool/errors"
+	_ "github.com/sirkon/ldetool/lexer"
+	_ "github.com/sirkon/ldetool/parser"
+	_ "github.com/sirkon/ldetool/token"
+	_ "github.com/sirkon/ldetool/util"
+	"github.com/sirkon/message"
 )
 
 func main() {

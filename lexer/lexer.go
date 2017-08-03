@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"unicode/utf8"
 
-	// "github.com/glossina/ldetool/util"
-	"github.com/glossina/ldetool/token"
+	// "github.com/sirkon/ldetool/util"
+	"github.com/sirkon/ldetool/token"
 )
 
 const(

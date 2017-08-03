@@ -3,13 +3,13 @@ Provided method of data extraction is basically a split of known output length o
 * The most common operation is looking for char/string in a string - this is what string splitting utilities like awk/gawk do when looking for the next field separator.
 * There's nothing like in depth lookup like in regex matching. We just find first character/string in the rest of line. It is enough in a huge majority of cases (and it is rather something wrong with the input if this is not enough).
 
-So, the conclusion is it would be basically enough to check performance on regular column-formatted files as it reflects common usage. The file can be generated with [utility](https://github.com/glossina/ldetool/blob/master/columngen.7z). Don't forget to get a package needed:
+So, the conclusion is it would be basically enough to check performance on regular column-formatted files as it reflects common usage. The file can be generated with [utility](https://github.com/sirkon/ldetool/blob/master/columngen.7z). Don't forget to get a package needed:
 ```bash
-go get github.com/glossina/message
+go get github.com/sirkon/message
 ```
-And here is the [benchmark code](https://github.com/glossina/ldetool/blob/master/benchmarker.7z). Following packages are needed:
+And here is the [benchmark code](https://github.com/sirkon/ldetool/blob/master/benchmarker.7z). Following packages are needed:
 ```bash
-go get github.com/glossina/message
+go get github.com/sirkon/message
 go get github.com/youtube/vitess/go/cgzip
 ```
 Compile both and make preparations:
@@ -90,7 +90,7 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/glossina/message"
+	"github.com/sirkon/message"
 	"github.com/youtube/vitess/go/cgzip"
 )
 

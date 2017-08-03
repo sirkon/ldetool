@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/glossina/message"
+	"github.com/sirkon/message"
 	"github.com/go-yaml/yaml"
 	"github.com/urfave/cli"
 )

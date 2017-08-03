@@ -146,4 +146,4 @@ func main() {
 }
 ```
 Take care of fmt.Printf usage above. I don't mean it is OK to use fmt.Printf. It is not. All efforts made so far all were for speed purposes, the fmt.Printf basically defeats all of them. You should consider using other tools, that will provide better output performance.
-Our typical usecase was to parse lines and put extracted data into clickhouse using [these](https://github.com/glossina/ch-encode) [tools](https://github.com/glossina/ch-insert).
+Our typical usecase was to parse lines and put extracted data into clickhouse using [these](https://github.com/sirkon/ch-encode) [tools](https://github.com/sirkon/ch-insert).

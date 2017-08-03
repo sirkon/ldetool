@@ -3,7 +3,7 @@ package ast
 import (
 	"strconv"
 
-	"github.com/glossina/ldetool/token"
+	"github.com/sirkon/ldetool/token"
 )
 
 // Target ...
