@@ -53,10 +53,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Int16
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -64,10 +66,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Int32
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -75,10 +79,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Int64
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -86,10 +92,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint8
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -97,10 +105,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint16
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -108,10 +118,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint32
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -119,10 +131,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint64
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -130,10 +144,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Float32
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -141,10 +157,12 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Float64
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -152,17 +170,21 @@ func (p *decoders) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into String
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	return true, nil
 }
 
@@ -202,10 +224,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Int16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -216,10 +240,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Int32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -230,10 +256,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Int64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -244,10 +272,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint8 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -258,10 +288,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -272,10 +304,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -286,10 +320,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Uint64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -300,10 +336,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Float32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -314,10 +352,12 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into Float64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -328,20 +368,24 @@ func (p *decodersLimited) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	// Put data before ' ' into String with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
 	}
 	if pos = bytes.IndexByte(p.rest[:8], ' '); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
+
 	return true, nil
 }
 
@@ -369,10 +413,12 @@ func (p *decodersBounded) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+8+1:]
 	} else {
 		return false, nil
 	}
+
 	return true, nil
 }
 
@@ -409,10 +455,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Int16
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -420,10 +468,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Int32
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -431,10 +481,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Int64
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -442,10 +494,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint8
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -453,10 +507,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint16
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -464,10 +520,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint32
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -475,10 +533,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint64
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -486,10 +546,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Float32
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -497,10 +559,12 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Float64
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -508,17 +572,21 @@ func (p *decodersString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into String
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	return true, nil
 }
 
@@ -558,10 +626,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Int16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -572,10 +642,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Int32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -586,10 +658,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Int64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -600,10 +674,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint8 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -614,10 +690,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -628,10 +706,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -642,10 +722,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Uint64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -656,10 +738,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Float32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -670,10 +754,12 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into Float64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
@@ -684,20 +770,24 @@ func (p *decodersLimitedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	// Put data before " " into String with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, nil
 	}
 	if pos = bytes.Index(p.rest[:8], space); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
+
 	return true, nil
 }
 
@@ -725,10 +815,12 @@ func (p *decodersBoundedString) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+8+len(space):]
 	} else {
 		return false, nil
 	}
+
 	return true, nil
 }
 
@@ -765,10 +857,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Int16
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -776,10 +870,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Int32
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -787,10 +883,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Int64
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -798,10 +896,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Uint8
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -809,10 +909,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Uint16
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -820,10 +922,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Uint32
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -831,10 +935,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Uint64
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -842,10 +948,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Float32
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -853,10 +961,12 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into Float64
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -864,17 +974,21 @@ func (p *decodersStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", ' ', string(p.rest))
 	}
+
 	// Put data before ' ' into String
 	if pos = bytes.IndexByte(p.rest, ' '); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field String", ' ', string(p.rest))
 	}
+
 	return true, nil
 }
 
@@ -914,10 +1028,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Int16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Int16 of the rest while only %d left", len(p.rest))
@@ -928,10 +1044,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Int32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Int32 of the rest while only %d left", len(p.rest))
@@ -942,10 +1060,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Int64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Int64 of the rest while only %d left", len(p.rest))
@@ -956,10 +1076,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Uint8 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint8 of the rest while only %d left", len(p.rest))
@@ -970,10 +1092,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Uint16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint16 of the rest while only %d left", len(p.rest))
@@ -984,10 +1108,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Uint32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint32 of the rest while only %d left", len(p.rest))
@@ -998,10 +1124,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Uint64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint64 of the rest while only %d left", len(p.rest))
@@ -1012,10 +1140,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Float32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Float32 of the rest while only %d left", len(p.rest))
@@ -1026,10 +1156,12 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into Float64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Float64 of the rest while only %d left", len(p.rest))
@@ -1040,20 +1172,24 @@ func (p *decodersLimitedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", ' ', string(p.rest[:8]))
 	}
+
 	// Put data before ' ' into String with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for String of the rest while only %d left", len(p.rest))
 	}
 	if pos = bytes.IndexByte(p.rest[:8], ' '); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field String", ' ', string(p.rest[:8]))
 	}
+
 	return true, nil
 }
 
@@ -1081,10 +1217,12 @@ func (p *decodersBoundedStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+8+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", ' ', string(p.rest[8:16]))
 	}
+
 	return true, nil
 }
 
@@ -1121,10 +1259,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", space, string(p.rest))
 	}
+
 	// Put data before " " into Int16
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1132,10 +1272,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", space, string(p.rest))
 	}
+
 	// Put data before " " into Int32
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1143,10 +1285,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", space, string(p.rest))
 	}
+
 	// Put data before " " into Int64
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1154,10 +1298,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", space, string(p.rest))
 	}
+
 	// Put data before " " into Uint8
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1165,10 +1311,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", space, string(p.rest))
 	}
+
 	// Put data before " " into Uint16
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1176,10 +1324,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", space, string(p.rest))
 	}
+
 	// Put data before " " into Uint32
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1187,10 +1337,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", space, string(p.rest))
 	}
+
 	// Put data before " " into Uint64
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1198,10 +1350,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", space, string(p.rest))
 	}
+
 	// Put data before " " into Float32
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1209,10 +1363,12 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", space, string(p.rest))
 	}
+
 	// Put data before " " into Float64
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		tmp = p.rest[:pos]
@@ -1220,17 +1376,21 @@ func (p *decodersStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", space, string(p.rest))
 	}
+
 	// Put data before " " into String
 	if pos = bytes.Index(p.rest, space); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", space, string(p.rest))
 	}
+
 	return true, nil
 }
 
@@ -1270,10 +1430,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Int16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Int16 of the rest while only %d left", len(p.rest))
@@ -1284,10 +1446,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int16 for field \033[1mInt16\033[0m: %s", string(tmp), err)
 		}
 		p.Int16 = int16(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Int32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Int32 of the rest while only %d left", len(p.rest))
@@ -1298,10 +1462,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int32 for field \033[1mInt32\033[0m: %s", string(tmp), err)
 		}
 		p.Int32 = int32(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Int64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Int64 of the rest while only %d left", len(p.rest))
@@ -1312,10 +1478,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int64 for field \033[1mInt64\033[0m: %s", string(tmp), err)
 		}
 		p.Int64 = int64(tmpInt)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Uint8 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint8 of the rest while only %d left", len(p.rest))
@@ -1326,10 +1494,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint8 for field \033[1mUint8\033[0m: %s", string(tmp), err)
 		}
 		p.Uint8 = uint8(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Uint16 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint16 of the rest while only %d left", len(p.rest))
@@ -1340,10 +1510,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint16 for field \033[1mUint16\033[0m: %s", string(tmp), err)
 		}
 		p.Uint16 = uint16(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Uint32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint32 of the rest while only %d left", len(p.rest))
@@ -1354,10 +1526,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint32 for field \033[1mUint32\033[0m: %s", string(tmp), err)
 		}
 		p.Uint32 = uint32(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Uint64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Uint64 of the rest while only %d left", len(p.rest))
@@ -1368,10 +1542,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as uint64 for field \033[1mUint64\033[0m: %s", string(tmp), err)
 		}
 		p.Uint64 = uint64(tmpUint)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Float32 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Float32 of the rest while only %d left", len(p.rest))
@@ -1382,10 +1558,12 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float32 for field \033[1mFloat32\033[0m: %s", string(tmp), err)
 		}
 		p.Float32 = float32(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into Float64 with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for Float64 of the rest while only %d left", len(p.rest))
@@ -1396,20 +1574,24 @@ func (p *decodersLimitedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", space, string(p.rest[:8]))
 	}
+
 	// Put data before " " into String with limited to 8 symbols boundary lookup
 	if len(p.rest) < 8 {
 		return false, fmt.Errorf("Requested lookup in first 8 symbols to bound value for String of the rest while only %d left", len(p.rest))
 	}
 	if pos = bytes.Index(p.rest[:8], space); pos >= 0 {
 		p.String = p.rest[:pos]
+
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", space, string(p.rest[:8]))
 	}
+
 	return true, nil
 }
 
@@ -1437,10 +1619,12 @@ func (p *decodersBoundedStringStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as float64 for field \033[1mFloat64\033[0m: %s", string(tmp), err)
 		}
 		p.Float64 = float64(tmpFloat)
+
 		p.rest = p.rest[pos+8+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", space, string(p.rest[8:16]))
 	}
+
 	return true, nil
 }
 
@@ -1470,11 +1654,13 @@ func (p *decoderOptionals) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
 	headRest = p.rest
+
 	// Checks if the rest starts with "head=" and pass it
 	if bytes.HasPrefix(headRest, headEq) {
 		headRest = headRest[len(headEq):]
@@ -1482,9 +1668,11 @@ func (p *decoderOptionals) Parse(line []byte) (bool, error) {
 		p.Head.Valid = false
 		goto headLabel
 	}
+
 	// Put data before ' ' into Head.Data
 	if pos = bytes.IndexByte(headRest, ' '); pos >= 0 {
 		p.Head.Data = headRest[:pos]
+
 		headRest = headRest[pos+1:]
 	} else {
 		p.Head.Valid = false
@@ -1500,6 +1688,7 @@ headLabel:
 	} else {
 		return false, nil
 	}
+
 	return true, nil
 }
 
@@ -1537,11 +1726,13 @@ func (p *decoderOptionalsStress) Parse(line []byte) (bool, error) {
 			return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as int8 for field \033[1mInt8\033[0m: %s", string(tmp), err)
 		}
 		p.Int8 = int8(tmpInt)
+
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", ' ', string(p.rest))
 	}
 	headRest = p.rest
+
 	// Checks if the rest starts with "head=" and pass it
 	if bytes.HasPrefix(headRest, headEq) {
 		headRest = headRest[len(headEq):]
@@ -1549,9 +1740,11 @@ func (p *decoderOptionalsStress) Parse(line []byte) (bool, error) {
 		p.Head.Valid = false
 		goto headLabel
 	}
+
 	// Put data before ' ' into Head.Data
 	if pos = bytes.IndexByte(headRest, ' '); pos >= 0 {
 		p.Head.Data = headRest[:pos]
+
 		headRest = headRest[pos+1:]
 	} else {
 		p.Head.Valid = false
@@ -1567,6 +1760,7 @@ headLabel:
 	} else {
 		return false, fmt.Errorf("The rest (\033[1m%s\033[0m) doesn't start with `\033[1m%s\033[0m`", string(p.rest), end)
 	}
+
 	return true, nil
 }
 
@@ -1599,10 +1793,12 @@ func (p *decoderBranching) Parse(line []byte) (bool, error) {
 		p.rest = p.rest[len(startSpace):]
 	}
 	headRest = p.rest
+
 	// Checks if the rest starts with "head=" and pass it if matched
 	if bytes.HasPrefix(headRest, headEq) {
 		headRest = headRest[len(headEq):]
 	}
+
 	// Put data before ' ' into Head.Data if found otherwise take to the end
 	if pos = bytes.IndexByte(headRest, ' '); pos >= 0 {
 		tmp = headRest[:pos]
@@ -1612,6 +1808,7 @@ func (p *decoderBranching) Parse(line []byte) (bool, error) {
 		headRest = headRest[len(headRest):]
 	}
 	p.Head.Data = tmp
+
 	p.Head.Valid = true
 	p.rest = headRest
 
@@ -1647,10 +1844,12 @@ func (p *decoderBranchingStress) Parse(line []byte) (bool, error) {
 		p.rest = p.rest[len(startSpace):]
 	}
 	headRest = p.rest
+
 	// Checks if the rest starts with "head=" and pass it if matched
 	if bytes.HasPrefix(headRest, headEq) {
 		headRest = headRest[len(headEq):]
 	}
+
 	// Put data before ' ' into Head.Data if found otherwise take to the end
 	if pos = bytes.IndexByte(headRest, ' '); pos >= 0 {
 		tmp = headRest[:pos]
@@ -1660,6 +1859,7 @@ func (p *decoderBranchingStress) Parse(line []byte) (bool, error) {
 		headRest = headRest[len(headRest):]
 	}
 	p.Head.Data = tmp
+
 	p.Head.Valid = true
 	p.rest = headRest
 
@@ -1695,6 +1895,7 @@ func (p *doubleOpts) Parse(line []byte) (bool, error) {
 	var tmp []byte
 	p.rest = line
 	headRest = p.rest
+
 	// Checks if the rest starts with "head=" and pass it
 	if bytes.HasPrefix(headRest, headEq) {
 		headRest = headRest[len(headEq):]
@@ -1702,6 +1903,7 @@ func (p *doubleOpts) Parse(line []byte) (bool, error) {
 		p.Head.Valid = false
 		goto headLabel
 	}
+
 	// Put data before ' ' into Head.Data if found otherwise take to the end
 	if pos = bytes.IndexByte(headRest, ' '); pos >= 0 {
 		tmp = headRest[:pos]
@@ -1711,11 +1913,13 @@ func (p *doubleOpts) Parse(line []byte) (bool, error) {
 		headRest = headRest[len(headRest):]
 	}
 	p.Head.Data = tmp
+
 	p.Head.Valid = true
 	p.rest = headRest
 headLabel:
 	;
 	restRest = p.rest
+
 	// Checks if the rest starts with "rest=" and pass it
 	if bytes.HasPrefix(restRest, restEq) {
 		restRest = restRest[len(restEq):]
@@ -1723,6 +1927,7 @@ headLabel:
 		p.Rest.Valid = false
 		goto restLabel
 	}
+
 	// Put data before ' ' into Rest.Data if found otherwise take to the end
 	if pos = bytes.IndexByte(restRest, ' '); pos >= 0 {
 		tmp = restRest[:pos]
@@ -1732,6 +1937,7 @@ headLabel:
 		restRest = restRest[len(restRest):]
 	}
 	p.Rest.Data = tmp
+
 	p.Rest.Valid = true
 	p.rest = restRest
 restLabel:
