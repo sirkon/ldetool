@@ -1,4 +1,5 @@
 # ldetool means line data extraction tool
+Useful for log parsing.
 
 ### Preamble
 
