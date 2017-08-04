@@ -1,5 +1,5 @@
 # ldetool means line data extraction tool
-Useful for log parsing.
+Useful for log parsing with Golang.
 
 ### Preamble
 
