@@ -16,7 +16,7 @@ Compile both and make preparations:
 ```bash
 go install columngen
 go install main
-time columngen | gzip -c > data.gz
+time columngen 100000000 | gzip -c > data.gz
 time zcat data.gz | wc -l 
 ```
 #### Now a raw performance comparison (the file is cached) on 1.3Gb of gzipped data.
