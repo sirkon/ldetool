@@ -67,7 +67,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 
 	// Set on stress
 	if a.ErrorOnMismatch {
-		g.Stress()
+		generators = append(generators, g.Stress)
 	}
 
 	// TakeUntilOrRest
