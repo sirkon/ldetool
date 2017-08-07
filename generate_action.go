@@ -49,6 +49,9 @@ func generateAction(c *cli.Context) (err error) {
 	}
 	formatDict := getDict(c)
 
+	if strings.HasSuffix(inputSource, ".lde") {
+		inputSource = inputSource[:len(inputSource)-4]
+	}
 	fname := fmt.Sprintf("%s_lde.go", strings.Replace(inputSource, ".", "_", -1))
 	dest, err := os.Create(fname)
 	if err != nil {
