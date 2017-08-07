@@ -219,7 +219,6 @@ func (g *Generator) TakeBeforeBoundedChar(name, fieldType, char string, lower in
 
 // TakeRest ...
 func (g *Generator) TakeRest(name, fieldType string) {
-	g.regVar("pos", "int")
 	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
 
