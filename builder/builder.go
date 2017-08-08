@@ -5,6 +5,7 @@ import (
 
 	"github.com/sirkon/ldetool/ast"
 	"github.com/sirkon/ldetool/generator"
+	"github.com/sirkon/message"
 )
 
 // Builder creates target sources using Generator object
@@ -64,6 +65,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 		return
 	}
 	it := a.Head
+	message.Info(it)
 
 	// Set on stress
 	if a.ErrorOnMismatch {

@@ -70,6 +70,7 @@ func generateAction(c *cli.Context) (err error) {
 	gen := gogen.NewGenerator(gotify.New(formatDict), tc)
 	b := builder.NewBuilder(c.String("package"), gen, dest)
 	for _, rule := range rules {
+		message.Infof("\nRule `\033[1m%s\033[0m`: processing", rule.Name)
 		err = b.BuildRule(rule)
 		if err != nil {
 			return err
@@ -77,7 +78,7 @@ func generateAction(c *cli.Context) (err error) {
 		if err != nil {
 			return err
 		}
-		message.Infof("Rule `\033[1m%s\033[0m` translated", rule.Name)
+		message.Infof("Rule `\033[1m%s\033[0m`: done", rule.Name)
 	}
 	err = b.Build()
 	return
