@@ -77,6 +77,8 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 		res.Take = &t
 	case TakeRest:
 		res.TakeRest = &t
+	case TakeUntilOrRest:
+		res.TakeUntilOrRest = &t
 	case PassFixed:
 		res.PassFirst = &t
 	case ActionSequence:
@@ -84,7 +86,7 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 	default:
 		err = fmt.Errorf("Unsupported action object %T", act)
 	}
-	return ActionSequence{Head: res, Tail: &tail}, nil
+	return ActionSequence{Head: res, Tail: &tail}, err
 
 }
 
@@ -119,7 +121,7 @@ func Action(act Attrib) (attr Attrib, err error) {
 	default:
 		err = fmt.Errorf("Unsupported action object %T", act)
 	}
-	return ActionSequence{Head: res, Tail: nil}, nil
+	return ActionSequence{Head: res, Tail: nil}, err
 }
 
 // MatchRequired ...
