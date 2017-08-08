@@ -3,7 +3,6 @@
  ldetool generate --package ldetesting parsing.scripts
  -----------------------------------------------------
 do not touch it with bare hands!
-Although you perfectly can, just remove this warning first.
 */
 
 package ldetesting
