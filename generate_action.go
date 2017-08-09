@@ -69,6 +69,7 @@ func generateAction(c *cli.Context) (err error) {
 	}()
 	gen := gogen.NewGenerator(gotify.New(formatDict), tc)
 	b := builder.NewBuilder(c.String("package"), gen, dest)
+	b.DontRecover()
 	for _, rule := range rules {
 		message.Infof("\nRule `\033[1m%s\033[0m`: processing", rule.Name)
 		err = b.BuildRule(rule)

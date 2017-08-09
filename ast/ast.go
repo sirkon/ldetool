@@ -52,10 +52,7 @@ func fasten(as1, as2 ActionSequence) ActionSequence {
 	return ActionSequence{Head: as1.Head, Tail: &as2}
 }
 
-// ActionSeq ...
-func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
-	tail := next.(ActionSequence)
-	res := ActionItem{}
+func assignAction(act Attrib) (res ActionItem, aseq bool, err error) {
 	switch t := act.(type) {
 	case AtEnd:
 		res.End = &t
@@ -82,9 +79,22 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 	case PassFixed:
 		res.PassFirst = &t
 	case ActionSequence:
-		return fasten(t, tail), nil
+		aseq = true
 	default:
 		err = fmt.Errorf("Unsupported action object %T", act)
+	}
+	return
+}
+
+// ActionSeq ...
+func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
+	tail := next.(ActionSequence)
+	res, aseq, err := assignAction(act)
+	if aseq {
+		return fasten(act.(ActionSequence), tail), nil
+	}
+	if err != nil {
+		return
 	}
 	return ActionSequence{Head: res, Tail: &tail}, err
 
@@ -92,34 +102,9 @@ func ActionSeq(act Attrib, next Attrib) (attr Attrib, err error) {
 
 // Action ...
 func Action(act Attrib) (attr Attrib, err error) {
-	res := ActionItem{}
-	switch t := act.(type) {
-	case AtEnd:
-		res.End = &t
-	case Optional:
-		res.Option = &t
-	case PassUntil:
-		res.Pass = &t
-	case PassUntilOrIgnore:
-		res.PassOrIgnore = &t
-	case StartChar:
-		res.StartWithChar = &t
-	case StartString:
-		res.StartWithString = &t
-	case MayBeStartChar:
-		res.MayBeStartWithChar = &t
-	case MayBeStartString:
-		res.MayBeStartWithString = &t
-	case Take:
-		res.Take = &t
-	case TakeRest:
-		res.TakeRest = &t
-	case TakeUntilOrRest:
-		res.TakeUntilOrRest = &t
-	case PassFixed:
-		res.PassFirst = &t
-	default:
-		err = fmt.Errorf("Unsupported action object %T", act)
+	res, aseq, err := assignAction(act)
+	if aseq {
+		err = fmt.Errorf("Composed actions (ActionSequence) is not expected at this step")
 	}
 	return ActionSequence{Head: res, Tail: nil}, err
 }
@@ -158,13 +143,13 @@ func (ai ActionItem) String() string {
 	case ai.PassOrIgnore != nil:
 		return fmt.Sprintf("Pass until or ignore \033[1m%s\033[0m", ai.Pass.Limit.Value)
 	case ai.StartWithChar != nil:
-		return fmt.Sprintf("Starts with character \033[1m%s\033[0m", ai.StartWithChar.Value)
+		return fmt.Sprintf("Check and pass character \033[1m%s\033[0m", ai.StartWithChar.Value)
 	case ai.StartWithString != nil:
-		return fmt.Sprintf("Starts with string \033[1m%s\033[0m", ai.StartWithString.Value)
+		return fmt.Sprintf("Check and pass \033[1m%s\033[0m", ai.StartWithString.Value)
 	case ai.MayBeStartWithChar != nil:
-		return fmt.Sprintf("Probably starts with character \033[1m%s\033[0m", ai.StartWithChar.Value)
+		return fmt.Sprintf("Pass character \033[1m%s\033[0m if starts with", ai.MayBeStartWithChar.Value)
 	case ai.MayBeStartWithString != nil:
-		return fmt.Sprintf("Probably with string \033[1m%s\033[0m", ai.StartWithString.Value)
+		return fmt.Sprintf("Pass \033[1m%s\033[0m if starts with", ai.MayBeStartWithString.Value)
 	case ai.Take != nil:
 		return fmt.Sprintf("Take until \033[1m%s\033[0m as \033[32m%s(%s)\033[0m",
 			ai.Take.Limit.Value, ai.Take.Field.Name, ai.Take.Field.Type)

@@ -33,16 +33,16 @@ func (b *Builder) DontRecover() {
 
 // BuildRule builds shit from the data
 func (b *Builder) BuildRule(rule ast.RuleItem) (err error) {
-	defer func() {
-		if b.recoverPanic {
+	if b.recoverPanic {
+		defer func() {
 			if r := recover(); r != nil {
 				var ok bool
 				if err, ok = r.(error); !ok {
 					panic(r)
 				}
 			}
-		}
-	}()
+		}()
+	}
 	b.gen.UseRule(rule.Name, rule.NameToken)
 	generators := b.composeRules(NewPrefix(), b.gen, &rule.Actions)
 	for _, item := range generators {
