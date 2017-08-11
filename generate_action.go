@@ -13,6 +13,7 @@ import (
 	"github.com/sirkon/ldetool/lexer"
 	"github.com/sirkon/ldetool/parser"
 	"github.com/sirkon/ldetool/templatecache"
+	"github.com/sirkon/ldetool/token"
 	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
@@ -32,9 +33,14 @@ func generateAction(c *cli.Context) (err error) {
 		return cli.NewExitError(err, 1)
 	}
 
+	var errorToken *token.Token
 	defer func() {
 		if err != nil {
-			err = cli.NewExitError(fmt.Sprintf("%s: %s", c.Args()[0], err), 1)
+			if errorToken != nil {
+				err = cli.NewExitError(fmt.Sprintf("%s:%d:%d: %s", c.Args()[0], errorToken.Line, errorToken.Column, err), 1)
+			} else {
+				err = cli.NewExitError(fmt.Sprintf("%s: %s", c.Args()[0], err), 1)
+			}
 		}
 	}()
 	lex := lexer.NewLexer(input)
@@ -67,16 +73,19 @@ func generateAction(c *cli.Context) (err error) {
 			}
 		}
 	}()
-	gen := gogen.NewGenerator(gotify.New(formatDict), tc)
-	b := builder.NewBuilder(c.String("package"), gen, dest)
+	gfy := gotify.New(formatDict)
+	gen := gogen.NewGenerator(gfy, tc)
+	b := builder.NewBuilder(c.String("package"), gen, dest, gfy)
 	b.DontRecover()
 	for _, rule := range rules {
+		if gfy.Public(rule.Name) != rule.Name {
+			errorToken = rule.NameToken
+			return fmt.Errorf("Wrong rule name %s, must be %s", rule.Name, gfy.Public(rule.Name))
+		}
 		message.Infof("\nRule `\033[1m%s\033[0m`: processing", rule.Name)
 		err = b.BuildRule(rule)
 		if err != nil {
-			return err
-		}
-		if err != nil {
+			errorToken = b.ErrorToken()
 			return err
 		}
 		message.Infof("Rule `\033[1m%s\033[0m`: done", rule.Name)

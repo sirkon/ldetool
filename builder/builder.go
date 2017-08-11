@@ -1,9 +1,13 @@
 package builder
 
 import (
+	"fmt"
 	"io"
 
+	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/ast"
+	"github.com/sirkon/ldetool/token"
+
 	"github.com/sirkon/ldetool/generator"
 	"github.com/sirkon/message"
 )
@@ -14,15 +18,19 @@ type Builder struct {
 	gen          generator.Generator
 	dest         io.Writer
 	recoverPanic bool
+	gotify       *gotify.Gotify
+
+	errToken *token.Token
 }
 
 // NewBuilder consturcot
-func NewBuilder(pn string, g generator.Generator, d io.Writer) *Builder {
+func NewBuilder(pn string, g generator.Generator, d io.Writer, gfy *gotify.Gotify) *Builder {
 	return &Builder{
 		pkgName:      pn,
 		gen:          g,
 		dest:         d,
 		recoverPanic: true,
+		gotify:       gfy,
 	}
 }
 
@@ -44,7 +52,10 @@ func (b *Builder) BuildRule(rule ast.RuleItem) (err error) {
 		}()
 	}
 	b.gen.UseRule(rule.Name, rule.NameToken)
-	generators := b.composeRules(NewPrefix(), b.gen, &rule.Actions)
+	generators, err := b.composeRules(NewPrefix(), b.gen, &rule.Actions)
+	if err != nil {
+		return
+	}
 	for _, item := range generators {
 		func() {
 			item()
@@ -60,7 +71,16 @@ func (b *Builder) Build() (err error) {
 	return nil
 }
 
-func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.ActionSequence) (generators []func()) {
+// checkField if field name is goish public variable
+func (b *Builder) checkField(field ast.Field) error {
+	if b.gotify.Public(field.Name) != field.Name {
+		b.errToken = field.NameToken
+		return fmt.Errorf("Wrong taker identifier `%s`, must be %s", field.Name, b.gotify.Public(field.Name))
+	}
+	return nil
+}
+
+func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.ActionSequence) (generators []func(), err error) {
 	if a == nil {
 		return
 	}
@@ -75,6 +95,9 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	// TakeUntilOrRest
 	if it.TakeUntilOrRest != nil {
 		item := it.TakeUntilOrRest
+		if err = b.checkField(item.Field); err != nil {
+			return
+		}
 		g.RegGravity(gPrefix.Add(item.Field.Name).String())
 		if item.Limit.Lower > 0 {
 			switch item.Limit.Type {
@@ -123,6 +146,9 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	// TakeUntil
 	if it.Take != nil {
 		item := it.Take
+		if err = b.checkField(item.Field); err != nil {
+			return
+		}
 		g.RegGravity(gPrefix.Add(item.Field.Name).String())
 		if item.Limit.Lower > 0 {
 			switch item.Limit.Type {
@@ -170,6 +196,9 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 
 	// TakeRest
 	if it.TakeRest != nil {
+		if err = b.checkField(it.TakeRest.Field); err != nil {
+			return
+		}
 		g.RegGravity(gPrefix.Add(it.TakeRest.Field.Name).String())
 		generators = append(generators, func() {
 			g.AddField(it.TakeRest.Field.Name, it.TakeRest.Field.Type, it.TakeRest.Field.NameToken)
@@ -299,10 +328,20 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 
 	// Optional area
 	if it.Option != nil {
+		if b.gotify.Public(it.Option.Name) != it.Option.Name {
+			b.errToken = it.Option.NameToken
+			err = fmt.Errorf("Wrong option identifier %s, must be %s", it.Option.Name, b.gotify.Public(it.Option.Name))
+			return
+		}
 		generators = append(generators, func() {
 			g.OpenOptionalScope(it.Option.Name, it.Option.NameToken)
 		})
-		generators = append(generators, b.composeRules(gPrefix.Add(it.Option.Name), g, &it.Option.Actions)...)
+		var newgens []func()
+		newgens, err = b.composeRules(gPrefix.Add(it.Option.Name), g, &it.Option.Actions)
+		if err != nil {
+			return
+		}
+		generators = append(generators, newgens...)
 		generators = append(generators, func() {
 			g.CloseOptionalScope()
 		})
@@ -316,5 +355,14 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 		})
 	}
 
-	return append(generators, b.composeRules(gPrefix, g, a.Tail)...)
+	newgens, err := b.composeRules(gPrefix, g, a.Tail)
+	if err != nil {
+		return
+	}
+	return append(generators, newgens...), nil
+}
+
+// ErrorToken returns token where error happened
+func (b *Builder) ErrorToken() *token.Token {
+	return b.errToken
 }

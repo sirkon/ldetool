@@ -7,7 +7,7 @@ import (
 )
 
 func TestBasicBeforeCharDecoder(t *testing.T) {
-	d := &decoders{}
+	d := &Decoders{}
 	ok, err := d.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -28,7 +28,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 	ok, err = d.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdefrest`))
 	require.False(t, ok)
 
-	dl := &decodersLimited{}
+	dl := &DecodersLimited{}
 	ok, err = dl.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -47,7 +47,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 	require.Equal(t, "abcdef", string(dl.String))
 	require.Equal(t, "rest", string(dl.rest))
 
-	db := &decodersBounded{}
+	db := &DecodersBounded{}
 	ok, err = db.Parse([]byte(`11122321312313         `))
 	if err != nil {
 		t.Fatal(err)
@@ -58,7 +58,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 }
 
 func TestBasicBeforeStringDecoder(t *testing.T) {
-	d := &decodersString{}
+	d := &DecodersString{}
 	ok, err := d.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -77,7 +77,7 @@ func TestBasicBeforeStringDecoder(t *testing.T) {
 	require.Equal(t, "abcdef", string(d.String))
 	require.Equal(t, "rest", string(d.rest))
 
-	dl := &decodersLimitedString{}
+	dl := &DecodersLimitedString{}
 	ok, err = dl.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -96,7 +96,7 @@ func TestBasicBeforeStringDecoder(t *testing.T) {
 	require.Equal(t, "abcdef", string(dl.String))
 	require.Equal(t, "rest", string(dl.rest))
 
-	db := &decodersBoundedString{}
+	db := &DecodersBoundedString{}
 	ok, err = db.Parse([]byte(`11122321312313         `))
 	if err != nil {
 		t.Fatal(err)
@@ -107,7 +107,7 @@ func TestBasicBeforeStringDecoder(t *testing.T) {
 }
 
 func TestBasicBeforeCharStressDecoder(t *testing.T) {
-	d := &decodersStress{}
+	d := &DecodersStress{}
 	ok, err := d.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -128,7 +128,7 @@ func TestBasicBeforeCharStressDecoder(t *testing.T) {
 	ok, err = d.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7abcdef rest`))
 	require.NotNil(t, err)
 
-	dl := &decodersLimitedStress{}
+	dl := &DecodersLimitedStress{}
 	ok, err = dl.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -147,7 +147,7 @@ func TestBasicBeforeCharStressDecoder(t *testing.T) {
 	require.Equal(t, "abcdef", string(dl.String))
 	require.Equal(t, "rest", string(dl.rest))
 
-	db := &decodersBoundedStress{}
+	db := &DecodersBoundedStress{}
 	ok, err = db.Parse([]byte(`11122321312313         `))
 	if err != nil {
 		t.Fatal(err)
@@ -158,7 +158,7 @@ func TestBasicBeforeCharStressDecoder(t *testing.T) {
 }
 
 func TestBasicBeforeStringStressDecoder(t *testing.T) {
-	d := &decodersStringStress{}
+	d := &DecodersStringStress{}
 	ok, err := d.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -177,7 +177,7 @@ func TestBasicBeforeStringStressDecoder(t *testing.T) {
 	require.Equal(t, "abcdef", string(d.String))
 	require.Equal(t, "rest", string(d.rest))
 
-	dl := &decodersLimitedStringStress{}
+	dl := &DecodersLimitedStringStress{}
 	ok, err = dl.Parse([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
 	if err != nil {
 		t.Fatal(err)
@@ -196,7 +196,7 @@ func TestBasicBeforeStringStressDecoder(t *testing.T) {
 	require.Equal(t, "abcdef", string(dl.String))
 	require.Equal(t, "rest", string(dl.rest))
 
-	db := &decodersBoundedStringStress{}
+	db := &DecodersBoundedStringStress{}
 	ok, err = db.Parse([]byte(`11122321312313         `))
 	if err != nil {
 		t.Fatal(err)
@@ -207,7 +207,7 @@ func TestBasicBeforeStringStressDecoder(t *testing.T) {
 }
 
 func TestDecoderOptionals(t *testing.T) {
-	d := &decoderOptionals{}
+	d := &DecoderOptionals{}
 
 	ok, err := d.Parse([]byte(`12 head=13 end`))
 	require.True(t, ok)
@@ -231,7 +231,7 @@ func TestDecoderOptionals(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ds := &decoderOptionalsStress{}
+	ds := &DecoderOptionalsStress{}
 
 	ok, err = ds.Parse([]byte(`12 head=13 end`))
 	require.True(t, ok)
@@ -255,7 +255,7 @@ func TestDecoderOptionals(t *testing.T) {
 }
 
 func TestDecoderBranching(t *testing.T) {
-	d := &decoderBranching{}
+	d := &DecoderBranching{}
 
 	ok, err := d.Parse([]byte(`start head=data `))
 	require.True(t, ok)
@@ -291,8 +291,7 @@ func TestDecoderBranching(t *testing.T) {
 		t.Fatal(err)
 	}
 	require.Equal(t, "data", string(d.GetHeadData()))
-
-	ds := &decoderBranchingStress{}
+	ds := &DecoderBranchingStress{}
 	ok, err = ds.Parse([]byte(`start head=data `))
 	require.True(t, ok)
 	if err != nil {

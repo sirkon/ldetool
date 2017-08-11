@@ -1,5 +1,5 @@
 # Check decoders for all types
-decoders =
+Decoders =
 	Int8(int8) ' '
 	Int16(int16) ' '
 	Int32(int32) ' '
@@ -12,7 +12,7 @@ decoders =
 	Float64(float64) ' '
 	String(string) ' ';
 
-decodersLimited =
+DecodersLimited =
 	Int8(int8) ' '[:8]
 	Int16(int16) ' '[:8]
 	Int32(int32) ' '[:8]
@@ -25,11 +25,11 @@ decodersLimited =
 	Float64(float64) ' '[:8]
 	String(string) ' '[:8];
 
-decodersBounded =
+DecodersBounded =
 	Int64(int64) ' '[8:16];
 
 
-decodersString =
+DecodersString =
 	Int8(int8) " "
 	Int16(int16) " "
 	Int32(int32) " "
@@ -42,7 +42,7 @@ decodersString =
 	Float64(float64) " "
 	String(string) " ";
 
-decodersLimitedString =
+DecodersLimitedString =
 	Int8(int8) " "[:8]
 	Int16(int16) " "[:8]
 	Int32(int32) " "[:8]
@@ -55,10 +55,10 @@ decodersLimitedString =
 	Float64(float64) " "[:8]
 	String(string) " "[:8];
 
-decodersBoundedString =
+DecodersBoundedString =
 	Float64(float64) " "[8:16];
 
-decodersStress = !
+DecodersStress = !
 	Int8(int8) ' '
 	Int16(int16) ' '
 	Int32(int32) ' '
@@ -71,7 +71,7 @@ decodersStress = !
 	Float64(float64) ' '
 	String(string) ' ';
 
-decodersLimitedStress = !
+DecodersLimitedStress = !
 	Int8(int8) ' '[:8]
 	Int16(int16) ' '[:8]
 	Int32(int32) ' '[:8]
@@ -84,11 +84,11 @@ decodersLimitedStress = !
 	Float64(float64) ' '[:8]
 	String(string) ' '[:8];
 
-decodersBoundedStress =	!
+DecodersBoundedStress =	!
 	Int64(int64) ' '[8:16];
 
 
-decodersStringStress = !
+DecodersStringStress = !
 	Int8(int8) " "
 	Int16(int16) " "
 	Int32(int32) " "
@@ -101,7 +101,7 @@ decodersStringStress = !
 	Float64(float64) " "
 	String(string) " ";
 
-decodersLimitedStringStress = !
+DecodersLimitedStringStress = !
 	Int8(int8) " "[:8]
 	Int16(int16) " "[:8]
 	Int32(int32) " "[:8]
@@ -114,28 +114,27 @@ decodersLimitedStringStress = !
 	Float64(float64) " "[:8]
 	String(string) " "[:8];
 
-decodersBoundedStringStress = !
+DecodersBoundedStringStress = !
 	Float64(float64) " "[8:16];
 
 
-decoderOptionals =
+DecoderOptionals =
 	Int8(int8) ' '
 	?Head (^"head=" Data(string) ' ')
 	^"end";
 
-decoderOptionalsStress = !
+DecoderOptionalsStress = !
 	Int8(int8) ' '
 	?Head (^"head=" Data(string) ' ')
 	^"end";
 
-decoderBranching =
+DecoderBranching =
 	^??"start "
 	?Head (^??"head=" Data(string) ?? ' ');
 
-decoderBranchingStress = !
+DecoderBranchingStress = !
 	^??"start "
 	?Head (^??"head=" Data(string) ?? ' ');
-
-doubleOpts = !
+DoubleOpts = !
 	?Head(^"head=" Data(string) ??' ')
 	?Rest(^"rest=" Data(string) ??' ');
