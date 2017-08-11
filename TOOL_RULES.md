@@ -1,7 +1,7 @@
 # Tool rules that can be used for parsing
 
 ## Rule and capture names
-Rule and capture names must be goish
+Rule and capture names must be public and goish
 
 ## Passing rules
 |Syntax|Description|Example of rule application<br>``rule(rest) → new rest``|
