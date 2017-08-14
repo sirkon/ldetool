@@ -155,6 +155,9 @@ parser =
     _ '|'                # find | and pass it to go at column 4
     _ '|'                # find | and pass again
     Count(string) '|';   # take the content of 5th column right to the | and exit
+``` or just
+```perl
+parser = Name(string) '|' _ '|' _ '|' _ '|' Count(string) '|';
 ```
 vs
 ```
