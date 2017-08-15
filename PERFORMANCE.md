@@ -1,4 +1,4 @@
-# General thoughts
+# General
 Provided method of data extraction is basically a split of known output length on steroids:
 * The most common operation is looking for char/string in a string - this is what string splitting utilities like awk/gawk do when looking for the next field separator.
 * There's nothing like in depth lookup like in regex matching. We just find first character/string in the rest of line. It is enough in a huge majority of cases (and it is rather something wrong with the input if this is not enough).
