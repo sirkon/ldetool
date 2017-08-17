@@ -40,6 +40,7 @@ What would we need?
 See [more details](TOOL_RULES.md) on parsing rules
 
 ```perl
+# filename: Line.lde
 Line =
   _ ' '                                  # Pass to the space (x20) character
   Time(string) ']'                       # Take everything as a record for Time right to ']' character
