@@ -43,7 +43,7 @@ See [more details](TOOL_RULES.md) on parsing rules
 # filename: Line.lde
 Line =
   _ ' '                                  # Pass to the space (x20) character
-  Time(string) ']'                       # Take everything as a record for Time right to ']' character
+  Time(string) ']'                       # Take everything as a string for Time right to ']' character
   ^" FETCH_EVENTS "                      # Current rest must starts with " FETCH_EVENTS " string
   ^"first=" First(uint8) ' '             # The rest must starts with "first=" characters, then take the rest until ' ' as uint8
                                          # under the name of First
