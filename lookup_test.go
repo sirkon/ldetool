@@ -41,9 +41,10 @@ func compile(input string) (string, error) {
 	gopath := os.Getenv("GOPATH")
 	root := filepath.Join(gopath, "src/github.com/sirkon/ldetool/generator/gogen/template_data")
 	tc := templatecache.NewFS(root)
-	gen := gogen.NewGenerator(gotify.New(nil), tc)
+	gfy := gotify.New(nil)
+	gen := gogen.NewGenerator(gfy, tc)
 	buf := &bytes.Buffer{}
-	b := builder.NewBuilder("main", gen, buf)
+	b := builder.NewBuilder("main", gen, buf, gfy)
 	err = b.BuildRule(res)
 	if err != nil {
 		return "", err

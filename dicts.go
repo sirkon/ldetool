@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"github.com/sirkon/message"
 	"github.com/go-yaml/yaml"
+	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
 
