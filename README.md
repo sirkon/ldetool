@@ -14,7 +14,6 @@ There's a traditional solution for this kind of tasks: regular expression with c
 3. They are overpowered for simple log parsing. In our experience with log processing we are not looking for patterns within the line. Usually our data is well structured and it is easier to think (and compute!) in terms of bounds and separators. And if the data is not well structured then it is a good idea to make it so, just for the sake of readability.
 4. Go regular expressions are slow. Go regular expressions with group capture are even slower. Simple comparison on performance [here](PERFORMANCE.md)
 5. There are no named captured groups in Go regexes, we must to use arrays instead which is hard for reading and comprehension.
-6. Named capture groups are not supported in Go regexes.
 
 There is another traditional approach: manual data extraction. We manually command to find a symbol or substring and pass
 it or take everything before it and put into variable, it also has his share of generic disadvantages:
