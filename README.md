@@ -1,150 +1,145 @@
 # ldetool means line data extraction tool
-Primary use case: fast yet simple log parsing.
+`ldetool` is a command line utility to generate Go code for parsing log files based on data extraction script. 
 
 ### Preamble
 
 There's a traditional solution for this kind of tasks: regular expression with capture groups. But it has numerous generic and Go-specific disadvantages:
 
-1. Syntax. Hard to debug and read.
+1. Regexes are hard to read and debug.
 2. Speed. While simple non-capturing regular expressions can be speedy, they quickly becomes slow as the complexity of the regular expression grows
 3. They are overpowered for simple log parsing. In our experience with log processing we are not looking for patterns within the line. Usually our data is well structured and it is easier to think (and compute!) in terms of bounds and separators. And if the data is not well structured then it is a good idea to make it so, just for the sake of readability.
 4. Go regular expressions are slow. Go regular expressions with group capture are even slower. Read basic explanation on performance [here](PERFORMANCE.md)
+5. There are no named captured groups in Go regexes, we must to use arrays instead which is hard for reading and comprehension.
+6. Named capture groups are not supported in Go regexes.
 
-### Approach proposed.
+There is another traditional approach: manual data extraction. We manually command to find a symbol or substring and pass
+it or take everything before it and put into variable, it also has his share of generic disadvantages:
 
-What would we need?
+1. It is annoying as hell to write it
+2. It can be hard to read
 
-* Take data from the current position right to the certain bound (`]` in example)
-	```
-	1234] UserAgent[....]
-	```
-* Take data from the current position right to the certain bound or take the rest if not found (take value 12 in the first line and value 13 in the second)
-	```
-	[2017-08-12T12:05:37] val=12
-	[2017-08-12T12:05:37] val=13,hidden=1
-	```
-* Take the rest
-* Look for certain bound and pass it (` UserAgent[` in example)
-	```
-	UserAgent[....]
-	```
-* Check if the rest starts with certain string or char (`value=` in example)
-	```
-	value=123
-	```
-* Pass first N symbols of the rest
-* Limit all kind of lookups (search and pass string/character, bounds for data taker) with first N characters
-* Optional subgroups.
+Still, the major advantage is:
+1. It can be fast
 
-#### Syntax
-See [more details](TOOL_RULES.md) on parsing rules
+We had severe shortage of resources at my last job, we couldn't just buy some more power, so we had no choice. We had to write it manually.
+It turned out most of things to retrieve data are repetitive and we are writing nearly the same things again and again.
+
+##### Typical operations:
+1. Check if the rest starts with the certain string or character and pass it
+1. Look for the char or substring in the rest and pass it
+    ```
+    0x23a719bdf5589bc.Receive() -> ID[alissa] Country[RU] … 
+    ```
+    We obviously only need data after `-> ` in this case, so we just need to find `-> ` and pass it. We also may have
+    some apriori knowledge of the length of chunk where the `-> ` might be found, thus the next command.
+2. Look for the char or substring in the first N characters of the rest and pass it
+3. Take all data from the rest up to the certain string or character and save it under some name.
+4. etc
+
+So, we wrote a code generator for this purpose. The code turned to be even faster than one we used to write, since we actually
+were trying to reduce amount of code we are writing introducing helper abstractions what might have some cost, the generator just put raw code.
+
+### How it works.
+1. Write extraction script.
+2. Generate go code using extraction script.
+3. Use it via the generated extraction method
+
+#### Example
+
+Take a look at these two lines
+
+```
+[2017-09-02T22:48:13] FETCH first[1] format[JSON] hidden[0] userAgent[Android App v1.0] rnd[21341975] country[MA]
+[2017-09-02T22:48:14] FETCH first[0] format[JSON] userAgent[Android App v1.0] rnd[10000000] country[LC]
+```
+
+We likely need a time, value of parameter `first`, `format`, `hidden`, `userAgent` and `country`. We obviously don't need `rnd` 
+
+##### Extraction script syntax
+See [more details](TOOL_RULES.md) on extraction rules
 
 ```perl
-# filename: Line.lde
-Line =
-  _ ' '                                  # Pass to the space (x20) character
+# filename: line.lde
+Line =                                   # Name of the extraction object' type
+  ^'['                                   # The line must start with [
   Time(string) ']'                       # Take everything as a string for Time right to ']' character
-  ^" FETCH_EVENTS "                      # Current rest must starts with " FETCH_EVENTS " string
-  ^"first=" First(uint8) ' '             # The rest must starts with "first=" characters, then take the rest until ' ' as uint8
+  ^" FETCH "                             # Current rest must starts with " FETCH " string
+  ^"first[" First(uint8) ']'             # The rest must starts with "first[" characters, then take the rest until ']' as uint8
                                          # under the name of First
-  ^"format=" Format(string) ' '          # Take format id
-  ^"responseTime=" Duration(string) ' '   # Take mandatory response time
-  ?Hidden (^"hidden=" Value(uint8) ' ')  # Optionally look for "hidden=\d+"
-  ^"user_agent=\"" UserAgent(string) '"' # User agent data
-  ^"country=" Country(string) ?? ' ';    # Take data as country to the rest or right to the first space character
+  ^" format[" Format(string) ']'         # Take format id
+  ?Hidden (^" hidden[" Value(uint8) ']') # Optionally look for " hidden[\d+]"
+  ^" user_agent[" UserAgent(string) ']'  # User agent data
+  _ "country[" Country(string)  ']'      # Look for the piece starting with country[
+;
 ```
 
-And what would like to have from it:
-* Code must be easy for comprehension and manual extension
-* There should be as least dependencies as possible..
-* Error messages should be helpful, i.e. mismatch cases must be easy to spot via error messages.
-* Extracted data must be accessible via names (using struct fields)
-* Unneccessary allocations should be avoided. For instance, when scanning logs we use []byte buffer as a temporary storage. Usually these fields only needed within the lifetime of current line, so extracted substrings better be []byte themselves, not strings
+##### Code generation
+The easiest way is to put `//go:generate ldetool generate --package main Line.lde` and then generate a code with 
+```bash
+go generate <project path>
+```
+It will be written into `line_lde.go` file in the same directory. It will look like [this](SAMPLE.md)
 
-And now use ldetool:
-1. Save rule for [Line](#syntax-for-extraction-of-needed-data-for-these-particular-lines) into parsing.scripts file
-2. Generate parsing_scripts_lde.go file using
-    ```bash
-	ldetool generate --package main parsing.scripts
-	```
-	and move it somewhere. The code will look like
-	```go
-	package main // We set the package name to main in the call of the utility
-
-	import (
-		....
-    )
-
-	var countryEq = []byte("country=")
-	var ....
-	....
-
-	// Line autogenerated parser
-	type Line struct {
-		rest     []byte
-		Time     []byte
-		First    uint8
-		Format   []byte
-		Duration []byte
-		Hidden   struct {
-			Valid bool
-			Value uint8
-		}
-		UserAgent []byte
-		Country   []byte
-	}
-
-	// Parse autogenerated method of line
-	func (p *Line) Parse(line []byte) (bool, error) {
-		....
-	}
-
-	func (p *line) GetHiddenValue() (res uint8) {
-		if !p.Hidden.Valid {
-			return
-		}
-		return p.Hidden.Value
-	}
-
-
+Now, we have
+1. Data extractor type
+    ```go
+    // Line autogenerated parser
+    type Line struct {
+        rest   []byte
+        Time   []byte
+        First  uint8
+        Format []byte
+        Hidden struct {
+            Valid bool
+            Value uint8
+        }
+        UserAgent []byte
+        Country   []byte
+    }
     ```
-
-We have done all preparations. Now use generated line parser.
-
-``` go
-package main
-
-import (
-	"bufio"
-	"os"
-	"fmt"
-)
-
-func main() {
-	parser := &Line{}
-	reader := bufio.NewReader(os.Stdin)
-	scanner := bufio.NewScanner(reader)
-	lbuf := &bytes.Buffer{}
-	for scanner.Scan() {
-		if ok, err := parser.Parse(scanner.Bytes()); !ok {
-			continue
-		} else if err != nil {
-			fmt.Fprintf(os.Stderr, "`\033[1m%s\033[0m` on parsing>>\033[1m%s\033[0m\n", err, scanner.Text())
-			continue
-		}
-		lbuf.Reset()
-
-		fmt.Printf("%s\t%d\t%s\t%s\t%d\t%s\t%s\n",
-			string(parser.Time),
-			parser.First,
-			string(parser.Format),
-			string(parser.Duration),
-			parser.GetHiddenValue(),
-			string(parser.UserAgent),
-			string(parser.Country),
-		)
-	}
+2. Parse method
+    ```go
+    // Extract autogenerated method of Line
+    func (p *Line) Extract(line []byte) (bool, error) {
+       …
+    }
+    ```
+    Take a look at return data. First bool signals if the data was successfully matched and error signals if there were
+    any error. string to numeric failures are always treated as errors, you can put `!` into extraction script and all
+    mismatches will be treated as errors
+3. Helper to access optional `Hidden` area returning default Go value if the the area was not matched
+    ```go
+    // GetHiddenValue retrieves optional value for HiddenValue.Name
+    func (p *Line) GetHiddenValue() (res uint8) {
+        if !p.Hidden.Valid {
+            return
+        }
+        return p.Hidden.Value
+        …
+    }    
+    ```
+    
+##### Generated code usage
+It is easy: put
+```go
+l := &Line{}
+```
+before and then feed `Parse` method with lines:
+```go
+scanner := bufio.NewScanner(reader)
+for scanner.Scan() {
+    ok, err := l.Extract(scanner.Bytes())
+    if !ok {
+        if err != nil {
+            return err
+        }
+        continue
+    }
+    …
+    l.Format
+    l.Time
+    l.GetHiddenValue()
+    …
 }
 ```
-Take care of fmt.Printf usage above. I don't mean it is OK to use fmt.Printf. It is not. All efforts made so far all were for speed purposes, the fmt.Printf basically defeats all of them. You should consider using other tools, that will provide better output performance.
-Our typical usecase was to parse lines and put extracted data into clickhouse using [these](https://github.com/sirkon/ch-encode) [tools](https://github.com/sirkon/ch-insert).
+

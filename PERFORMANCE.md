@@ -1,5 +1,5 @@
 # General
-Provided method of data extraction is basically a split of known output length on steroids:
+Provided method of data extraction is basically an `awk` on steroids:
 * The most common operation is looking for char/string in a string - this is what string splitting utilities like awk/gawk do when looking for the next field separator.
 * There's nothing like in depth lookup like in regex matching. We just find first character/string in the rest of line. It is enough in a huge majority of cases (and it is rather something wrong with the input if this is not enough).
 
@@ -65,7 +65,7 @@ The bottleneck for Go version is data decompression.
 
 #### Will try sed
 ```
-$ time zcat data.gz | sed -E 's/^([^|]*)\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|.*$/\1|\2/g' | wc -l
+$ time zcat data.gz | sed -E 's/^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$/\1|\2/g' | wc -l
 ^C
 real	5m40,856s
 user	5m54,020s
@@ -75,7 +75,7 @@ I need to go, can't wait when it will complete.
 
 |utility|CPU usage %|
 |-------|-----------|
-|zcat|5.3%|
+|zcat|7%|
 |sed|99%|
 
 #### Go with regular expression with group capture 
@@ -115,7 +115,7 @@ func main() {
 	dest := bufio.NewWriter(os.Stdout)
 	defer dest.Flush()
 	buf := &bytes.Buffer{}
-	r := regexp.MustCompile(`^([^|]*)\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|.*$`)
+	r := regexp.MustCompile(`^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$`)
 	for scanner.Scan() {
 		data := r.FindSubmatch(scanner.Bytes())
 		if len(data) == 3 {
@@ -147,7 +147,8 @@ sys	0m3,444s
 |zcat|15.5%|
 |regmain|97%|
 
-Not that bad as I expected, still 6.5 times slower and, probably the most important, it was a bit easier to write LDE rule than a regexp
+Not as slow as `sed`, still 6.5 times slower and, probably the most important, it was a bit easier to write LDE 
+rule than a regexp and significantly easier to access extracted data
 ```perl
 parser =
     Name(string) '|'     # Take a text until | into Name as a string ([]byte, actually), then pass |
@@ -158,5 +159,5 @@ parser =
 ``` 
 vs
 ```
-^([^|]*)\|[^|]*\|[^|]*\|[^|]*\|([^|]*)\|.*$
+^(.*?)\|.*?\|.*?\|.*?\|(^.*?)\|.*$
 ```
