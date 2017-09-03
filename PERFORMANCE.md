@@ -147,7 +147,7 @@ sys	0m3,444s
 |zcat|15.5%|
 |regmain|97%|
 
-Not as slow as `sed`, still 6.5 times slower and, probably the most important, it was a bit easier to write LDE 
+Not as slow as `sed`, still 6.5 times slower than proposed method and, probably the most important, it was a bit easier to write LDE 
 rule than a regexp and significantly easier to access extracted data
 ```perl
 parser =
