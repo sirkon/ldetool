@@ -105,8 +105,8 @@ Now, we have
     }
     ```
     Take a look at return data. First bool signals if the data was successfully matched and error signals if there were
-    any error. string to numeric failures are always treated as errors, you can put `!` into extraction script and all
-    mismatches will be treated as errors
+    any error. String to numeric failures are always treated as errors, you can put `!` into extraction script and all
+    mismatches after the sign will be treated as errors
 3. Helper to access optional `Hidden` area returning default Go value if the the area was not matched
     ```go
     // GetHiddenValue retrieves optional value for HiddenValue.Name
