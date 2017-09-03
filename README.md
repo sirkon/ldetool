@@ -12,7 +12,7 @@ There's a traditional solution for this kind of tasks: regular expression with c
 1. Regexes are hard to read and debug.
 2. Speed. While simple non-capturing regular expressions can be speedy, they quickly becomes slow as the complexity of the regular expression grows
 3. They are overpowered for simple log parsing. In our experience with log processing we are not looking for patterns within the line. Usually our data is well structured and it is easier to think (and compute!) in terms of bounds and separators. And if the data is not well structured then it is a good idea to make it so, just for the sake of readability.
-4. Go regular expressions are slow. Go regular expressions with group capture are even slower. Simple comparison on performance [here](PERFORMANCE.md)
+4. Go regular expressions are slow. Go regular expressions with group capture are even slower. Simple comparison on performance [here](https://github.com/sirkon/ldetool/blob/master/PERFORMANCE.md)
 5. There are no named captured groups in Go regexes, we must to use arrays instead which is hard for reading and comprehension.
 
 There is another traditional approach: manual data extraction. We manually command to find a symbol or substring and pass
@@ -59,7 +59,7 @@ Take a look at these two lines
 We likely need a time, value of parameter `first`, `format`, `hidden`, `userAgent` and `country`. We obviously don't need `rnd` 
 
 ##### Extraction script syntax
-See [more details](TOOL_RULES.md) on extraction rules
+See [more details](https://github.com/sirkon/ldetool/blob/master/TOOL_RULES.md) on extraction rules
 
 ```perl
 # filename: line.lde
