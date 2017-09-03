@@ -78,7 +78,7 @@ Line =                                   # Name of the extraction object' type
 ```
 
 ##### Code generation
-The easiest way is to put `//go:generate ldetool generate --package main Line.lde` and then generate a code with 
+The easiest way is to put `//go:generate ldetool generate --package main Line.lde` somewhere in the Go file and then generate a code with 
 ```bash
 go generate <project path>
 ```
