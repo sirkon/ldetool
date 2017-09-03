@@ -1,6 +1,10 @@
 # ldetool means line data extraction tool
 `ldetool` is a command line utility to generate Go code for parsing log files. 
 
+```bash
+go get -u github.com/sirkon/ldetool
+```
+
 ### Preamble
 
 There's a traditional solution for this kind of tasks: regular expression with capture groups. But it has numerous generic and Go-specific disadvantages:
