@@ -40,7 +40,7 @@ It turned out most of things to retrieve data are repetitive and we are writing 
 4. etc
 
 So, we wrote a code generator for this purpose. The code turned to be even faster than one we used to write, since we actually
-were trying to reduce amount of code we were introducing helper abstractions what have some cost while the generator just put raw code.
+were trying to reduce amount of code introducing helper abstractions what have some cost while the generator just put raw code.
 
 ### How it works.
 1. Write extraction script.
