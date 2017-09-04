@@ -12,8 +12,8 @@ There's a traditional solution for this kind of tasks: regular expression with c
 1. Regexes are hard to read and debug.
 2. Speed. While simple non-capturing regular expressions can be speedy, they quickly becomes slow as the complexity of the regular expression grows
 3. They are overpowered for simple log parsing. In our experience with log processing we are not looking for patterns within the line. Usually our data is well structured and it is easier to think (and compute!) in terms of bounds and separators. And if the data is not well structured then it is a good idea to make it so, just for the sake of readability.
-4. Go regular expressions are slow. Go regular expressions with group capture are even slower. Simple comparison on performance [here](https://github.com/sirkon/ldetool/blob/master/PERFORMANCE.md)
-5. There are no named captured groups in Go regexes what would give us a convenient way to access a group's value, we must use arrays instead which is hard for reading and comprehension.
+4. Go regular expressions are slow. Go regular expressions with group capture are even slower.
+5. There are no cheap way in Go regexes what would give us a convenient way to access a group's value, we must use arrays instead of access by group by name, thus it is hard for reading and comprehension.
 
 There is another traditional approach: manual data extraction. We manually command to find a symbol or substring and pass
 it or take everything before it and put into variable, it also has his share of generic disadvantages:
@@ -146,3 +146,54 @@ for scanner.Scan() {
 }
 ```
 
+### Performance
+##### Manual comparison against CLI tools
+There a comparison against `gawk`, `sed` and Go's `regex` implementation in processing 1.3Gb of data: https://github.com/sirkon/ldetool/blob/master/PERFORMANCE.md
+##### Automated Go comparsion against Ragel and stdlib regex
+```bash
+go test -v github.com/sirkon/ldetool/benchmarking
+```
+There's parameter on a [line](https://github.com/sirkon/ldetool/blob/6be94610ca6da1fbf0cfe8e2c18e27792622a320/benchmarking/performance_test.go#L29)
+where you can tweak first field's maximal length. Generally, the longer field (and thus the further character lookup bounding it),
+the more advantage has LDE generated code because it uses highly optimized `bytes.IndexByte` function for lookups.
+Using Ragel for log parsing hardly makes any sense though, because it doesn't seem any easier to write Ragel actions and rules instead of lookining
+up for bounding characters and strings manually, while advanced features of finite state machines are rarely needed and
+it is rather a reason to tweak log output if they are instead of utilizing Ragel.
+
+1. 16 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   30000	     54751 ns/op
+    BenchmarkRagel-4   	   10000	    113695 ns/op
+    BenchmarkRegex-4   	     500	   3141558 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	5.244s
+    ```
+2. 64 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   20000	     62158 ns/op
+    BenchmarkRagel-4   	   10000	    141991 ns/op
+    BenchmarkRegex-4   	     500	   3944421 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	5.686s
+    
+    ```
+3. 256 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   20000	     69599 ns/op
+    BenchmarkRagel-4   	    5000	    241497 ns/op
+    BenchmarkRegex-4   	     200	   7212705 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	5.513s    
+    ```
+4. 1024 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   20000	     90019 ns/op
+    BenchmarkRagel-4   	    2000	    626500 ns/op
+    BenchmarkRegex-4   	     100	  20325788 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	6.106s
+    ```
