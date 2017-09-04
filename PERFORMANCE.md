@@ -25,9 +25,9 @@ Now, `data` file is cached and we can test performance. We will extract 1st and 
 ```
 $ time ./main < data | wc -l
 
-real	0m10.219s
-user	0m10.704s
-sys	0m0.752s
+real	0m8.032s
+user	0m8.420s
+sys	0m0.820s
 ```
 #### Gawk
 ```
