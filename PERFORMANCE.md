@@ -16,68 +16,48 @@ Compile both and make preparations:
 ```bash
 go install columngen
 go install main
-time columngen 100000000 | gzip -c > data.gz
-time zcat data.gz | wc -l 
+time columngen 100000000 > data
+wc -l data
 ```
-#### Now a raw performance comparison (the file is cached) on 1.3Gb of gzipped data.
+Now, `data` file is cached and we can test performance. We will extract 1st and 4th columns and output them separated again with | in the stdout.
+
+#### Generated utility
 ```
-$ time zcat data.gz | wc -l
+$ time ./main < data | wc -l
+
+real	0m10.219s
+user	0m10.704s
+sys	0m0.752s
+```
+#### Gawk
+```
+$ time  gawk -F '|' '{ print $1 "|" $4 }' data | wc -l
 100000000
 
-real	0m19,936s
-user	0m19,212s
-sys	0m0,668s
+real	1m2.773s
+user	1m3.208s
+sys	0m1.520s
 ```
-1.3G is just a matter or of seconds on modern hardware, definitely less than 19s, thus it is decompressing performance that limits us.
-
-#### Now output 1st and 4th column separated by `|` with gawk:
+#### Mawk, should be quite fast
 ```
-$ time zcat data.gz | gawk -F '|' '{ print $1 "|" $4 }' | wc -l
+$ time  mawk -F '|' '{ print $1 "|" $4 }' data | wc -l
 100000000
 
-real	1m10,401s
-user	1m28,048s
-sys	0m1,476s
+real	0m20.785s
+user	0m20.992s
+sys	0m1.008s
 ```
-Not very fast, 70 seconds, about 3.5 times slower than plain file decompression.
-CPU usage in this pipe
-
-|utility|CPU usage %|
-|-------|-----------|
-|zcat|29%|
-|gawk|99%|
-
-#### Finally, `main` program doing the same (output 1st and 4th columns separated by `|`)
+It is indeed, only two times slower. Still, it doesn't signal errors, it only can work upon columned files.
+#### sed
 ```
-$ time zcat data.gz | main | wc -l
+$ time sed -E 's/^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$/\1|\2/g' data | wc -l
 100000000
 
-real	0m20,102s
-user	0m31,376s
-sys	0m1,464s
+real	7m44.861s
+user	7m47.444s
+sys	0m5.600s
 ```
-The bottleneck for Go version is data decompression.
-
-|utility|CPU usage %|
-|-------|-----------|
-|zcat|95%|
-|main|60%|
-
-#### Will try sed
-```
-$ time zcat data.gz | sed -E 's/^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$/\1|\2/g' | wc -l
-^C
-real	5m40,856s
-user	5m54,020s
-sys	0m2,884s
-```
-I need to go, can't wait when it will complete.
-
-|utility|CPU usage %|
-|-------|-----------|
-|zcat|7%|
-|sed|99%|
-
+OMG, that was SLOW
 #### Go with regular expression with group capture 
 Program
 ```go
@@ -134,20 +114,15 @@ func main() {
 ```
 Launching
 ```bash
-$ time zcat data.gz | regmain | wc -l
+$ time ./goregex < data | wc -l
+
 100000000
 
-real	2m11,926s
-user	2m27,044s
-sys	0m3,444s
+real	2m4.064s
+user	2m6.928s
+sys	0m5.616s
 ```
-
-|utility|CPU usage %|
-|-------|-----------|
-|zcat|15.5%|
-|regmain|97%|
-
-Not as slow as `sed`, still 6.5 times slower than proposed method and, probably the most important, it was a bit easier to write LDE 
+Harder to use than LDE generated code, slower, harder to reason when something goes wrong. It was a bit easier to write LDE 
 rule than a regexp and significantly easier to access extracted data
 ```perl
 parser =
