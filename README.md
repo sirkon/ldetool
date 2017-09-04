@@ -148,17 +148,15 @@ for scanner.Scan() {
 
 ### Performance
 ##### Manual comparison against CLI tools
-There a comparison against `gawk`, `sed` and Go's `regex` implementation in processing 1.3Gb of data: https://github.com/sirkon/ldetool/blob/master/PERFORMANCE.md
+There a comparison against `gawk`, `sed` and Go's `regex` implementation in processing 1.3Gb of data: [here](https://github.com/sirkon/ldetool/blob/master/PERFORMANCE.md)
 ##### Automated Go comparsion against Ragel and stdlib regex
-```bash
+```
 go test -v github.com/sirkon/ldetool/benchmarking
 ```
 There's parameter on a [line](https://github.com/sirkon/ldetool/blob/6be94610ca6da1fbf0cfe8e2c18e27792622a320/benchmarking/performance_test.go#L29)
 where you can tweak first field's maximal length. Generally, the longer field (and thus the further character lookup bounding it),
 the more advantage has LDE generated code because it uses highly optimized `bytes.IndexByte` function for lookups.
-Using Ragel for log parsing hardly makes any sense though, because it doesn't seem any easier to write Ragel actions and rules instead of lookining
-up for bounding characters and strings manually, while advanced features of finite state machines are rarely needed and
-it is rather a reason to tweak log output if they are instead of utilizing Ragel.
+Using Ragel for log parsing hardly makes any sense though, because it doesn't seem any easier to write Ragel actions and rules instead of looking up for bounding characters and strings manually since the amount of boilerplate is equal or even more with Ragel, while advanced features of finite state machines are rarely needed at all and it is rather a reason to tweak log output if they are instead of utilizing Ragel.
 
 1. 16 symbols
     ```
