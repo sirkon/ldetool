@@ -1,0 +1,6 @@
+Line =
+	Name(string) '|'
+	_ '|'
+	_ '|'
+	_ '|'
+	Count(string) '|';

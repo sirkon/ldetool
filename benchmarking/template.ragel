@@ -1,0 +1,28 @@
+package main
+
+// Ragel based parsing
+type Ragel struct {
+    Name  []byte
+    Count []byte
+}
+
+%% machine fields;
+%% write data;
+
+// Extract extracts field from
+func (r *Ragel) Extract(data []byte) (ok bool, error error) {
+    cs, p, pe := 0, 0, len(data)
+    var pos = 0
+    %%{
+        action shot       { pos = p + 1             }
+        action take_name  { r.Name = data[pos:p+1]  }
+        action take_count { r.Count = data[pos:p+1] }
+
+        field = (any -- ( "|" ))* ;
+        main :=
+             field@take_name "|" field "|" field "|" field "|"@shot field@take_count ;
+        write init;
+        write exec;
+    }%%
+    return true, nil
+}
