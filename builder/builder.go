@@ -210,7 +210,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.StartWithString != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.HeadString(it.StartWithString.Value)
+			g.HeadString(it.StartWithString.Value, false)
 		})
 	}
 
@@ -218,7 +218,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.StartWithChar != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.HeadChar(it.StartWithChar.Value)
+			g.HeadChar(it.StartWithChar.Value, false)
 		})
 	}
 
@@ -226,7 +226,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.MayBeStartWithString != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.MayBeHeadString(it.MayBeStartWithString.Value)
+			g.HeadString(it.MayBeStartWithString.Value, true)
 		})
 	}
 
@@ -234,7 +234,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.MayBeStartWithChar != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.MayBeHeadChar(it.MayBeStartWithChar.Value)
+			g.HeadChar(it.MayBeStartWithChar.Value, true)
 		})
 	}
 
@@ -250,38 +250,40 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.Pass != nil {
 		g.RegGravity(gPrefix.String())
 		l := it.Pass.Limit
-		if l.Lower > 0 {
+		var lower int
+		var upper int
+		if l.Close {
+			lower = -1
+			upper = -1
+		} else {
+			lower = l.Lower
+			upper = l.Upper
+		}
+
+		if lower == upper && lower > 0 {
+			// Fixed position check
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupBoundedString(l.Value, l.Lower, l.Upper)
+					g.LookupFixedString(l.Value, lower, false)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupBoundedChar(l.Value, l.Lower, l.Upper)
-				})
-			}
-		} else if l.Upper > 0 {
-			switch l.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.LookupLimitedString(l.Value, l.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.LookupLimitedChar(l.Value, l.Upper)
+					g.LookupFixedChar(l.Value, lower, false)
 				})
 			}
 		} else {
+			// It is either short or limited/bounded lookup
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupString(l.Value)
+					g.LookupString(l.Value, lower, upper, false)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupChar(l.Value)
+					g.LookupChar(l.Value, lower, upper, false)
 				})
+
 			}
 		}
 	}
@@ -290,38 +292,40 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.PassOrIgnore != nil {
 		g.RegGravity(gPrefix.String())
 		l := it.PassOrIgnore.Limit
-		if l.Lower > 0 {
+		var lower int
+		var upper int
+		if l.Close {
+			lower = -1
+			upper = -1
+		} else {
+			lower = l.Lower
+			upper = l.Upper
+		}
+
+		if lower == upper && lower > 0 {
+			// Fixed position check
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupBoundedStringOrIgnore(l.Value, l.Lower, l.Upper)
+					g.LookupFixedString(l.Value, lower, true)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupBoundedCharOrIgnore(l.Value, l.Lower, l.Upper)
-				})
-			}
-		} else if l.Upper > 0 {
-			switch l.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.LookupLimitedStringOrIgnore(l.Value, l.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.LookupLimitedCharOrIgnore(l.Value, l.Upper)
+					g.LookupFixedChar(l.Value, lower, true)
 				})
 			}
 		} else {
+			// It is either short or limited/bounded lookup
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupStringOrIgnore(l.Value)
+					g.LookupString(l.Value, lower, upper, true)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupCharOrIgnore(l.Value)
+					g.LookupChar(l.Value, lower, upper, true)
 				})
+
 			}
 		}
 	}

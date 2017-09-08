@@ -6,6 +6,10 @@ import (
 	"os"
 	"strings"
 
+	"bytes"
+
+	"io"
+
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/ast"
 	"github.com/sirkon/ldetool/builder"
@@ -51,7 +55,7 @@ func generateAction(c *cli.Context) (err error) {
 	}
 	rules, ok := w.([]ast.RuleItem)
 	if !ok {
-		return fmt.Errorf("Not an parsing scripts file")
+		return fmt.Errorf("not a parsing scripts file")
 	}
 	formatDict := getDict(c)
 
@@ -59,6 +63,29 @@ func generateAction(c *cli.Context) (err error) {
 		inputSource = inputSource[:len(inputSource)-4]
 	}
 	fname := fmt.Sprintf("%s_lde.go", strings.Replace(inputSource, ".", "_", -1))
+	tmpDest := &bytes.Buffer{}
+	gfy := gotify.New(formatDict)
+	gen := gogen.NewGenerator(gfy, tc)
+	b := builder.NewBuilder(c.String("package"), gen, tmpDest, gfy)
+	b.DontRecover()
+	for _, rule := range rules {
+		if gfy.Public(rule.Name) != rule.Name {
+			errorToken = rule.NameToken
+			return fmt.Errorf("wrong rule name %s, must be %s", rule.Name, gfy.Public(rule.Name))
+		}
+		message.Infof("\nRule `\033[1m%s\033[0m`: processing", rule.Name)
+		err = b.BuildRule(rule)
+		if err != nil {
+			errorToken = b.ErrorToken()
+			return err
+		}
+		message.Infof("Rule `\033[1m%s\033[0m`: done", rule.Name)
+		gen.Relax()
+	}
+	if err = b.Build(); err != nil {
+		return
+	}
+
 	dest, err := os.Create(fname)
 	if err != nil {
 		message.Fatal(err)
@@ -73,23 +100,7 @@ func generateAction(c *cli.Context) (err error) {
 			}
 		}
 	}()
-	gfy := gotify.New(formatDict)
-	gen := gogen.NewGenerator(gfy, tc)
-	b := builder.NewBuilder(c.String("package"), gen, dest, gfy)
-	b.DontRecover()
-	for _, rule := range rules {
-		if gfy.Public(rule.Name) != rule.Name {
-			errorToken = rule.NameToken
-			return fmt.Errorf("Wrong rule name %s, must be %s", rule.Name, gfy.Public(rule.Name))
-		}
-		message.Infof("\nRule `\033[1m%s\033[0m`: processing", rule.Name)
-		err = b.BuildRule(rule)
-		if err != nil {
-			errorToken = b.ErrorToken()
-			return err
-		}
-		message.Infof("Rule `\033[1m%s\033[0m`: done", rule.Name)
-	}
-	err = b.Build()
+	io.Copy(dest, tmpDest)
+
 	return
 }

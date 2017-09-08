@@ -125,6 +125,11 @@ func (g *Generator) Stress() {
 	g.serious = true
 }
 
+// Relax ...
+func (g *Generator) Relax() {
+	g.serious = false
+}
+
 // Generate writes into io.Writer
 func (g *Generator) Generate(pkgName string, dest io.Writer) {
 	var imports ImportSeq

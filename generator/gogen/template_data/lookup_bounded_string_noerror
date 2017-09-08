@@ -1,9 +1,0 @@
-
-// Looking for {{ .ConstValue }} from {{.Lower}} until {{.Upper}} symbols of the rest and then pass it if found
-if len({{.Rest}}) < {{.Upper}} {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in {{.Lower}}..%d-th symbols of the rest while only %d left", {{.Upper}}-1, len({{.Rest}})){{else}}nil{{end}};{{end}}
-}
-pos = bytes.Index({{.Rest}}[{{.Lower}}:{{.Upper}}], {{ .ConstName }});
-if pos >= 0 {
-    {{.Rest}} = {{.Rest}}[pos + {{.Lower}} + len({{.ConstName}}):]
-}

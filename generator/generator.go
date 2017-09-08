@@ -19,24 +19,14 @@ type Generator interface {
 	AtEnd()
 
 	// Head
-	HeadString(anchor string)
-	MayBeHeadString(anchor string)
-	HeadChar(char string)
-	MayBeHeadChar(char string)
+	HeadString(anchor string, ignore bool)
+	HeadChar(char string, ignore bool)
 
 	// Lookups
-	LookupString(anchor string)
-	LookupLimitedString(anchor string, upper int)
-	LookupBoundedString(anchor string, lower, upper int)
-	LookupChar(anchor string)
-	LookupLimitedChar(anchor string, upper int)
-	LookupBoundedChar(anchor string, lower, upper int)
-	LookupStringOrIgnore(anchor string)
-	LookupLimitedStringOrIgnore(anchor string, upper int)
-	LookupBoundedStringOrIgnore(anchor string, lower, upper int)
-	LookupCharOrIgnore(anchor string)
-	LookupLimitedCharOrIgnore(anchor string, upper int)
-	LookupBoundedCharOrIgnore(anchor string, lower, upper int)
+	LookupString(anchor string, lower, upper int, ignore bool)
+	LookupFixedString(anchor string, offset int, ignore bool)
+	LookupChar(anchor string, lower, upper int, ignore bool)
+	LookupFixedChar(anchor string, offset int, ignore bool)
 
 	// Takes
 	// Take before anchor (string or character)
@@ -63,10 +53,13 @@ type Generator interface {
 	ExitOptionalScope() // We always know what scope we are in
 	CloseOptionalScope()
 
-	// Stress trigger mismatch treatment as serious error
+	// Stress set mismatch treatment as serious error
 	Stress()
 
-	// UseRule
+	// Relax move mismatch treatment into unserious error
+	Relax()
+
+	// UseRule ...
 	UseRule(name string, t *token.Token)
 
 	// Push is used to signal all the data for current parser was generated

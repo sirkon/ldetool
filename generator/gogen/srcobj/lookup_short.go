@@ -20,12 +20,18 @@ func (l LookupByteShort) Dump(w io.Writer) error {
 	})
 	breaking := &Body{}
 	breaking.Append(Assign{Receiver: l.Var, Expr: Raw("i")})
+	breaking.Append(Break)
 	b.Append(For{
 		I:         "i",
 		Value:     "char",
 		Container: l.Src,
 		Body: If{
-			Expr: OperatorEq(Raw(l.Var), Raw("char")),
+			Expr: OperatorEq(
+				Index{
+					Src:   l.Src,
+					Index: Raw("i"),
+				},
+				l.Needle),
 			Then: breaking,
 		},
 	})

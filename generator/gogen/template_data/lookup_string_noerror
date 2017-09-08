@@ -1,6 +1,0 @@
-
-// Looking for {{ .ConstValue }} and then pass it if found
-pos = bytes.Index({{.Rest}}, {{ .ConstName }});
-if pos >= 0 {
-    {{.Rest}} = {{.Rest}}[pos + len({{.ConstName}}):]
-}

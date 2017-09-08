@@ -1,5 +1,0 @@
-
-// Checks if the rest starts with {{.Char}} symbol and pass it if matched
-if len({{.Rest}}) > 0 && {{.Rest}}[0] == {{.Char}} {
-   {{.Rest}} = {{.Rest}}[1:]
-}

@@ -15,7 +15,7 @@ type For struct {
 
 // Dump ...
 func (f For) Dump(w io.Writer) error {
-	if _, err := fmt.Fprintf(w, "for %s, %s := range "); err != nil {
+	if _, err := fmt.Fprintf(w, "for %s, %s := range ", f.I, f.Value); err != nil {
 		return err
 	}
 	if err := f.Container.Dump(w); err != nil {
@@ -25,6 +25,9 @@ func (f For) Dump(w io.Writer) error {
 		return err
 	}
 	if err := f.Body.Dump(w); err != nil {
+		return err
+	}
+	if _, err := io.WriteString(w, "}\n"); err != nil {
 		return err
 	}
 	return nil
