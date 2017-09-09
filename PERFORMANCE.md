@@ -25,9 +25,9 @@ Now, `data` file is cached and we can test performance. We will extract 1st and 
 ```
 $ time ./main < data | wc -l
 
-real	0m8.032s
-user	0m8.420s
-sys	0m0.820s
+real	0m6.565s
+user	0m7.020s
+sys	0m0.832s
 ```
 #### Gawk
 ```
@@ -136,3 +136,94 @@ vs
 ```
 ^(.*?)\|.*?\|.*?\|.*?\|(^.*?)\|.*$
 ```
+#### Ragel with
+
+```ragel
+package main
+
+import (
+        "bufio"
+        "io"
+        "os"
+                "github.com/sirkon/message"
+                        "github.com/youtube/vitess/go/cgzip"
+
+        )
+
+// Ragel based parsing
+type Ragel struct {
+    Name  []byte
+    Count []byte
+}
+
+%% machine fields;
+%% write data;
+
+// Extract extracts field from
+func (r *Ragel) Extract(data []byte) (ok bool, error error) {
+    cs, p, pe := 0, 0, len(data)
+    var pos = 0
+    %%{
+        action shot       { pos = p + 1             }
+        action take_name  { r.Name = data[pos:p+1]  }
+        action take_count { r.Count = data[pos:p+1] }
+
+        field = (any -- ( "|" ))* ;
+        main :=
+             field@take_name "|" field "|" field "|" field "|"@shot field@take_count ;
+        write init;
+        write exec;
+    }%%
+    return true, nil
+}
+
+func main() {
+        var zreader io.Reader
+        if len(os.Args) != 2 {
+                zreader = os.Stdin
+        } else {
+                rawreader, err := os.Open(os.Args[1])
+                if err != nil {
+                        message.Critical(err)
+                }
+                defer rawreader.Close()
+                zreader, err = cgzip.NewReaderBuffer(rawreader, 512*1024)
+                if err != nil {
+                        message.Critical(err)
+                }
+        }
+        reader := bufio.NewReaderSize(zreader, 128*1024)
+        scanner := bufio.NewScanner(reader)
+
+    r := &Ragel{}
+                dest := bufio.NewWriter(os.Stdout)
+        defer dest.Flush()
+        var ok bool
+        var err error
+        for scanner.Scan() {
+            if ok, err = r.Extract(scanner.Bytes()); !ok {
+                    if err == nil {
+                            panic("Unknown error")
+                        }
+                        panic(err)
+                }
+                                        dest.Write(r.Name)
+                        dest.WriteByte('|')
+                        dest.Write(r.Count)
+                        dest.WriteByte('\n')
+        }
+                if scanner.Err() != nil {
+                message.Critical(scanner.Err())
+        }
+}
+```
+compiled with `ragel -Z -G2 ragel.template` (turned to be the fastest)
+```
+$ time ./ragel < data | wc -l
+100000000
+
+real	0m7.216s
+user	0m7.700s
+sys	0m0.816s
+```
+Quite fast, you see. Still, the dataset is nearly ideal for Ragel but it wasn't enough beat LDE. The LDE on the other hand just destroys Ragel for longer lookups.
