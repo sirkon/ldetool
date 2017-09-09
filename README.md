@@ -67,9 +67,12 @@ Line =                                   # Name of the extraction object' type
   ^'['                                   # The line must start with [
   Time(string) ']'                       # Take everything as a string for Time right to ']' character
   ^" FETCH "                             # Current rest must starts with " FETCH " string
-  ^"first[" First(uint8) ']'             # The rest must starts with "first[" characters, then take the rest until ']' as uint8
+  ^"first[" First(uint8) ']'[1]          # The rest must starts with "first[" characters, then take the rest until ']' as uint8. It is
+                                         # known First is the single character, thus the [1] index.
                                          # under the name of First
-  ^" format[" Format(string) ']'         # Take format id
+  ^" format[" Format(string) ']'[]       # Take format id. Format is a short word: XML, JSON, BIN. [] after ']' suggests
+                                         # generator to use for loop scan rather than IndexByte, which is although fast
+                                         # has call overhead as it cannot be inlined by Go compiler.
   ?Hidden (^" hidden[" Value(uint8) ']') # Optionally look for " hidden[\d+]"
   ^" user_agent[" UserAgent(string) ']'  # User agent data
   _ "country[" Country(string)  ']'      # Look for the piece starting with country[
