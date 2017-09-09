@@ -1,6 +1,0 @@
-
-// Looking for {{ .Char }} symbol and then pass it if found
-pos = bytes.IndexByte({{.Rest}}, {{ .Char }});
-if pos >= 0 {
-    {{.Rest}} = {{.Rest}}[pos + 1:]
-}

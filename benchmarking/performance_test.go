@@ -26,8 +26,12 @@ func RandStringRunes(n int) string {
 }
 
 func name() string {
-	length := rand.Int()%1024 + 1
+	length := rand.Int()%128 + 1
 	return RandStringRunes(length)
+}
+
+func randInt() uint64 {
+	return rand.Uint64()
 }
 
 var samples [][]byte
@@ -41,16 +45,16 @@ func sampleData(length int) {
 		n := name()
 		buf.WriteString(n)
 		buf.WriteByte('|')
-		io.WriteString(buf, fmt.Sprintf("%d", rand.Uint64()))
+		io.WriteString(buf, fmt.Sprintf("%d", randInt()))
 		buf.WriteByte('|')
-		io.WriteString(buf, fmt.Sprintf("%d", rand.Uint64()))
+		io.WriteString(buf, fmt.Sprintf("%d", randInt()))
 		buf.WriteByte('|')
-		io.WriteString(buf, fmt.Sprintf("%d", rand.Uint64()))
+		io.WriteString(buf, fmt.Sprintf("%d", randInt()))
 		buf.WriteByte('|')
-		c := fmt.Sprintf("%d", rand.Uint64())
+		c := fmt.Sprintf("%d", randInt())
 		io.WriteString(buf, c)
 		buf.WriteByte('|')
-		io.WriteString(buf, fmt.Sprintf("%d", rand.Uint64()))
+		io.WriteString(buf, fmt.Sprintf("%d", randInt()))
 		buf.WriteByte('|')
 		samples = append(samples, []byte(buf.String()))
 		totalLength += buf.Len()
@@ -73,7 +77,7 @@ func init() {
 	sampleData(1000)
 }
 
-func BenchmarkLDE(b *testing.B) {
+func BenchmarkFieldsLDE(b *testing.B) {
 	l := &Line{}
 	var ok bool
 	var err error
@@ -102,7 +106,7 @@ func BenchmarkLDE(b *testing.B) {
 	}
 }
 
-func BenchmarkRagel(b *testing.B) {
+func BenchmarkFieldsRagel(b *testing.B) {
 	r := &Ragel{}
 	var ok bool
 	var err error
@@ -133,7 +137,7 @@ func BenchmarkRagel(b *testing.B) {
 
 var r = regexp.MustCompile(`^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$`)
 
-func BenchmarkRegex(b *testing.B) {
+func BenchmarkFieldsRegex(b *testing.B) {
 	var name []byte
 	var count []byte
 	for n := 0; n < b.N; n++ {

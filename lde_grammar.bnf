@@ -75,8 +75,12 @@ AtomicAction
 Target
         : string_lit "[" ":" int_lit "]"                << ast.LimitedScopeStringTarget($0, $3) >>
         | string_lit "[" int_lit ":" int_lit "]"        << ast.BoundedScopeStringTarget($0, $2, $4) >>
+        | string_lit "[" int_lit "]"                    << ast.FixedStringTarget($0, $2) >>
+        | string_lit "[" "]"                            << ast.CloseStringTarget($0) >>
         | string_lit                                    << ast.StringTarget($0) >>
         | char_lit   "[" ":" int_lit "]"                << ast.LimitedScopeCharTarget($0, $3) >>
         | char_lit   "[" int_lit ":" int_lit "]"        << ast.BoundedScopeCharTarget($0, $2, $4) >>
+        | char_lit   "[" int_lit "]"                    << ast.FixedCharTarget($0, $2) >>
+        | char_lit   "[" "]"                            << ast.CloseCharTarget($0) >>
         | char_lit                                      << ast.CharTarget($0) >>
         ;

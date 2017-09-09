@@ -251,10 +251,30 @@ var productionsTable = ProdTab{
 		},
 	},
 	ProdTabEntry{
-		String: `Target : string_lit	<< ast.StringTarget(X[0]) >>`,
+		String: `Target : string_lit "[" int_lit "]"	<< ast.FixedStringTarget(X[0], X[2]) >>`,
 		Id:         "Target",
 		NTType:     5,
 		Index:      23,
+		NumSymbols: 4,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.FixedStringTarget(X[0], X[2])
+		},
+	},
+	ProdTabEntry{
+		String: `Target : string_lit "[" "]"	<< ast.CloseStringTarget(X[0]) >>`,
+		Id:         "Target",
+		NTType:     5,
+		Index:      24,
+		NumSymbols: 3,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.CloseStringTarget(X[0])
+		},
+	},
+	ProdTabEntry{
+		String: `Target : string_lit	<< ast.StringTarget(X[0]) >>`,
+		Id:         "Target",
+		NTType:     5,
+		Index:      25,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.StringTarget(X[0])
@@ -264,7 +284,7 @@ var productionsTable = ProdTab{
 		String: `Target : char_lit "[" ":" int_lit "]"	<< ast.LimitedScopeCharTarget(X[0], X[3]) >>`,
 		Id:         "Target",
 		NTType:     5,
-		Index:      24,
+		Index:      26,
 		NumSymbols: 5,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.LimitedScopeCharTarget(X[0], X[3])
@@ -274,17 +294,37 @@ var productionsTable = ProdTab{
 		String: `Target : char_lit "[" int_lit ":" int_lit "]"	<< ast.BoundedScopeCharTarget(X[0], X[2], X[4]) >>`,
 		Id:         "Target",
 		NTType:     5,
-		Index:      25,
+		Index:      27,
 		NumSymbols: 6,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.BoundedScopeCharTarget(X[0], X[2], X[4])
 		},
 	},
 	ProdTabEntry{
+		String: `Target : char_lit "[" int_lit "]"	<< ast.FixedCharTarget(X[0], X[2]) >>`,
+		Id:         "Target",
+		NTType:     5,
+		Index:      28,
+		NumSymbols: 4,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.FixedCharTarget(X[0], X[2])
+		},
+	},
+	ProdTabEntry{
+		String: `Target : char_lit "[" "]"	<< ast.CloseCharTarget(X[0]) >>`,
+		Id:         "Target",
+		NTType:     5,
+		Index:      29,
+		NumSymbols: 3,
+		ReduceFunc: func(X []Attrib) (Attrib, error) {
+			return ast.CloseCharTarget(X[0])
+		},
+	},
+	ProdTabEntry{
 		String: `Target : char_lit	<< ast.CharTarget(X[0]) >>`,
 		Id:         "Target",
 		NTType:     5,
-		Index:      26,
+		Index:      30,
 		NumSymbols: 1,
 		ReduceFunc: func(X []Attrib) (Attrib, error) {
 			return ast.CharTarget(X[0])

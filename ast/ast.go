@@ -141,7 +141,7 @@ func (ai ActionItem) String() string {
 	case ai.Pass != nil:
 		return fmt.Sprintf("Pass until \033[1m%s\033[0m", ai.Pass.Limit.Value)
 	case ai.PassOrIgnore != nil:
-		return fmt.Sprintf("Pass until or ignore \033[1m%s\033[0m", ai.Pass.Limit.Value)
+		return fmt.Sprintf("Pass until \033[1m%s\033[0m or ignore", ai.PassOrIgnore.Limit.Value)
 	case ai.StartWithChar != nil:
 		return fmt.Sprintf("Check and pass character \033[1m%s\033[0m", ai.StartWithChar.Value)
 	case ai.StartWithString != nil:

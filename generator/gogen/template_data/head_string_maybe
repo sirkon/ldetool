@@ -1,5 +1,0 @@
-
-// Checks if the rest starts with {{.ConstValue}} and pass it if matched
-if bytes.HasPrefix({{.Rest}}, {{.ConstName}}) {
-   {{.Rest}} = {{.Rest}}[len({{.ConstName}}):]
-}

@@ -5,6 +5,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/sirkon/ldetool/generator/gogen/mnemo"
 	"github.com/sirkon/ldetool/token"
 )
 
@@ -24,7 +25,7 @@ func (g *Generator) lookupPop() LookupItem {
 
 // constNameFromContent generates name of the constant based on content
 func (g *Generator) constNameFromContent(value string) string {
-	w := NewMnemowriter()
+	w := mnemo.New()
 	for _, r := range []rune(value) {
 		_, _ = w.WriteRune(r)
 	}

@@ -1,9 +1,0 @@
-
-// Looking for {{ .Char }} symbol from {{.Lower}} until {{.Upper}} symbols of the rest and then pass it
-if len({{.Rest}}) < {{.Upper}} {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if.Serious }}fmt.Errorf("Requested lookup in {{.Lower}}..%d-th symbols of the rest while only %s left", {{.Upper}}-1, len({{.Rest}})){{else}}nil{{end}};{{end}}
-}
-pos = bytes.IndexByte({{.Rest}}[{{.Lower}}:{{.Upper}}], {{ .Char }});
-if pos >= 0 {
-    {{.Rest}} = {{.Rest}}[pos + {{.Lower}} + 1:]
-}

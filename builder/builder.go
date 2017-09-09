@@ -23,7 +23,7 @@ type Builder struct {
 	errToken *token.Token
 }
 
-// NewBuilder consturcot
+// NewBuilder constructor
 func NewBuilder(pn string, g generator.Generator, d io.Writer, gfy *gotify.Gotify) *Builder {
 	return &Builder{
 		pkgName:      pn,
@@ -99,47 +99,19 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 			return
 		}
 		g.RegGravity(gPrefix.Add(item.Field.Name).String())
-		if item.Limit.Lower > 0 {
-			switch item.Limit.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeBoundedStringOrRest(
-						item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeBoundedCharOrRest(
-						item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper)
-				})
-			}
-		} else if item.Limit.Upper > 0 {
-			switch item.Limit.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeLimitedStringOrRest(item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeLimitedCharOrRest(item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Upper)
-				})
-			}
-		} else {
-			switch item.Limit.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeStringOrRest(item.Field.Name, item.Field.Type, item.Limit.Value)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeCharOrRest(item.Field.Name, item.Field.Type, item.Limit.Value)
-				})
-			}
+		switch item.Limit.Type {
+		case ast.String:
+			generators = append(generators, func() {
+				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
+				g.TakeBeforeString(
+					item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper, true)
+			})
+		case ast.Char:
+			generators = append(generators, func() {
+				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
+				g.TakeBeforeChar(
+					item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper, true)
+			})
 		}
 	}
 
@@ -150,47 +122,25 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 			return
 		}
 		g.RegGravity(gPrefix.Add(item.Field.Name).String())
-		if item.Limit.Lower > 0 {
-			switch item.Limit.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeBoundedString(
-						item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeBoundedChar(
-						item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper)
-				})
-			}
-		} else if item.Limit.Upper > 0 {
-			switch item.Limit.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeLimitedString(item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeLimitedChar(item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Upper)
-				})
-			}
-		} else {
-			switch item.Limit.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeString(item.Field.Name, item.Field.Type, item.Limit.Value)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
-					g.TakeBeforeChar(item.Field.Name, item.Field.Type, item.Limit.Value)
-				})
-			}
+		lower := item.Limit.Lower
+		upper := item.Limit.Upper
+		if item.Limit.Close {
+			lower = -1
+			upper = -1
+		}
+		switch item.Limit.Type {
+		case ast.String:
+			generators = append(generators, func() {
+				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
+				g.TakeBeforeString(
+					item.Field.Name, item.Field.Type, item.Limit.Value, lower, upper, false)
+			})
+		case ast.Char:
+			generators = append(generators, func() {
+				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
+				g.TakeBeforeChar(
+					item.Field.Name, item.Field.Type, item.Limit.Value, lower, upper, false)
+			})
 		}
 	}
 
@@ -210,7 +160,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.StartWithString != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.HeadString(it.StartWithString.Value)
+			g.HeadString(it.StartWithString.Value, false)
 		})
 	}
 
@@ -218,7 +168,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.StartWithChar != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.HeadChar(it.StartWithChar.Value)
+			g.HeadChar(it.StartWithChar.Value, false)
 		})
 	}
 
@@ -226,7 +176,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.MayBeStartWithString != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.MayBeHeadString(it.MayBeStartWithString.Value)
+			g.HeadString(it.MayBeStartWithString.Value, true)
 		})
 	}
 
@@ -234,7 +184,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.MayBeStartWithChar != nil {
 		g.RegGravity(gPrefix.String())
 		generators = append(generators, func() {
-			g.MayBeHeadChar(it.MayBeStartWithChar.Value)
+			g.HeadChar(it.MayBeStartWithChar.Value, true)
 		})
 	}
 
@@ -250,38 +200,40 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.Pass != nil {
 		g.RegGravity(gPrefix.String())
 		l := it.Pass.Limit
-		if l.Lower > 0 {
+		var lower int
+		var upper int
+		if l.Close {
+			lower = -1
+			upper = -1
+		} else {
+			lower = l.Lower
+			upper = l.Upper
+		}
+
+		if lower == upper && lower > 0 {
+			// Fixed position check
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupBoundedString(l.Value, l.Lower, l.Upper)
+					g.LookupFixedString(l.Value, lower, false)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupBoundedChar(l.Value, l.Lower, l.Upper)
-				})
-			}
-		} else if l.Upper > 0 {
-			switch l.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.LookupLimitedString(l.Value, l.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.LookupLimitedChar(l.Value, l.Upper)
+					g.LookupFixedChar(l.Value, lower, false)
 				})
 			}
 		} else {
+			// It is either short or limited/bounded lookup
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupString(l.Value)
+					g.LookupString(l.Value, lower, upper, false)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupChar(l.Value)
+					g.LookupChar(l.Value, lower, upper, false)
 				})
+
 			}
 		}
 	}
@@ -290,38 +242,40 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 	if it.PassOrIgnore != nil {
 		g.RegGravity(gPrefix.String())
 		l := it.PassOrIgnore.Limit
-		if l.Lower > 0 {
+		var lower int
+		var upper int
+		if l.Close {
+			lower = -1
+			upper = -1
+		} else {
+			lower = l.Lower
+			upper = l.Upper
+		}
+
+		if lower == upper && lower > 0 {
+			// Fixed position check
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupBoundedStringOrIgnore(l.Value, l.Lower, l.Upper)
+					g.LookupFixedString(l.Value, lower, true)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupBoundedCharOrIgnore(l.Value, l.Lower, l.Upper)
-				})
-			}
-		} else if l.Upper > 0 {
-			switch l.Type {
-			case ast.String:
-				generators = append(generators, func() {
-					g.LookupLimitedStringOrIgnore(l.Value, l.Upper)
-				})
-			case ast.Char:
-				generators = append(generators, func() {
-					g.LookupLimitedCharOrIgnore(l.Value, l.Upper)
+					g.LookupFixedChar(l.Value, lower, true)
 				})
 			}
 		} else {
+			// It is either short or limited/bounded lookup
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupStringOrIgnore(l.Value)
+					g.LookupString(l.Value, lower, upper, true)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupCharOrIgnore(l.Value)
+					g.LookupChar(l.Value, lower, upper, true)
 				})
+
 			}
 		}
 	}
