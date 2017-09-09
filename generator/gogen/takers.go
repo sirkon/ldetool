@@ -354,21 +354,28 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 // TakeRest ...
 func (g *Generator) TakeRest(name, fieldType string) {
 	g.regVar(g.curRestVar(), "[]byte")
-	g.regImport("", "bytes")
 
 	item := g.fields[g.fullName(name)]
-	method := g.decoderGen(fieldType)
-
-	g.tc.MustExecute("take_rest", g.curBody, TParams{
-		Rest:       g.curRestVar(),
-		Name:       item.name,
-		Type:       g.goType(fieldType),
-		Serious:    g.serious,
-		UseTmp:     g.tmpSuspected,
-		ScopeLabel: g.goish.Private(strings.Join(g.namespaces, "_") + "_label"),
-		Dest:       item.name,
-		Decoder:    method,
-		Namespace:  strings.Join(g.namespaces, "."),
-	})
 	g.getterGen(name, fieldType)
+
+	body := srcobj.NewBody(srcobj.Raw("\n"))
+	body.Append(srcobj.Comment(fmt.Sprintf("Take the rest as %s(%s)", name, fieldType)))
+
+	body.Append(g.dgen.Source("p."+item.name, srcobj.Raw(g.curRestVar()), fieldType))
+	body.Append(
+		srcobj.Assign(
+			g.curRestVar(),
+			srcobj.SliceFrom(
+				srcobj.Raw(g.curRestVar()),
+				srcobj.NewCall(
+					"len",
+					srcobj.Raw(g.curRestVar()),
+				),
+			),
+		),
+	)
+
+	if err := body.Dump(g.curBody); err != nil {
+		panic(err)
+	}
 }

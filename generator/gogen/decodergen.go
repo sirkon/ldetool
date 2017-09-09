@@ -220,7 +220,7 @@ func (dg *DecoderGen) Source(dest string, src srcobj.Source, fieldType string) (
 			panic(fmt.Errorf("unsupported type %s for field %s", fieldType, dest))
 		}
 	}()
-	failure := srcobj.Error(
+	failure := srcobj.ReturnError(
 		"error parsing `\033[1m%s\033]0m` value as "+fieldType+" for field `\033[1m"+dest[2:]+"\033[0m`: %s",
 		src, srcobj.Raw("err"))
 

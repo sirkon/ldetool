@@ -1,4 +1,0 @@
-if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&{{ .Source }})), 10, {{ .Bits }}); err != nil {
-    return false, fmt.Errorf("Error parsing \033[1m%s\033[0m value as {{ .Type }} for field \033[1m{{ .Dest }}\033[0m: %s", string({{ .Source }}), err)
-}
-p.{{.Dest}} = int{{.Bits}}(tmpInt);

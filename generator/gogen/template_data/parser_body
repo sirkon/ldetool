@@ -3,5 +3,6 @@ func (p *{{.ParserName}}) Extract(line []byte) (bool, error) {
    {{ range .Vars }} var {{.Name}} {{.Type}};{{end}}
    p.rest = line
    {{.Parser}}
+
    return true, nil
 }

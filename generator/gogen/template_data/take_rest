@@ -1,4 +1,0 @@
-
-// Put the rest of the data into {{.Dest}}
-{{ call .Decoder (printf "%s" .Rest) .Dest }}
-{{.Rest}} = {{.Rest}}[len({{.Rest}}):]
