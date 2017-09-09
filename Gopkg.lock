@@ -22,8 +22,8 @@
 [[projects]]
   name = "github.com/sirkon/gosrcfmt"
   packages = ["."]
-  revision = "0a0058817305d572688a1021db8fd45dd83d8cf7"
-  version = "v1.0"
+  revision = "fd056f5332b1850254475a704f3338a9ba389600"
+  version = "v1.1"
 
 [[projects]]
   name = "github.com/sirkon/gotify"
@@ -52,6 +52,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6325f47b09c236c5fd2532cafb0f449356333a9ab958f340db773ce8fabdb43c"
+  inputs-digest = "c1b4ea237f62ef1c9f0a16703f6ac927caf628964905e643897f817067904e1f"
   solver-name = "gps-cdcl"
   solver-version = 1

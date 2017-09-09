@@ -26,8 +26,8 @@
   name = "github.com/go-yaml/yaml"
 
 [[constraint]]
-  branch = "master"
   name = "github.com/sirkon/gosrcfmt"
+  version = "1.1"
 
 [[constraint]]
   branch = "master"
