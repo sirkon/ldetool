@@ -16,14 +16,14 @@ Rule and capture names must be public and goish
 |``_'c'[:N]``|Look for the character *c* in first N characters the rest and pass it.<br>Signal error when it was not found|``_'1'[:2]("a12") → "2"``<br>``_'1'[:2]("aa12") → error``<br>``_'1'[:3]("aa123c") → "23c"``|
 |``_??'c'[:N]``|Look for the character *c* in first N characters the rest and pass it.<br>Ignore when text *t* was not found|``_'1'[:2]("a12") → "2"``<br>``_'1'[:2]("aa12") → "aa12"``<br>``_'1'[:3]("aa123c") → "23c"``|
 |``_'c'[M:N]``|Look for the character *c* in the M..N-1 characters the rest<br>and pass it.<br>Signal error when it was not found|``_'1'[1:2]("a12") → "2"``<br>``_'1'[1:2]("12") → error``<br>``_'1'[0:2]("123c") → "23c"``|
-|``_'c'[M]``|Only look at the slice rest[M:] for character c||
+|``_'c'[M]``|Only check for character *c* at the M+1-th place of the rest||
 |``_??'c'[M:N]``|Just like with other ??-powered searches:<br>Pass or ignore rather than pass or error|``_'1'[1:2]("a12") → "2"``<br>``_'1'[1:2]("12") → "12"``<br>``_'1'[0:2]("123c") → "23c"``|
 |``_"t"``|Look for the text *t* in the rest and pass it.<br>Signal error when it was not found|``_"ab"("1ab2") → "2"``|
 |``_??"t"``|Works exactly like ``_"t"`` if the text *t* was fou-------|nd.<br>Do nothing otherwise|``_??"ab"("1ab2") → "2"``<br>``_??"ab"("1b2") → "1b2"``|
 |``_"t"[:N]``|Here and for the rest of lookups: same as for character lookup|``_"ab"[:3]("1ab2") → "2"``<br>``_"ab"[:2]("1ab2") → error``|
 |``_??"t"[:N]``| |``_??"ab"[:3]("1ab2") → "2"``<br>``_??"ab"[:2]("1ab2") → "1ab2"``|
 |``_"t"[M:N]``| |``_"ab"[1:3]("1ab2") → "2"``<br>``_??"ab"[2:4]("1ab2") → error``|
-|``_"t"[M]``| |``_"ab"[1:3]("1ab2") → "2"``<br>``_??"ab"[2:4]("1ab2") → error``|
+|``_"t"[M]``|Symbols of the rest from (M+1)-th position must starts with *t* |``_"ab"[1:3]("1ab2") → "2"``<br>``_??"ab"[2:4]("1ab2") → error``|
 |``_??"t"[M:N]``| |``_??"ab"[1:3]("1ab2") → "2"``<br>``_??"ab"[2:4]("1ab2") → "1ab2"``|
 
 ## Capturing rules
