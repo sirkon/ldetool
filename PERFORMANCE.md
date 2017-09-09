@@ -47,7 +47,8 @@ real	0m20.785s
 user	0m20.992s
 sys	0m1.008s
 ```
-It is indeed, only two times slower. Still, it doesn't signal errors, it only can work upon columned files.
+It is indeed, only three times slower. Still, it doesn't signal errors, it only can work upon columned files and, finally,
+it just doesn't have an infrastructure.
 #### sed
 ```
 $ time sed -E 's/^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$/\1|\2/g' data | wc -l
@@ -226,4 +227,6 @@ real	0m7.216s
 user	0m7.700s
 sys	0m0.816s
 ```
-Quite fast, you see. Still, the dataset is nearly ideal for Ragel but it wasn't enough beat LDE. The LDE on the other hand just destroys Ragel for longer lookups.
+Quite fast, you see. Still, the dataset is nearly ideal for Ragel, but it wasn't enough to beat LDE. 
+And the LDE just destroys Ragel for longer lookups - it is basically immune to extended range and rather limits with
+memory bandwidth.  
