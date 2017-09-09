@@ -26,7 +26,7 @@ func RandStringRunes(n int) string {
 }
 
 func name() string {
-	length := rand.Int()%25 + 1
+	length := rand.Int()%128 + 1
 	return RandStringRunes(length)
 }
 

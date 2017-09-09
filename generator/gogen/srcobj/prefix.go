@@ -11,7 +11,7 @@ type PrefixByte struct {
 
 // Dump ...
 func (p PrefixByte) Dump(w io.Writer) error {
-	src := Assign{
+	src := LineAssign{
 		Receiver: "ok",
 		Expr: OperatorAnd(
 			OperatorGT(Call{Name: "len", Params: []Source{p.Src}}, Raw("0")),
@@ -29,7 +29,7 @@ type PrefixString struct {
 
 // Dump ...
 func (p PrefixString) Dump(w io.Writer) error {
-	src := Assign{
+	src := LineAssign{
 		Receiver: "ok",
 		Expr:     Call{Name: "bytes.HasPrefix", Params: []Source{p.Src, p.Needle}},
 	}
@@ -45,7 +45,7 @@ type PrefixStringShort struct {
 // Dump ...
 func (p PrefixStringShort) Dump(w io.Writer) error {
 	body := &Body{}
-	body.Append(Assign{Receiver: "ok", Expr: Raw("true")})
+	body.Append(LineAssign{Receiver: "ok", Expr: Raw("true")})
 	body.Append(If{
 		Expr: OperatorGE(NewCall("len", p.Src), NewCall("len", p.Needle)),
 		Then: For{
@@ -55,12 +55,12 @@ func (p PrefixStringShort) Dump(w io.Writer) error {
 			Body: If{
 				Expr: OperatorNEq(Raw("char"), Index{Src: p.Src, Index: Raw("i")}),
 				Then: NewBody(
-					Assign{Receiver: "ok", Expr: Raw("false")},
+					LineAssign{Receiver: "ok", Expr: Raw("false")},
 					Break,
 				),
 			},
 		},
-		Else: Assign{Receiver: "ok", Expr: Raw("false")},
+		Else: LineAssign{Receiver: "ok", Expr: Raw("false")},
 	})
 	return body.Dump(w)
 }

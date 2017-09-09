@@ -1,6 +1,12 @@
 package gogen
 
-import "bytes"
+import (
+	"bytes"
+
+	"fmt"
+
+	"github.com/sirkon/ldetool/generator/gogen/srcobj"
+)
 
 // DecoderGen generates code for value decoding
 type DecoderGen struct {
@@ -204,4 +210,95 @@ func (dg *DecoderGen) String(src, dest string) string {
 		Dest:   dest,
 	})
 	return buf.String()
+}
+
+// Source decoder
+func (dg *DecoderGen) Source(dest string, src srcobj.Source, fieldType string) (res srcobj.Source) {
+	var unknownType bool
+	defer func() {
+		if unknownType {
+			panic(fmt.Errorf("unsupported type %s for field %s", fieldType, dest))
+		}
+	}()
+	failure := srcobj.Error(
+		"error parsing `\033[1m%s\033]0m` value as "+fieldType+" for field `\033[1m"+dest[2:]+"\033[0m`: %s",
+		src, srcobj.Raw("err"))
+
+	if fieldType == "string" {
+		return srcobj.LineAssign{Receiver: dest, Expr: src}
+	}
+
+	dg.g.regVar("err", "error")
+	dg.g.regVar("tmp", "[]byte")
+	dg.g.regImport("", "unsafe")
+	dg.g.regImport("", "strconv")
+	dg.g.regImport("", "fmt")
+	var decoder srcobj.Call
+	unsafeDeref := srcobj.NewCall("*(*string)", srcobj.NewCall("unsafe.Pointer", srcobj.Reference(srcobj.Raw("tmp"))))
+
+	var tmpDest string
+	var conv string
+	switch fieldType {
+	case "int8":
+		dg.g.regVar("tmpInt", "int64")
+		decoder = srcobj.NewCall("strconv.ParseInt", unsafeDeref, srcobj.Literal(10), srcobj.Literal(8))
+		tmpDest = "tmpInt"
+		conv = "int8"
+	case "int16":
+		dg.g.regVar("tmpInt", "int64")
+		decoder = srcobj.NewCall("strconv.ParseInt", unsafeDeref, srcobj.Literal(10), srcobj.Literal(16))
+		tmpDest = "tmpInt"
+		conv = "int16"
+	case "int32":
+		dg.g.regVar("tmpInt", "int64")
+		decoder = srcobj.NewCall("strconv.ParseInt", unsafeDeref, srcobj.Literal(10), srcobj.Literal(32))
+		tmpDest = "tmpInt"
+		conv = "int32"
+	case "int64":
+		dg.g.regVar("tmpInt", "int64")
+		decoder = srcobj.NewCall("strconv.ParseInt", unsafeDeref, srcobj.Literal(10), srcobj.Literal(64))
+		tmpDest = "tmpInt"
+		conv = "int64"
+	case "uint8":
+		dg.g.regVar("tmpUint", "uint64")
+		decoder = srcobj.NewCall("strconv.ParseUint", unsafeDeref, srcobj.Literal(10), srcobj.Literal(8))
+		tmpDest = "tmpUint"
+		conv = "uint8"
+	case "uint16":
+		dg.g.regVar("tmpUint", "uint64")
+		decoder = srcobj.NewCall("strconv.ParseUint", unsafeDeref, srcobj.Literal(10), srcobj.Literal(16))
+		tmpDest = "tmpUint"
+		conv = "uint16"
+	case "uint32":
+		dg.g.regVar("tmpUint", "uint64")
+		decoder = srcobj.NewCall("strconv.ParseUint", unsafeDeref, srcobj.Literal(10), srcobj.Literal(32))
+		tmpDest = "tmpUint"
+		conv = "uint32"
+	case "uint64":
+		dg.g.regVar("tmpUint", "uint64")
+		decoder = srcobj.NewCall("strconv.ParseUint", unsafeDeref, srcobj.Literal(10), srcobj.Literal(64))
+		tmpDest = "tmpUint"
+		conv = "uint64"
+	case "float32":
+		dg.g.regVar("tmpFloat", "float64")
+		decoder = srcobj.NewCall("strconv.ParseFloat", unsafeDeref, srcobj.Literal(32))
+		tmpDest = "tmpFloat"
+		conv = "float32"
+	case "float64":
+		dg.g.regVar("tmpFloat", "float64")
+		decoder = srcobj.NewCall("strconv.ParseFloat", unsafeDeref, srcobj.Literal(64))
+		tmpDest = "tmpFloat"
+		conv = "float64"
+	default:
+		unknownType = true
+		return
+	}
+
+	return srcobj.NewBody(
+		srcobj.Decode(tmpDest, decoder, failure),
+		srcobj.LineAssign{
+			dest,
+			srcobj.NewCall(conv, srcobj.Raw(tmpDest)),
+		},
+	)
 }

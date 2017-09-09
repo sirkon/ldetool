@@ -2,6 +2,7 @@ package srcobj
 
 import (
 	"io"
+	"strings"
 )
 
 type hardToAccessBinaryOperator struct {
@@ -11,7 +12,9 @@ type hardToAccessBinaryOperator struct {
 }
 
 func (h hardToAccessBinaryOperator) Dump(w io.Writer) error {
-	if err := h.operand1.Dump(w); err != nil {
+	data := String(h.operand1)
+	data = strings.TrimRight(data, "\n")
+	if _, err := io.WriteString(w, data); err != nil {
 		return err
 	}
 	if _, err := io.WriteString(w, h.operator); err != nil {
@@ -91,4 +94,54 @@ func OperatorAdd(op1, op2 Source) Source {
 		operand2: op2,
 		operator: "+",
 	}
+}
+
+func OperatorDot(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: ".",
+	}
+}
+
+func OperatorInstruction(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: ";",
+	}
+}
+
+func OperatorInc(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: "+=",
+	}
+}
+
+type hardToAccessUnaryOperator struct {
+	operator string
+	operand  Source
+}
+
+func (uo hardToAccessUnaryOperator) Dump(w io.Writer) error {
+	if _, err := io.WriteString(w, uo.operator); err != nil {
+		return err
+	}
+	if err := uo.operand.Dump(w); err != nil {
+		return err
+	}
+	return nil
+}
+
+func unaryAccess(operator string, operand Source) Source {
+	return hardToAccessUnaryOperator{
+		operator: operator,
+		operand:  operand,
+	}
+}
+
+func Reference(operand Source) Source {
+	return unaryAccess("&", operand)
 }

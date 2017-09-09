@@ -80,7 +80,7 @@ func (g *Generator) LookupString(anchor string, lower, upper int, ignore bool) {
 
 	body.Append(srcobj.If{
 		Expr: srcobj.OperatorGE(srcobj.Raw("pos"), srcobj.Raw("0")),
-		Then: srcobj.Assign{
+		Then: srcobj.LineAssign{
 			Receiver: g.curRestVar(),
 			Expr: srcobj.SliceFrom(
 				srcobj.Raw(g.curRestVar()),
@@ -168,7 +168,7 @@ func (g *Generator) LookupChar(char string, lower, upper int, ignore bool) {
 
 	body.Append(srcobj.If{
 		Expr: srcobj.OperatorGE(srcobj.Raw("pos"), srcobj.Raw("0")),
-		Then: srcobj.Assign{
+		Then: srcobj.LineAssign{
 			Receiver: g.curRestVar(),
 			Expr: srcobj.SliceFrom(
 				srcobj.Raw(g.curRestVar()),

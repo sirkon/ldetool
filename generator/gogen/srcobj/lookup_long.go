@@ -11,7 +11,7 @@ type LookupByteLong struct {
 
 // Dump ...
 func (l LookupByteLong) Dump(w io.Writer) error {
-	ass := Assign{
+	ass := LineAssign{
 		Receiver: l.Var,
 		Expr: Call{
 			Name:   "bytes.IndexByte",
@@ -30,7 +30,7 @@ type LookupStringLong struct {
 
 // Dump ...
 func (l LookupStringLong) Dump(w io.Writer) error {
-	ass := Assign{
+	ass := LineAssign{
 		Receiver: l.Var,
 		Expr: Call{
 			Name:   "bytes.Index",

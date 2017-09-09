@@ -30,23 +30,11 @@ type Generator interface {
 
 	// Takes
 	// Take before anchor (string or character)
-	TakeBeforeString(name, fieldType, anchor string)
-	TakeBeforeLimitedString(name, fieldType, anchor string, upper int)
-	TakeBeforeBoundedString(name, fieldType, anchor string, lower, upper int)
-	TakeBeforeChar(name, fieldType, char string)
-	TakeBeforeLimitedChar(name, fieldType, char string, upper int)
-	TakeBeforeBoundedChar(name, fieldType, char string, lower, upper int)
+	TakeBeforeString(name, fieldType, anchor string, lower, upper int, expand bool)
+	TakeBeforeChar(name, fieldType, char string, lower, upper int, expand bool)
 
-	// Take all
+	// Take the rest
 	TakeRest(name, fieldType string)
-
-	// Take before anchor or to the rest
-	TakeBeforeStringOrRest(name, fieldType, anchor string)
-	TakeBeforeLimitedStringOrRest(name, fieldType, anchor string, upper int)
-	TakeBeforeBoundedStringOrRest(name, fieldType, anchor string, lower, upper int)
-	TakeBeforeCharOrRest(name, fieldType, char string)
-	TakeBeforeLimitedCharOrRest(name, fieldType, char string, upper int)
-	TakeBeforeBoundedCharOrRest(name, fieldType, char string, lower, upper int)
 
 	// Optionals
 	OpenOptionalScope(name string, t *token.Token)

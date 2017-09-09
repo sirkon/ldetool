@@ -64,7 +64,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 
 	body.Append(srcobj.If{
 		Expr: cond,
-		Then: srcobj.Assign{
+		Then: srcobj.LineAssign{
 			Receiver: g.curRestVar(),
 			Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), shift),
 		},
@@ -140,7 +140,7 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
 
 	body.Append(srcobj.If{
 		Expr: cond,
-		Then: srcobj.Assign{
+		Then: srcobj.LineAssign{
 			Receiver: g.curRestVar(),
 			Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), shift),
 		},

@@ -3,6 +3,8 @@ package srcobj
 import (
 	"bytes"
 	"fmt"
+	"io"
+	"strings"
 )
 
 // Found is `pos >= 0`
@@ -34,7 +36,6 @@ func Error(format string, params ...Source) Source {
 			buf.WriteByte(char)
 		}
 	}
-	fmt.Println(buf.String())
 	p := make([]Source, 0, len(params)+1)
 	p = append(p, Raw(fmt.Sprintf(`"%s"`, buf.String())))
 	p = append(p, params...)
@@ -48,3 +49,32 @@ func Comment(comment string) Source {
 
 // Break represents break operator
 const Break = Raw("break")
+
+type hardToAccessDecodingStuff struct {
+	Dest     string
+	Decoding Call
+	Failure  Source
+}
+
+func (d hardToAccessDecodingStuff) Dump(w io.Writer) error {
+	expr := Assign(fmt.Sprintf("%s, err", d.Dest), d.Decoding)
+	return If{
+		Expr: OperatorInstruction(expr, OperatorNEq(Raw("err"), Raw("nil"))),
+		Then: d.Failure,
+	}.Dump(w)
+}
+
+// Decode decoding generator
+func Decode(dest string, decoding Call, fail Source) (res hardToAccessDecodingStuff) {
+	res.Dest = dest
+	res.Decoding = decoding
+	res.Failure = fail
+	return
+}
+
+// Trim trims generated code from new line characters and semicolons
+func Trim(s Source) Source {
+	data := String(s)
+	data = strings.TrimRight(data, "\n;")
+	return Raw(data)
+}
