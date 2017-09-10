@@ -21,13 +21,22 @@ wc -l data
 ```
 Now, `data` file is cached and we can test performance. We will extract 1st and 4th columns and output them separated again with | in the stdout.
 
-#### Generated utility
+#### LDE with short lookup optimization (slower for longer lookups)
 ```
 $ time ./main < data | wc -l
 
 real	0m6.565s
 user	0m7.020s
 sys	0m0.832s
+```
+#### LDE with regular lookup (faster for longer lookups)
+```
+$ time ./main < data | wc -l
+100000000
+
+real	0m7.454s
+user	0m7.916s
+sys	0m0.740s
 ```
 #### Gawk
 ```
@@ -227,6 +236,4 @@ real	0m7.216s
 user	0m7.700s
 sys	0m0.816s
 ```
-Quite fast, you see. Still, the dataset is nearly ideal for Ragel, but it wasn't enough to beat LDE. 
-And the LDE just destroys Ragel for longer lookups - it is basically immune to extended range and rather limits with
-memory bandwidth.  
+Quite fast, you see. Still, the dataset is nearly ideal for Ragel, but it wasn't enough to beat LDE with short lookup optimization and it is just barely faster than generic LDE which would destroy it on longer fields.
