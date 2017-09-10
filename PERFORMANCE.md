@@ -21,7 +21,7 @@ wc -l data
 ```
 Now, `data` file is cached and we can test performance. We will extract 1st and 4th columns and output them separated again with | in the stdout.
 
-#### LDE with short lookup optimization (slower for longer lookups)
+#### LDE with short lookup optimization (faster for short lookups of 1-6 characters)
 ```
 $ time ./main < data | wc -l
 
