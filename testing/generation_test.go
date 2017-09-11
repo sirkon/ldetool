@@ -210,10 +210,10 @@ func TestDecoderOptionals(t *testing.T) {
 	d := &DecoderOptionals{}
 
 	ok, err := d.Extract([]byte(`12 head=13 end`))
-	require.True(t, ok)
 	if err != nil {
 		t.Fatal(err)
 	}
+	require.True(t, ok)
 	require.Equal(t, int8(12), d.Int8)
 	require.Equal(t, "13", string(d.GetHeadData()))
 
@@ -227,9 +227,7 @@ func TestDecoderOptionals(t *testing.T) {
 
 	ok, err = d.Extract([]byte(`12 head=13`))
 	require.False(t, ok)
-	if err != nil {
-		t.Fatal(err)
-	}
+	require.NotNil(t, err)
 
 	ds := &DecoderOptionalsStress{}
 

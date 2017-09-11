@@ -1,8 +1,6 @@
 package gogen
 
 import (
-	"strings"
-
 	"fmt"
 
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
@@ -48,7 +46,12 @@ func (g *Generator) LookupString(anchor string, lower, upper int, ignore bool) {
 	var failure srcobj.Source
 	if !ignore {
 		if len(g.namespaces) > 0 {
-			failure = srcobj.Goto(g.goish.Private(strings.Join(g.namespaces, "_") + "_label"))
+			g.abandon()
+			failure = srcobj.NewBody(
+				srcobj.Assign(g.valid(), srcobj.False),
+				srcobj.Semicolon,
+				srcobj.Goto(g.label()),
+			)
 		} else if g.serious {
 			g.regImport("", "fmt")
 			failure = srcobj.ReturnError(
@@ -136,11 +139,16 @@ func (g *Generator) LookupChar(char string, lower, upper int, ignore bool) {
 	var failure srcobj.Source
 	if !ignore {
 		if len(g.namespaces) > 0 {
-			failure = srcobj.Goto(g.goish.Private(strings.Join(g.namespaces, "_") + "_label"))
+			g.abandon()
+			failure = srcobj.NewBody(
+				srcobj.Assign(g.valid(), srcobj.False),
+				srcobj.Semicolon,
+				srcobj.Goto(g.label()),
+			)
 		} else if g.serious {
 			g.regImport("", "fmt")
 			failure = srcobj.ReturnError(
-				"Cannot find \033[1m%s\033[0m in `\033[1m%s\033[0m`",
+				"Cannot find \033[1m%c\033[0m in `\033[1m%s\033[0m`",
 				srcobj.Raw(char),
 				rest,
 			)

@@ -126,12 +126,15 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			Needle: srcobj.Raw(constName),
 		})
 	}
-	validPath := "p." + strings.Join(g.namespaces, ".") + ".Valid"
 	var alternative srcobj.Source
 	if !expand {
 		if len(g.namespaces) > 0 {
 			g.abandon()
-			alternative = srcobj.Goto(g.goish.Private(strings.Join(g.namespaces, "_") + "_label"))
+			alternative = srcobj.NewBody(
+				srcobj.Assign(g.valid(), srcobj.False),
+				srcobj.Semicolon,
+				srcobj.Goto(g.label()),
+			)
 		} else if g.serious {
 			g.regImport("", "fmt")
 			alternative = srcobj.ReturnError(
@@ -141,15 +144,6 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			)
 		} else {
 			alternative = srcobj.ReturnFail
-		}
-		if len(g.namespaces) > 0 {
-			alternative = srcobj.NewBody(
-				srcobj.LineAssign{
-					Receiver: validPath,
-					Expr:     srcobj.Raw("false"),
-				},
-				alternative,
-			)
 		}
 	} else {
 		alternative = srcobj.NewBody(
@@ -192,14 +186,6 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	})
 
 	body.Append(g.dgen.Source("p."+item.name, srcobj.Raw("tmp"), fieldType))
-	if len(g.namespaces) > 0 {
-		body.Append(
-			srcobj.LineAssign{
-				Receiver: validPath,
-				Expr:     srcobj.Raw("true"),
-			},
-		)
-	}
 	if err := body.Dump(g.curBody); err != nil {
 		panic(err)
 	}
@@ -279,30 +265,24 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 			Needle: srcobj.Raw(char),
 		})
 	}
-	validPath := "p." + strings.Join(g.namespaces, ".") + ".Valid"
 	var alternative srcobj.Source
 	if !expand {
 		if len(g.namespaces) > 0 {
 			g.abandon()
-			alternative = srcobj.Goto(g.goish.Private(strings.Join(g.namespaces, "_") + "_label"))
+			alternative = srcobj.NewBody(
+				srcobj.Assign(g.valid(), srcobj.False),
+				srcobj.Semicolon,
+				srcobj.Goto(g.label()),
+			)
 		} else if g.serious {
 			g.regImport("", "fmt")
 			alternative = srcobj.ReturnError(
-				"Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
+				"Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
 				srcobj.Raw(char),
 				rest,
 			)
 		} else {
 			alternative = srcobj.ReturnFail
-		}
-		if len(g.namespaces) > 0 {
-			alternative = srcobj.NewBody(
-				srcobj.LineAssign{
-					Receiver: validPath,
-					Expr:     srcobj.Raw("false"),
-				},
-				alternative,
-			)
 		}
 	} else {
 		alternative = srcobj.NewBody(

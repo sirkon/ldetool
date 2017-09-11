@@ -234,7 +234,7 @@ func (dg *DecoderGen) Source(dest string, src srcobj.Source, fieldType string) (
 	dg.g.regImport("", "strconv")
 	dg.g.regImport("", "fmt")
 	var decoder srcobj.Call
-	unsafeDeref := srcobj.NewCall("*(*string)", srcobj.NewCall("unsafe.Pointer", srcobj.Reference(srcobj.Raw("tmp"))))
+	unsafeDeref := srcobj.NewCall("*(*string)", srcobj.NewCall("unsafe.Pointer", srcobj.Ref(srcobj.Raw("tmp"))))
 
 	var tmpDest string
 	var conv string

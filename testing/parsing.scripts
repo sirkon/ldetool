@@ -118,7 +118,7 @@ DecodersBoundedStringStress = !
 	Float64(float64) " "[8:16];
 
 
-DecoderOptionals =
+DecoderOptionals = !
 	Int8(int8) ' '
 	?Head (^"head=" Data(string) ' ')
 	^"end";

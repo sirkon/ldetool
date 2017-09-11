@@ -71,12 +71,27 @@ func OperatorNEq(op1, op2 Source) Source {
 	}
 }
 
-// OperatorAnd generate equality check
 func OperatorAnd(op1, op2 Source) Source {
 	return hardToAccessBinaryOperator{
 		operand1: op1,
 		operand2: op2,
 		operator: "&&",
+	}
+}
+
+func OperatorOr(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: "||",
+	}
+}
+
+func OperatorBitAnd(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: "&",
 	}
 }
 
@@ -93,6 +108,14 @@ func OperatorAdd(op1, op2 Source) Source {
 		operand1: op1,
 		operand2: op2,
 		operator: "+",
+	}
+}
+
+func OperatorSub(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: "-",
 	}
 }
 
@@ -142,6 +165,10 @@ func unaryAccess(operator string, operand Source) Source {
 	}
 }
 
-func Reference(operand Source) Source {
+func Ref(operand Source) Source {
 	return unaryAccess("&", operand)
+}
+
+func Deref(operand Source) Source {
+	return unaryAccess("*", operand)
 }

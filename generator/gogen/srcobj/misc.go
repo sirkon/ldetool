@@ -78,3 +78,9 @@ func Trim(s Source) Source {
 	data = strings.TrimRight(data, "\n;")
 	return Raw(data)
 }
+
+// False ...
+const False = Raw("false")
+
+// Semicolon ...
+const Semicolon = Raw(";")
