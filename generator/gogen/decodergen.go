@@ -67,7 +67,7 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 				),
 				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
 			),
-			Then: g.failure("Cannot parse `%s`: %s", srcobj.Stringify(src), srcobj.Raw("err")),
+			Then: srcobj.ReturnError("Cannot parse `%s`: %s", srcobj.Stringify(src), srcobj.Raw("err")),
 		},
 	)
 	g.body.Append(srcobj.LineAssign{
