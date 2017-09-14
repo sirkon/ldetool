@@ -1,5 +1,0 @@
-
-// Check if the rest is empty
-if len(p.rest) > 0 {
-return false, {{ if .Serious }}fmt.Errorf("Rest must be empty, not `\033[1m%s\033[0m`", string(p.rest)){{else}}nil{{end}}
-}

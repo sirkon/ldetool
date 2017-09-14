@@ -36,3 +36,8 @@ func (c Call) Dump(w io.Writer) error {
 	}
 	return nil
 }
+
+// Stringify cast to string code generator
+func Stringify(src Source) Source {
+	return NewCall("string", src)
+}

@@ -27,7 +27,7 @@ func (g *Generator) LookupString(anchor string, lower, upper int, ignore bool) {
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
-	body := srcobj.NewBody(srcobj.Raw("\n"))
+	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Looking for %s and then pass it", anchor)))
 	if lower >= 0 {
 		body.Append(srcobj.LookupStringLong{
@@ -92,9 +92,6 @@ func (g *Generator) LookupString(anchor string, lower, upper int, ignore bool) {
 		},
 		Else: failure,
 	})
-	if err := body.Dump(g.curBody); err != nil {
-		panic(err)
-	}
 }
 
 // LookupFixedString ...
@@ -120,7 +117,7 @@ func (g *Generator) LookupChar(char string, lower, upper int, ignore bool) {
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
-	body := srcobj.NewBody(srcobj.Raw("\n"))
+	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Looking for %s and then pass it", char)))
 	if lower >= 0 {
 		g.regImport("", "bytes")
@@ -185,10 +182,6 @@ func (g *Generator) LookupChar(char string, lower, upper int, ignore bool) {
 		},
 		Else: failure,
 	})
-
-	if err := body.Dump(g.curBody); err != nil {
-		panic(err)
-	}
 }
 
 // LookupFixedChar ...

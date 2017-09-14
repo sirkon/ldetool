@@ -19,12 +19,17 @@ type File struct {
 }
 
 // NewFile constructor
-func NewFile(pkgName string) *File {
+func NewFile() *File {
 	return &File{
-		pkgName:   pkgName,
+		imports:   map[string]string{},
 		strConsts: map[string]string{},
 		body:      &Body{},
 	}
+}
+
+// PkgName sets package name
+func (f *File) PkgName(name string) {
+	f.pkgName = name
 }
 
 // AddConst adds text constant and returns its name
@@ -69,6 +74,7 @@ func (f *File) AddExtractor(typeName string) *Struct {
 // AddExtract adds extraction method for an extractor
 func (f *File) AddExtract(typeName string) *Method {
 	res := NewExtractor(typeName)
+	f.body.Append(Raw("\n"))
 	f.body.Append(res)
 	return res
 }
@@ -82,6 +88,10 @@ func (f *File) AddAccessor(typeName, name string, resultType hardToAccessResultT
 
 // Dump ...
 func (f *File) Dump(w io.Writer) error {
+	if len(f.pkgName) == 0 {
+		return fmt.Errorf("package name is not set, use PkgName")
+	}
+
 	buf := &bytes.Buffer{}
 	if _, err := fmt.Fprintf(buf, "package %s\n", f.pkgName); err != nil {
 		return err
@@ -97,7 +107,10 @@ func (f *File) Dump(w io.Writer) error {
 	sort.Sort(sort.StringSlice(imports))
 	for _, k := range imports {
 		access := f.imports[k]
-		if _, err := fmt.Fprintf(buf, `%s "%s"\n`, access, k); err != nil {
+		if _, err := fmt.Fprintf(buf, `%s "%s"`, access, k); err != nil {
+			return err
+		}
+		if _, err := io.WriteString(buf, "\n"); err != nil {
 			return err
 		}
 	}
@@ -112,9 +125,12 @@ func (f *File) Dump(w io.Writer) error {
 	sort.Sort(sort.StringSlice(vars))
 	for _, varName := range vars {
 		value := f.strConsts[varName]
-		if _, err := fmt.Fprintf(buf, "var %s = %s", varName, value); err != nil {
+		if _, err := fmt.Fprintf(buf, "var %s = []byte(%s)\n", varName, value); err != nil {
 			return err
 		}
+	}
+	if _, err := io.WriteString(w, "\n"); err != nil {
+		return err
 	}
 
 	if err := f.body.Dump(buf); err != nil {
@@ -135,4 +151,9 @@ func (f *File) Dump(w io.Writer) error {
 		gosrcfmt.Format(w, buf.Bytes())
 		return
 	}()
+}
+
+// Append appends to file body
+func (f *File) Append(src Source) {
+	f.body.Append(src)
 }

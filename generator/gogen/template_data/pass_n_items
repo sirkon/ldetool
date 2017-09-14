@@ -1,7 +1,0 @@
-
-// Cut out first N items from the rest
-if len({{.Rest}}) >= {{.Upper}} {
- {{.Rest}} = {{.Rest}}[{{.Upper}}:]
-} else {
-{{if .Namespace}}p.{{.Namespace}}.Valid = false; goto {{.ScopeLabel}}{{else}}return false, {{ if .Serious }}fmt.Errorf("Cannot cut out first {{.Upper}} symbols from the rest: it is shorter (%d)", len({{.Rest}})){{else}}nil{{end}};{{end}}
-}

@@ -26,7 +26,8 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 		panic(fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err))
 	}
 
-	body := srcobj.NewBody(srcobj.Raw("\n"))
+	body := g.body
+	body.Append(srcobj.Raw("\n"))
 	if offset > 0 {
 		body.Append(
 			srcobj.Comment(fmt.Sprintf("Checks if rest[%d:] starts with `%s` and pass it", offset, anchor)))
@@ -146,10 +147,6 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 		},
 		Else: failure,
 	})
-
-	if err := body.Dump(g.curBody); err != nil {
-		return
-	}
 }
 
 // HeadString checks if the rest starts with the given string and passes it
@@ -227,10 +224,6 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
 		},
 		Else: failure,
 	})
-
-	if err := body.Dump(g.curBody); err != nil {
-		return
-	}
 }
 
 // HeadChar checks if rest starts with the given char

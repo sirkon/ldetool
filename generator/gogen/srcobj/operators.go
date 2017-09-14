@@ -53,6 +53,15 @@ func OperatorLT(op1, op2 Source) Source {
 	}
 }
 
+// OperatorAssign generate assignment
+func OperatorAssign(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: "=",
+	}
+}
+
 // OperatorEq generate equality check
 func OperatorEq(op1, op2 Source) Source {
 	return hardToAccessBinaryOperator{
@@ -127,7 +136,7 @@ func OperatorDot(op1, op2 Source) Source {
 	}
 }
 
-func OperatorInstruction(op1, op2 Source) Source {
+func OperatorSemicolon(op1, op2 Source) Source {
 	return hardToAccessBinaryOperator{
 		operand1: op1,
 		operand2: op2,
@@ -140,6 +149,14 @@ func OperatorInc(op1, op2 Source) Source {
 		operand1: op1,
 		operand2: op2,
 		operator: "+=",
+	}
+}
+
+func OperatorComma(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: ",",
 	}
 }
 
@@ -171,4 +188,8 @@ func Ref(operand Source) Source {
 
 func Deref(operand Source) Source {
 	return unaryAccess("*", operand)
+}
+
+func OperatorNot(operand Source) Source {
+	return unaryAccess("!", operand)
 }

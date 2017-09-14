@@ -23,20 +23,29 @@ func (g *Generator) getterGen(name, fieldType string) {
 	if len(g.namespaces) == 0 {
 		return
 	}
-	goType := g.goType(fieldType)
-	accesses := []string{}
-	for i := 1; i <= len(g.namespaces); i++ {
-		accesses = append(accesses, strings.Join(g.namespaces[:i], "."))
-	}
 
-	g.tc.MustExecute("getter", g.opgetters, GParams{
-		Accesses:   accesses,
-		Access:     strings.Join(g.namespaces, "."),
-		LongName:   g.goish.Public(strings.Join(append(g.namespaces, name), "_")),
-		ParserName: g.parserName,
-		Name:       name,
-		Type:       goType,
+	method := srcobj.NewAccessor(
+		g.parserName,
+		g.goish.Public("get_"+strings.Join(append(g.namespaces, name), "_")),
+		srcobj.Go2ResultType(fieldType),
+	)
+	g.optgetters.Append(method)
+	body := method.Body()
+	origBody := body
+	for i := 1; i <= len(g.namespaces); i++ {
+		valid := "p." + strings.Join(g.namespaces[:i], ".") + ".Valid"
+		newBody := srcobj.NewBody()
+		body.Append(srcobj.If{
+			Expr: srcobj.Raw(valid),
+			Then: newBody,
+		})
+		body = newBody
+	}
+	body.Append(srcobj.LineAssign{
+		Receiver: "res",
+		Expr:     srcobj.Raw("p." + strings.Join(append(g.namespaces, name), ".")),
 	})
+	origBody.Append(srcobj.Raw("return"))
 }
 
 func numerator(num int) string {
@@ -76,7 +85,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
-	body := srcobj.NewBody(srcobj.Raw("\n"))
+	body := g.indent()
 	ccc := " "
 	if expand {
 		ccc = " (or all the rest if not found) "
@@ -185,10 +194,8 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 		Else: alternative,
 	})
 
-	body.Append(g.dgen.Source("p."+item.name, srcobj.Raw("tmp"), fieldType))
-	if err := body.Dump(g.curBody); err != nil {
-		panic(err)
-	}
+	decoder := g.decoderMap[fieldType]
+	decoder(srcobj.Raw("tmp"), "p."+item.name)
 }
 
 // TakeBeforeChar ...
@@ -213,7 +220,7 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
-	body := srcobj.NewBody(srcobj.Raw("\n"))
+	body := g.indent()
 	ccc := " "
 	if expand {
 		ccc = " (or all the rest if not found) "
@@ -324,11 +331,8 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 		Else: alternative,
 	})
 
-	body.Append(g.dgen.Source("p."+item.name, srcobj.Raw("tmp"), fieldType))
-
-	if err := body.Dump(g.curBody); err != nil {
-		panic(err)
-	}
+	decoder := g.decoderMap[fieldType]
+	decoder(srcobj.Raw("tmp"), "p."+item.name)
 }
 
 // TakeRest ...
@@ -338,10 +342,11 @@ func (g *Generator) TakeRest(name, fieldType string) {
 	item := g.fields[g.fullName(name)]
 	g.getterGen(name, fieldType)
 
-	body := srcobj.NewBody(srcobj.Raw("\n"))
+	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Take the rest as %s(%s)", name, fieldType)))
 
-	body.Append(g.dgen.Source("p."+item.name, srcobj.Raw(g.curRestVar()), fieldType))
+	decoder := g.decoderMap[fieldType]
+	decoder(g.rest(), g.varName(item.name))
 	body.Append(
 		srcobj.Assign(
 			g.curRestVar(),
@@ -354,8 +359,4 @@ func (g *Generator) TakeRest(name, fieldType string) {
 			),
 		),
 	)
-
-	if err := body.Dump(g.curBody); err != nil {
-		panic(err)
-	}
 }

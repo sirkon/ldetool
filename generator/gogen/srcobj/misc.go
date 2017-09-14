@@ -59,7 +59,7 @@ type hardToAccessDecodingStuff struct {
 func (d hardToAccessDecodingStuff) Dump(w io.Writer) error {
 	expr := Assign(fmt.Sprintf("%s, err", d.Dest), d.Decoding)
 	return If{
-		Expr: OperatorInstruction(expr, OperatorNEq(Raw("err"), Raw("nil"))),
+		Expr: OperatorSemicolon(expr, OperatorNEq(Raw("err"), Raw("nil"))),
 		Then: d.Failure,
 	}.Dump(w)
 }

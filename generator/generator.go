@@ -38,7 +38,6 @@ type Generator interface {
 
 	// Optionals
 	OpenOptionalScope(name string, t *token.Token)
-	ExitOptionalScope() // We always know what scope we are in
 	CloseOptionalScope()
 
 	// Stress set mismatch treatment as serious error

@@ -16,21 +16,12 @@ import (
 	"github.com/sirkon/ldetool/generator/gogen"
 	"github.com/sirkon/ldetool/lexer"
 	"github.com/sirkon/ldetool/parser"
-	"github.com/sirkon/ldetool/templatecache"
 	"github.com/sirkon/ldetool/token"
 	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
 
 func generateAction(c *cli.Context) (err error) {
-	path := c.String("code-source")
-	var tc *templatecache.TemplateCache
-	if len(path) != 0 {
-		tc = templatecache.NewFS(path)
-	} else {
-		tc = templatecache.NewMap(staticTemplatesData)
-	}
-
 	inputSource := c.Args()[0]
 	input, err := ioutil.ReadFile(inputSource)
 	if err != nil {
@@ -65,7 +56,7 @@ func generateAction(c *cli.Context) (err error) {
 	fname := fmt.Sprintf("%s_lde.go", strings.Replace(inputSource, ".", "_", -1))
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)
-	gen := gogen.NewGenerator(gfy, tc)
+	gen := gogen.NewGenerator(gfy)
 	b := builder.NewBuilder(c.String("package"), gen, tmpDest, gfy)
 	b.DontRecover()
 	for _, rule := range rules {

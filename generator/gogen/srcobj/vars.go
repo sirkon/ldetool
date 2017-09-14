@@ -40,7 +40,7 @@ func (v *Vars) Dump(w io.Writer) error {
 	}
 	sort.Sort(sort.StringSlice(keys))
 	for _, variable := range keys {
-		if _, err := fmt.Fprintf(w, "var %s %s", variable, v.m[variable]); err != nil {
+		if _, err := fmt.Fprintf(w, "var %s %s\n", variable, v.m[variable]); err != nil {
 			return err
 		}
 	}

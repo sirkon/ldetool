@@ -49,6 +49,7 @@ func (g *Generator) constNameFromContent(value string) string {
 		i++
 	}
 	g.consts[res] = value
+	g.file.AddConst(res, value)
 	return res
 }
 
@@ -77,6 +78,7 @@ func (g *Generator) regVar(name, varType string) {
 		}
 	}
 	g.vars[name] = varType
+	g.vargen.Declare(name, varType)
 }
 
 func (g *Generator) regImport(importAs, path string) {
@@ -97,6 +99,7 @@ func (g *Generator) regImport(importAs, path string) {
 		}
 	}
 	g.imports[path] = importAs
+	g.file.AddNamedImport(importAs, path)
 }
 
 func (g *Generator) gravityTend(pos int) string {
@@ -121,26 +124,6 @@ func (g *Generator) goType(inputType string) string {
 		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))
 	}
 	return goTypeName
-}
-
-func (g *Generator) decoderGen(inputType string) func(string, string) string {
-	tmpl, ok := map[string]func(string, string) string{
-		"int8":    g.dgen.Int8,
-		"int16":   g.dgen.Int16,
-		"int32":   g.dgen.Int32,
-		"int64":   g.dgen.Int64,
-		"uint8":   g.dgen.Uint8,
-		"uint16":  g.dgen.Uint16,
-		"uint32":  g.dgen.Uint32,
-		"uint64":  g.dgen.Uint64,
-		"float32": g.dgen.Float32,
-		"float64": g.dgen.Float64,
-		"string":  g.dgen.String,
-	}[inputType]
-	if !ok {
-		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))
-	}
-	return tmpl
 }
 
 func (g *Generator) tmpSuspectancy(inputType string) bool {

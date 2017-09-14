@@ -104,6 +104,10 @@ func (s *Struct) AddFloat64(name string) {
 	s.addPrimitive(name, "float64")
 }
 
+func (s *Struct) AddString(name string) {
+	s.addPrimitive(name, "[]byte")
+}
+
 // AddSubstruct add substruct and returns it
 func (s *Struct) AddSubstruct(name string) *Struct {
 	res := &Struct{}

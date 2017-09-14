@@ -12,26 +12,33 @@ func (h hardToAccessResultType) ResultType() string {
 	return fmt.Sprintf("(res %s)", string(h))
 }
 
-const (
-	Int8Result  = hardToAccessResultType("int8")
-	Int16Result = hardToAccessResultType("int16")
-	Int32Result = hardToAccessResultType("int32")
-	Int64Result = hardToAccessResultType("int64")
+var go2resultType = map[string]hardToAccessResultType{
+	"int8":    hardToAccessResultType("int8"),
+	"int16":   hardToAccessResultType("int16"),
+	"int32":   hardToAccessResultType("int32"),
+	"int64":   hardToAccessResultType("int64"),
+	"uint8":   hardToAccessResultType("uint8"),
+	"uint16":  hardToAccessResultType("uint16"),
+	"uint32":  hardToAccessResultType("uint32"),
+	"uint64":  hardToAccessResultType("uint64"),
+	"float32": hardToAccessResultType("float32"),
+	"float64": hardToAccessResultType("float64"),
+	"string":  hardToAccessResultType("[]byte"),
+}
 
-	Uint8Result  = hardToAccessResultType("uint8")
-	Uint16Result = hardToAccessResultType("uint16")
-	Uint32Result = hardToAccessResultType("uint32")
-	Uint64Result = hardToAccessResultType("uint64")
-
-	Float32Result = hardToAccessResultType("float32")
-	Float64Result = hardToAccessResultType("float64")
-)
+func Go2ResultType(goType string) hardToAccessResultType {
+	res, ok := go2resultType[goType]
+	if !ok {
+		panic(fmt.Errorf("unsupported type `\033[1m%s\033[0m`", goType))
+	}
+	return res
+}
 
 // ExtractorResult
 type ExtractorResult struct{}
 
 func (e ExtractorResult) ResultType() string {
-	return "(ok bool, err error)"
+	return "(bool, error)"
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -68,13 +75,14 @@ func NewAccessor(objType, name string, resType hardToAccessResultType) *Method {
 		name:    name,
 		params:  "",
 		resType: resType,
+		body:    &Body{},
 	}
 	return res
 }
 
-// Append appends new piece of source to the body
-func (m *Method) Append(s Source) {
-	m.body.Append(s)
+// Body returns method body
+func (m *Method) Body() *Body {
+	return m.body
 }
 
 // Dump implementation of source
@@ -82,7 +90,7 @@ func (m *Method) Dump(w io.Writer) error {
 	if _, err := fmt.Fprintf(w, "// %s ...\n", m.name); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprintf(w, "func (e *%s) %s(%s) %s {\n", m.objType, m.name, m.params, m.resType.ResultType()); err != nil {
+	if _, err := fmt.Fprintf(w, "func (p *%s) %s(%s) %s {\n", m.objType, m.name, m.params, m.resType.ResultType()); err != nil {
 		return err
 	}
 	if err := m.body.Dump(w); err != nil {
