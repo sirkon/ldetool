@@ -42,20 +42,11 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 
 	var failure srcobj.Source
 	if !ignore {
-		if len(g.namespaces) > 0 {
-			g.abandon()
-			failure = srcobj.NewBody(
-				srcobj.Assign(g.valid(), srcobj.False),
-				srcobj.Semicolon,
-				srcobj.Goto(g.label()),
-			)
-		} else if g.serious {
-			g.regImport("", "fmt")
-			failure = srcobj.ReturnError(
-				"`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", rest, srcobj.Raw(anchor))
-		} else {
-			failure = srcobj.ReturnFail
-		}
+		failure = g.failure(
+			"`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`",
+			srcobj.Stringify(rest),
+			srcobj.Raw(anchor),
+		)
 	}
 
 	var shift srcobj.Source = srcobj.Literal(len(unquoted) + offset)
@@ -166,20 +157,11 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
 
 	var failure srcobj.Source
 	if !ignore {
-		if len(g.namespaces) > 0 {
-			g.abandon()
-			failure = srcobj.NewBody(
-				srcobj.Assign(g.valid(), srcobj.False),
-				srcobj.Semicolon,
-				srcobj.Goto(g.label()),
-			)
-		} else if g.serious {
-			g.regImport("", "fmt")
-			failure = srcobj.ReturnError(
-				"`\033[1m%s\033[0m)` is expected to start with \033[1m%s\033[0m", rest, srcobj.Raw(char))
-		} else {
-			failure = srcobj.ReturnFail
-		}
+		failure = g.failure(
+			"`\033[1m%s\033[0m)` is expected to start with \033[1m%s\033[0m",
+			srcobj.Stringify(rest),
+			srcobj.Raw(char),
+		)
 	}
 
 	body := srcobj.NewBody(srcobj.Raw("\n"))

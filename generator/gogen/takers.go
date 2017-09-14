@@ -137,23 +137,11 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	}
 	var alternative srcobj.Source
 	if !expand {
-		if len(g.namespaces) > 0 {
-			g.abandon()
-			alternative = srcobj.NewBody(
-				srcobj.Assign(g.valid(), srcobj.False),
-				srcobj.Semicolon,
-				srcobj.Goto(g.label()),
-			)
-		} else if g.serious {
-			g.regImport("", "fmt")
-			alternative = srcobj.ReturnError(
-				"Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
-				srcobj.Raw(constName),
-				rest,
-			)
-		} else {
-			alternative = srcobj.ReturnFail
-		}
+		alternative = g.failure(
+			"Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
+			srcobj.Raw(constName),
+			srcobj.Stringify(rest),
+		)
 	} else {
 		alternative = srcobj.NewBody(
 			srcobj.LineAssign{
@@ -274,23 +262,11 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 	}
 	var alternative srcobj.Source
 	if !expand {
-		if len(g.namespaces) > 0 {
-			g.abandon()
-			alternative = srcobj.NewBody(
-				srcobj.Assign(g.valid(), srcobj.False),
-				srcobj.Semicolon,
-				srcobj.Goto(g.label()),
-			)
-		} else if g.serious {
-			g.regImport("", "fmt")
-			alternative = srcobj.ReturnError(
-				"Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
-				srcobj.Raw(char),
-				rest,
-			)
-		} else {
-			alternative = srcobj.ReturnFail
-		}
+		alternative = g.failure(
+			"Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
+			srcobj.Raw(char),
+			srcobj.Stringify(rest),
+		)
 	} else {
 		alternative = srcobj.NewBody(
 			srcobj.LineAssign{
