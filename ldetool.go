@@ -1,7 +1,6 @@
 package main
 
 //go:generate gocc lde_grammar.bnf
-//go:generate ldetool sync --code-source generator/gogen/template_data --package main static_template_data.go
 
 import (
 	"os"
