@@ -27,7 +27,7 @@
 
 [[constraint]]
   name = "github.com/sirkon/gosrcfmt"
-  version = "1.1"
+  version = "1.5"
 
 [[constraint]]
   branch = "master"
