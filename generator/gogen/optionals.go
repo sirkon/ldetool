@@ -36,6 +36,7 @@ func (g *Generator) CloseOptionalScope() {
 	if g.abandoned() {
 		scopeLabelName := g.goish.Private(strings.Join(g.namespaces, "_") + "_label")
 		g.body.Append(srcobj.OperatorColon(srcobj.Raw(scopeLabelName), srcobj.Raw("")))
+		g.indent()
 	}
 	g.obj = g.obj[:len(g.obj)-1]
 	g.namespaces = g.namespaces[:len(g.namespaces)-1]
