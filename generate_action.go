@@ -10,6 +10,8 @@ import (
 
 	"io"
 
+	"path/filepath"
+
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/ast"
 	"github.com/sirkon/ldetool/builder"
@@ -53,7 +55,8 @@ func generateAction(c *cli.Context) (err error) {
 	if strings.HasSuffix(inputSource, ".lde") {
 		inputSource = inputSource[:len(inputSource)-4]
 	}
-	fname := fmt.Sprintf("%s_lde.go", strings.Replace(inputSource, ".", "_", -1))
+	dirPath, fname := filepath.Split(inputSource)
+	fname = fmt.Sprintf("%s_lde.go", strings.Replace(fname, ".", "_", -1))
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)
 	gen := gogen.NewGenerator(gfy)
@@ -77,7 +80,7 @@ func generateAction(c *cli.Context) (err error) {
 		return
 	}
 
-	dest, err := os.Create(fname)
+	dest, err := os.Create(filepath.Join(dirPath, fname))
 	if err != nil {
 		message.Fatal(err)
 	}
