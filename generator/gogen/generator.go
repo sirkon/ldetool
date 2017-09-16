@@ -9,7 +9,6 @@ import (
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 	"github.com/sirkon/ldetool/token"
-	"github.com/sirkon/message"
 )
 
 // Name provides a link between token and string
@@ -201,9 +200,6 @@ func (g *Generator) Relax() {
 
 // Generate writes into io.Writer
 func (g *Generator) Generate(pkgName string, dest io.Writer) {
-	for i, gr := range g.gravity {
-		message.Infof("%2d: %+v", i, gr)
-	}
 	g.file.PkgName(pkgName)
 	if err := g.file.Dump(dest); err != nil {
 		panic(err)

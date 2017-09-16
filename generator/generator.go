@@ -40,10 +40,10 @@ type Generator interface {
 	OpenOptionalScope(name string, t *token.Token)
 	CloseOptionalScope()
 
-	// Stress set mismatch treatment as serious error
+	// Stress set mismatch treatment as critical error
 	Stress()
 
-	// Relax move mismatch treatment into unserious error
+	// Relax set mismatch error as not critical
 	Relax()
 
 	// UseRule ...
