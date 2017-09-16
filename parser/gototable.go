@@ -2,7 +2,7 @@
 
 package parser
 
-const numNTSymbols = 6
+const numNTSymbols = 7
 
 type (
 	gotoTable [numStates]gotoRow
@@ -15,6 +15,7 @@ var gotoTab = gotoTable{
 		1,  // Rules
 		2,  // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -23,6 +24,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		4,  // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -31,6 +33,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -39,6 +42,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -47,6 +51,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -55,6 +60,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		8,  // Action
+		-1, // Type
 		10, // AtomicAction
 		-1, // Target
 	},
@@ -63,6 +69,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -71,6 +78,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -79,6 +87,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -87,6 +96,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		19, // Action
+		-1, // Type
 		21, // AtomicAction
 		-1, // Target
 	},
@@ -95,6 +105,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		26, // Action
+		-1, // Type
 		10, // AtomicAction
 		-1, // Target
 	},
@@ -103,6 +114,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		27, // Action
+		-1, // Type
 		10, // AtomicAction
 		-1, // Target
 	},
@@ -111,6 +123,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -119,6 +132,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		35, // Target
 	},
@@ -127,6 +141,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -135,6 +150,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		37, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -143,6 +159,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -151,6 +168,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -159,6 +177,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -167,6 +186,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -174,7 +194,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		40, // Action
+		51, // Action
+		-1, // Type
 		21, // AtomicAction
 		-1, // Target
 	},
@@ -182,7 +203,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		41, // Action
+		52, // Action
+		-1, // Type
 		21, // AtomicAction
 		-1, // Target
 	},
@@ -190,7 +212,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		42, // Action
+		53, // Action
+		-1, // Type
 		21, // AtomicAction
 		-1, // Target
 	},
@@ -199,6 +222,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -207,14 +231,16 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
-		50, // Target
+		61, // Target
 	},
 	gotoRow{ // S25
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -223,6 +249,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -231,6 +258,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -239,6 +267,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -247,6 +276,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -255,6 +285,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -263,6 +294,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -271,6 +303,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -279,14 +312,16 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
-		56, // Target
+		67, // Target
 	},
 	gotoRow{ // S34
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -295,6 +330,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -303,6 +339,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -311,6 +348,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -319,6 +357,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -326,8 +365,9 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		61, // Action
-		10, // AtomicAction
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S40
@@ -335,6 +375,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -343,6 +384,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -351,6 +393,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -359,6 +402,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -367,6 +411,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -375,6 +420,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -383,6 +429,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -391,6 +438,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -399,14 +447,16 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
-		67, // Target
+		-1, // Target
 	},
 	gotoRow{ // S49
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		71, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -414,8 +464,9 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		-1, // Action
-		-1, // AtomicAction
+		72, // Action
+		-1, // Type
+		10, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S51
@@ -423,6 +474,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -431,6 +483,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -439,6 +492,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -447,6 +501,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -455,6 +510,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -463,6 +519,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -471,6 +528,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -478,8 +536,9 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		77, // Action
-		21, // AtomicAction
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S59
@@ -487,14 +546,16 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
-		79, // Target
+		78, // Target
 	},
 	gotoRow{ // S60
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -503,6 +564,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -510,8 +572,9 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		81, // Action
-		21, // AtomicAction
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S63
@@ -519,6 +582,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -527,6 +591,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -535,6 +600,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -543,6 +609,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -551,6 +618,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -559,6 +627,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -566,7 +635,8 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		89, // Action
+		88, // Action
+		-1, // Type
 		21, // AtomicAction
 		-1, // Target
 	},
@@ -575,14 +645,16 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
-		-1, // Target
+		90, // Target
 	},
 	gotoRow{ // S71
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -591,6 +663,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -598,8 +671,9 @@ var gotoTab = gotoTable{
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
-		-1, // Action
-		-1, // AtomicAction
+		92, // Action
+		-1, // Type
+		21, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S74
@@ -607,6 +681,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -615,6 +690,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -623,6 +699,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -631,6 +708,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -639,14 +717,16 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
-		98, // Target
+		-1, // Target
 	},
 	gotoRow{ // S79
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -654,15 +734,17 @@ var gotoTab = gotoTable{
 		-1,  // S'
 		-1,  // Rules
 		-1,  // Rule
-		-1,  // Action
-		-1,  // AtomicAction
-		100, // Target
+		100, // Action
+		-1,  // Type
+		21,  // AtomicAction
+		-1,  // Target
 	},
 	gotoRow{ // S81
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -671,6 +753,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -679,6 +762,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -687,6 +771,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -695,6 +780,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -703,6 +789,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -711,6 +798,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -719,38 +807,43 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S89
-		-1, // S'
-		-1, // Rules
-		-1, // Rule
-		-1, // Action
-		-1, // AtomicAction
-		-1, // Target
+		-1,  // S'
+		-1,  // Rules
+		-1,  // Rule
+		-1,  // Action
+		-1,  // Type
+		-1,  // AtomicAction
+		109, // Target
 	},
 	gotoRow{ // S90
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S91
-		-1, // S'
-		-1, // Rules
-		-1, // Rule
-		-1, // Action
-		-1, // AtomicAction
-		-1, // Target
+		-1,  // S'
+		-1,  // Rules
+		-1,  // Rule
+		-1,  // Action
+		-1,  // Type
+		-1,  // AtomicAction
+		111, // Target
 	},
 	gotoRow{ // S92
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -759,6 +852,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -767,6 +861,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -775,6 +870,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -783,6 +879,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -791,6 +888,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -799,22 +897,25 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S99
-		-1,  // S'
-		-1,  // Rules
-		-1,  // Rule
-		-1,  // Action
-		-1,  // AtomicAction
-		113, // Target
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
 	},
 	gotoRow{ // S100
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -823,6 +924,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -831,6 +933,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -839,6 +942,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -847,6 +951,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -855,6 +960,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -863,6 +969,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -871,6 +978,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -879,6 +987,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -887,22 +996,25 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
 	gotoRow{ // S110
-		-1, // S'
-		-1, // Rules
-		-1, // Rule
-		-1, // Action
-		-1, // AtomicAction
-		-1, // Target
+		-1,  // S'
+		-1,  // Rules
+		-1,  // Rule
+		-1,  // Action
+		-1,  // Type
+		-1,  // AtomicAction
+		124, // Target
 	},
 	gotoRow{ // S111
 		-1, // S'
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -911,6 +1023,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -919,6 +1032,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -927,6 +1041,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -935,6 +1050,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -943,6 +1059,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -951,6 +1068,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -959,6 +1077,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -967,6 +1086,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -975,6 +1095,7 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},
@@ -983,6 +1104,106 @@ var gotoTab = gotoTable{
 		-1, // Rules
 		-1, // Rule
 		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S122
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S123
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S124
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S125
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S126
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S127
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S128
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S129
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S130
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S131
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
+		-1, // AtomicAction
+		-1, // Target
+	},
+	gotoRow{ // S132
+		-1, // S'
+		-1, // Rules
+		-1, // Rule
+		-1, // Action
+		-1, // Type
 		-1, // AtomicAction
 		-1, // Target
 	},

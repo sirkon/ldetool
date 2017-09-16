@@ -30,13 +30,16 @@ func generateAction(c *cli.Context) (err error) {
 		return cli.NewExitError(err, 1)
 	}
 
+	et := NewErrorTranslator()
+
 	var errorToken *token.Token
 	defer func() {
 		if err != nil {
 			if errorToken != nil {
 				err = cli.NewExitError(fmt.Sprintf("%s:%d:%d: %s", c.Args()[0], errorToken.Line, errorToken.Column, err), 1)
 			} else {
-				err = cli.NewExitError(fmt.Sprintf("%s: %s", c.Args()[0], err), 1)
+				err = et.Translate(err)
+				err = cli.NewExitError(fmt.Sprintf("%s:%s", c.Args()[0], err), 1)
 			}
 		}
 	}()

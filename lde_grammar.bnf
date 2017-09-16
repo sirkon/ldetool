@@ -55,6 +55,21 @@ Action
         | AtomicAction                                  << ast.Action($0) >>
         | stress Action                                 << ast.MatchRequired($1) >>
         ;
+        
+        
+Type
+        : "int8"                                        << $0, nil >>
+        | "int16"                                       << $0, nil >>
+        | "int32"                                       << $0, nil >>
+        | "int64"                                       << $0, nil >>
+        | "uint8"                                       << $0, nil >>
+        | "uint16"                                      << $0, nil >>
+        | "uint32"                                      << $0, nil >>
+        | "uint64"                                      << $0, nil >>
+        | "float32"                                     << $0, nil >>
+        | "float64"                                     << $0, nil >>
+        | "string"                                      << $0, nil >>
+        ;
 
 
 AtomicAction
@@ -65,10 +80,10 @@ AtomicAction
         | "_" "[" int_lit ":" "]"                       << ast.PassFirst($2) >>
         | "_" Target                                    << ast.PassUntilTarget($1) >>
         | "_" "??" Target                               << ast.PassUntilTargetOrIgnore($2) >>
-        | identifier "(" identifier ")" Target          << ast.TakeUntilTarget($0, $2, $4) >>
-        | identifier "(" identifier ")" "??" Target     << ast.TakeUntilTargetOrRest($0, $2, $5) >>
+        | identifier "(" Type ")" Target                << ast.TakeUntilTarget($0, $2, $4) >>
+        | identifier "(" Type ")" "??" Target           << ast.TakeUntilTargetOrRest($0, $2, $5) >>
         | "?" identifier "(" Action ")"                 << ast.Option($1, $3) >>
-        | identifier "(" identifier ")"                 << ast.TakeTheRest($0, $2) >>
+        | identifier "(" Type ")"                       << ast.TakeTheRest($0, $2) >>
         | "$"                                           << ast.AtTheEnd() >>
         ;
 
