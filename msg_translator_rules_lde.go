@@ -17,7 +17,10 @@ import (
 )
 
 var commaSpaceExpectedSpaceOneSpaceOfColonSpace = []byte(", expected one of: ")
-var identifierLbrack = []byte("identifier(")
+var commaSpaceExpectedSpaceOneSpaceOfColonSpaceLbrack = []byte(", expected one of: (")
+var errorSpaceInSpaceS49Colon = []byte("Error in S49:")
+var errorSpaceInSpaceS7ColonSpaceEq = []byte("Error in S7: =")
+var lbrack = []byte("(")
 var lineEq = []byte("line=")
 var posLbrack = []byte("Pos(")
 
@@ -38,27 +41,19 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 	var tmp []byte
 	var tmpUint uint64
 
-	// Checks if the rest starts with `"Error in"` and pass it
-	if len(p.rest) >= 8 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&18446744073709551615 == 7955925892594823749 {
-		p.rest = p.rest[8:]
+	// Checks if the rest starts with `"Error in S49:"` and pass it
+	if bytes.HasPrefix(p.rest, errorSpaceInSpaceS49Colon) {
+		p.rest = p.rest[len(errorSpaceInSpaceS49Colon):]
 	} else {
-		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), "Error in")
+		return false, nil
 	}
 
-	// Looking for ':' and then pass it
-	pos = bytes.IndexByte(p.rest[:8], ':')
+	// Looking for "(" and then pass it
+	pos = bytes.Index(p.rest, lbrack)
 	if pos >= 0 {
-		p.rest = p.rest[pos+1:]
+		p.rest = p.rest[pos+len(lbrack):]
 	} else {
-		return false, fmt.Errorf("Cannot find \033[1m%c\033[0m in `\033[1m%s\033[0m`", ':', string(p.rest[:8]))
-	}
-
-	// Looking for "identifier(" and then pass it
-	pos = bytes.Index(p.rest, identifierLbrack)
-	if pos >= 0 {
-		p.rest = p.rest[pos+len(identifierLbrack):]
-	} else {
-		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", identifierLbrack, string(p.rest))
+		return false, nil
 	}
 
 	// Looking for ',' and then pass it
@@ -66,7 +61,7 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 	if pos >= 0 {
 		p.rest = p.rest[pos+1:]
 	} else {
-		return false, fmt.Errorf("Cannot find \033[1m%c\033[0m in `\033[1m%s\033[0m`", ',', string(p.rest))
+		return false, nil
 	}
 
 	// Take until ')' as Name(string)
@@ -75,7 +70,7 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 		tmp = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
-		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Name", ')', string(p.rest))
+		return false, nil
 	}
 	p.Name = tmp
 
@@ -84,7 +79,7 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 	if pos >= 0 {
 		p.rest = p.rest[pos+len(posLbrack):]
 	} else {
-		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", posLbrack, string(p.rest))
+		return false, nil
 	}
 
 	// Looking for "line=" and then pass it
@@ -92,7 +87,7 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 	if pos >= 0 {
 		p.rest = p.rest[pos+len(lineEq):]
 	} else {
-		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", lineEq, string(p.rest))
+		return false, nil
 	}
 
 	// Take until ',' as Line(uint32)
@@ -101,7 +96,7 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 		tmp = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
-		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Line", ',', string(p.rest))
+		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
@@ -112,7 +107,7 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 	if len(p.rest) >= 8 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&18446744073709551615 == 4426595834849616672 {
 		p.rest = p.rest[8:]
 	} else {
-		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " column=")
+		return false, nil
 	}
 
 	// Take until ')' as Column(uint32)
@@ -121,7 +116,7 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 		tmp = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
-		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Column", ')', string(p.rest))
+		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
@@ -132,11 +127,100 @@ func (p *TypeError) Extract(line []byte) (bool, error) {
 	if bytes.HasPrefix(p.rest, commaSpaceExpectedSpaceOneSpaceOfColonSpace) {
 		p.rest = p.rest[len(commaSpaceExpectedSpaceOneSpaceOfColonSpace):]
 	} else {
-		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), ", expected one of: ")
+		return false, nil
 	}
 
 	// Take the rest as Choices(string)
 	p.Choices = p.rest
 	p.rest = p.rest[len(p.rest):]
+	return true, nil
+}
+
+// NoEnd1Error ...
+type NoEnd1Error struct {
+	rest   []byte
+	Line   uint32
+	Column uint32
+}
+
+// Extract ...
+func (p *NoEnd1Error) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpUint uint64
+
+	// Checks if the rest starts with `"Error in S7: ="` and pass it
+	if bytes.HasPrefix(p.rest, errorSpaceInSpaceS7ColonSpaceEq) {
+		p.rest = p.rest[len(errorSpaceInSpaceS7ColonSpaceEq):]
+	} else {
+		return false, nil
+	}
+
+	// Looking for ',' and then pass it
+	pos = bytes.IndexByte(p.rest, ',')
+	if pos >= 0 {
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+
+	// Looking for "Pos(" and then pass it
+	pos = bytes.Index(p.rest, posLbrack)
+	if pos >= 0 {
+		p.rest = p.rest[pos+len(posLbrack):]
+	} else {
+		return false, nil
+	}
+
+	// Looking for "line=" and then pass it
+	pos = bytes.Index(p.rest, lineEq)
+	if pos >= 0 {
+		p.rest = p.rest[pos+len(lineEq):]
+	} else {
+		return false, nil
+	}
+
+	// Take until ',' as Line(uint32)
+	pos = bytes.IndexByte(p.rest, ',')
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Line = uint32(tmpUint)
+
+	// Checks if the rest starts with `" column="` and pass it
+	if len(p.rest) >= 8 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&18446744073709551615 == 4426595834849616672 {
+		p.rest = p.rest[8:]
+	} else {
+		return false, nil
+	}
+
+	// Take until ')' as Column(uint32)
+	pos = bytes.IndexByte(p.rest, ')')
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Column = uint32(tmpUint)
+
+	// Checks if the rest starts with `", expected one of: ("` and pass it
+	if bytes.HasPrefix(p.rest, commaSpaceExpectedSpaceOneSpaceOfColonSpaceLbrack) {
+		p.rest = p.rest[len(commaSpaceExpectedSpaceOneSpaceOfColonSpaceLbrack):]
+	} else {
+		return false, nil
+	}
+
 	return true, nil
 }

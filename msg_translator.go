@@ -11,13 +11,15 @@ import (
 
 // ErrorTranslator translates gocc error messages in human readable form
 type ErrorTranslator struct {
-	te *TypeError
+	te  *TypeError
+	ne1 *NoEnd1Error
 }
 
 // NewErrorTranslator ...
 func NewErrorTranslator() *ErrorTranslator {
 	return &ErrorTranslator{
-		te: &TypeError{},
+		te:  &TypeError{},
+		ne1: &NoEnd1Error{},
 	}
 }
 
@@ -32,13 +34,25 @@ func (et *ErrorTranslator) translate(err error) string {
 
 	data := []byte(err.Error())
 	if ok, errParsing = et.te.Extract(data); ok {
+		var msg string
+		if len(et.te.Name) == 0 {
+			msg = fmt.Sprintf("no type given")
+		} else {
+			msg = fmt.Sprintf("unsupported type `\033[1m%s\033[0m`", string(et.te.Name))
+		}
+		choices := strings.Split(string(et.te.Choices), " ")
+		for i, choice := range choices {
+			choices[i] = fmt.Sprintf("\033[1m%s\033[0m", choice)
+		}
 		return fmt.Sprintf(
-			"%d:%d: unsupported type `\033[1m%s\033[0m`, expected one of %s",
+			"%d:%d: %s, use one of %s",
 			et.te.Line,
 			et.te.Column,
-			string(et.te.Name),
-			strings.Join(strings.Split(string(et.te.Choices), " "), ", "),
+			msg,
+			strings.Join(choices, ", "),
 		)
+	} else if ok, errParsing = et.ne1.Extract(data); ok {
+		return fmt.Sprintf("%d:%d: it looks like `;` is missed in the previous rule", et.ne1.Line, et.ne1.Column)
 	}
 	return err.Error()
 }

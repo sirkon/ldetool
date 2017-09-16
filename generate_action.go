@@ -12,6 +12,10 @@ import (
 
 	"path/filepath"
 
+	"time"
+
+	"bufio"
+
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/ast"
 	"github.com/sirkon/ldetool/builder"
@@ -34,6 +38,11 @@ func generateAction(c *cli.Context) (err error) {
 
 	var errorToken *token.Token
 	defer func() {
+		if r := recover(); r != nil {
+			if v, ok := r.(string); !ok && v != "finish" {
+				panic(r)
+			}
+		}
 		if err != nil {
 			if errorToken != nil {
 				err = cli.NewExitError(fmt.Sprintf("%s:%d:%d: %s", c.Args()[0], errorToken.Line, errorToken.Column, err), 1)
@@ -43,12 +52,47 @@ func generateAction(c *cli.Context) (err error) {
 			}
 		}
 	}()
-	lex := lexer.NewLexer(input)
-	p := parser.NewParser()
-	w, err := p.Parse(lex)
-	if err != nil {
+
+	////////////////////////////
+	// Unfortunately, generated parser may hang if no expected element was not found
+	// Thus the workaround, where we just expect parsing to be completed within 2 seconds
+	resultChan := make(chan interface{})
+	go func() {
+		lex := lexer.NewLexer(input)
+		p := parser.NewParser()
+		w, err := p.Parse(lex)
+		if err != nil {
+			return
+		}
+		resultChan <- w
+	}()
+	var w interface{}
+	select {
+	case kkk := <-resultChan:
+		w = kkk
+	case <-time.After(time.Second * 2):
+		var count int
+		var column int
+		scanner := bufio.NewScanner(bytes.NewBuffer(input))
+		i := 0
+		for scanner.Scan() {
+			if len(scanner.Bytes()) > 0 {
+				count = i + 1
+				column = len(scanner.Bytes()) + 1
+			}
+			i++
+		}
+		err = fmt.Errorf("Probably, `\033[1m;\033[0m` missed")
+		errorToken = &token.Token{
+			Pos: token.Pos{
+				Line:   count,
+				Column: column,
+			},
+		}
 		return
 	}
+	///////////////
+
 	rules, ok := w.([]ast.RuleItem)
 	if !ok {
 		return fmt.Errorf("not a parsing scripts file")
