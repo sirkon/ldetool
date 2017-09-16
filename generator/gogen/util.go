@@ -9,20 +9,6 @@ import (
 	"github.com/sirkon/ldetool/token"
 )
 
-func (g *Generator) lookupPush(name string, lower, upper int) {
-	g.lookupStack = append(g.lookupStack, LookupItem{
-		Name:  name,
-		Lower: lower,
-		Upper: upper,
-	})
-}
-
-func (g *Generator) lookupPop() LookupItem {
-	res := g.lookupStack[len(g.lookupStack)-1]
-	g.lookupStack = g.lookupStack[:len(g.lookupStack)-1]
-	return res
-}
-
 // constNameFromContent generates name of the constant based on content
 func (g *Generator) constNameFromContent(value string) string {
 	w := mnemo.New()
@@ -143,7 +129,6 @@ func (g *Generator) tmpSuspectancy(inputType string) bool {
 	if !ok {
 		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))
 	}
-	g.tmpSuspected = suspected
 	return suspected
 }
 

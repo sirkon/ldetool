@@ -9,6 +9,7 @@ import (
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 	"github.com/sirkon/ldetool/token"
+	"github.com/sirkon/message"
 )
 
 // Name provides a link between token and string
@@ -17,64 +18,51 @@ type Name struct {
 	token *token.Token
 }
 
-// LookupItem keeps last lookup cooridinates
-type LookupItem struct {
-	Name  string
-	Lower int
-	Upper int
-}
-
 // Generator implementation of generator.Generator
 // for Go target
 type Generator struct {
-	rules          map[string]*token.Token
-	consts         map[string]string
-	fields         map[string]Name
-	vars           map[string]string
-	imports        map[string]string
-	scopeAbandoned map[string]bool
+	rules          map[string]*token.Token // Register rule names to check duplication
+	consts         map[string]string       // string constants for reuse
+	fields         map[string]Name         // Field names obviously should have different names
+	vars           map[string]string       // Function local variables
+	imports        map[string]string       // Set of import paths
+	scopeAbandoned map[string]bool         // Set check if the current scope was abandoned due to mismatch
 
-	namespaces  []string
-	lookupStack []LookupItem
+	namespaces []string // Stack of namespaces (each item is a name of optional area)
 
-	serious bool
-	goish   *gotify.Gotify
+	critical bool           // Treat mismatch errors as critical
+	goish    *gotify.Gotify // identifier gotification service
 
+	// gravity is not used yet, planned to clarify mismatch position against the rule, something like
+	// "Could not find string `name=` right before Parameter.Name field" or
+	// "Could not find string 'FETCH' between Time and Timeout fields", etc
 	gravity []string
-	pos     int
 
-	file       *srcobj.File
-	body       *srcobj.Body
-	obj        []*srcobj.Struct
-	optgetters *srcobj.Body
-	vargen     *srcobj.Vars
-
+	// Source object representation primitives
+	file       *srcobj.File     // File image
+	body       *srcobj.Body     // Current method image
+	obj        []*srcobj.Struct // Image of the structure
+	optgetters *srcobj.Body     // Option getters for current structure
+	vargen     *srcobj.Vars     // Function variables image
 	decoderMap map[string]func(src srcobj.Source, dest string)
 
-	parserName string
-
-	tmpSuspected bool
+	curRuleName string // Name of currently processing rule
 }
 
 // NewGenerator constructor
 func NewGenerator(goish *gotify.Gotify) *Generator {
 	res := &Generator{
-		rules:          map[string]*token.Token{},
-		consts:         map[string]string{},
-		fields:         map[string]Name{},
-		imports:        map[string]string{},
-		scopeAbandoned: map[string]bool{},
-		namespaces:     nil,
-		lookupStack:    nil,
+		rules:   map[string]*token.Token{},
+		consts:  map[string]string{},
+		imports: map[string]string{},
 
-		serious: false,
-		vars:    map[string]string{},
-		goish:   goish,
-		gravity: nil,
-		pos:     0,
+		critical: false,
+		vars:     map[string]string{},
+		goish:    goish,
+		gravity:  nil,
 
-		file:       srcobj.NewFile(),
-		parserName: "",
+		file:        srcobj.NewFile(),
+		curRuleName: "",
 	}
 
 	res.decoderMap = map[string]func(src srcobj.Source, dest string){
@@ -103,14 +91,18 @@ func (g *Generator) varName(name string) string {
 
 // UseRule ...
 func (g *Generator) UseRule(name string, t *token.Token) {
-	if len(g.parserName) != 0 {
-		panic(fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.parserName))
+	if len(g.curRuleName) != 0 {
+		panic(fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.curRuleName))
 	}
 	if prev, ok := g.rules[name]; ok {
 		panic(fmt.Errorf("%d: redeclaration of rule `%s` which has already been defined at line %d", t.Line, name, prev.Line))
 	}
 	g.rules[name] = t
-	g.parserName = name
+	g.fields = map[string]Name{}
+	g.scopeAbandoned = map[string]bool{}
+	g.vars = map[string]string{}
+	g.namespaces = nil
+	g.curRuleName = name
 	g.obj = []*srcobj.Struct{g.file.AddExtractor(name)}
 	g.curObj().AddString("rest")
 	g.body = g.file.AddExtract(name).Body()
@@ -155,7 +147,7 @@ func (g *Generator) failure(format string, params ...srcobj.Source) (res srcobj.
 			srcobj.Semicolon,
 			srcobj.Goto(g.label()),
 		)
-	} else if g.serious {
+	} else if g.critical {
 		g.regImport("", "fmt")
 		res = srcobj.ReturnError(format, params...)
 	} else {
@@ -197,18 +189,21 @@ func (g *Generator) PassN(n int) {
 	)
 }
 
-// Stress mismatches should be treated as serious errors
+// Stress mismatches should be treated as critical errors
 func (g *Generator) Stress() {
-	g.serious = true
+	g.critical = true
 }
 
 // Relax ...
 func (g *Generator) Relax() {
-	g.serious = false
+	g.critical = false
 }
 
 // Generate writes into io.Writer
 func (g *Generator) Generate(pkgName string, dest io.Writer) {
+	for i, gr := range g.gravity {
+		message.Infof("%2d: %+v", i, gr)
+	}
 	g.file.PkgName(pkgName)
 	if err := g.file.Dump(dest); err != nil {
 		panic(err)
@@ -217,7 +212,7 @@ func (g *Generator) Generate(pkgName string, dest io.Writer) {
 
 // Push pushes data
 func (g *Generator) Push() {
-	if len(g.parserName) == 0 {
+	if len(g.curRuleName) == 0 {
 		panic(fmt.Errorf("no rule has been set up to push it now"))
 	}
 
@@ -226,12 +221,11 @@ func (g *Generator) Push() {
 	g.file.Append(g.optgetters)
 
 	g.Relax()
-	g.serious = false
-	g.lookupStack = nil
+	g.critical = false
 	g.vars = map[string]string{}
 	g.fields = map[string]Name{}
 	g.scopeAbandoned = map[string]bool{}
-	g.parserName = ""
+	g.curRuleName = ""
 }
 
 // RegGravity registers center of gravity
@@ -253,14 +247,4 @@ func (g *Generator) AtEnd() {
 			),
 		},
 	)
-}
-
-// TmpOn sets tmpSuspected state to on
-func (g *Generator) TmpOn() {
-	g.tmpSuspected = true
-}
-
-// TmpOff sets tmpSuspected state to off
-func (g *Generator) TmpOff() {
-	g.tmpSuspected = false
 }
