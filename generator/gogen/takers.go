@@ -17,7 +17,7 @@ if pos = bytes.Index(p.rest, {{ .ConstName }}); pos >= 0 {
 
 // getterGen generates optional getter
 func (g *Generator) getterGen(name, fieldType string) {
-	if len(g.curRuleName) == 0 {
+	if len(g.ruleName) == 0 {
 		panic(fmt.Errorf("Rule set up required"))
 	}
 	if len(g.namespaces) == 0 {
@@ -25,7 +25,7 @@ func (g *Generator) getterGen(name, fieldType string) {
 	}
 
 	method := srcobj.NewAccessor(
-		g.curRuleName,
+		g.ruleName,
 		g.goish.Public("get_"+strings.Join(append(g.namespaces, name), "_")),
 		srcobj.Go2ResultType(fieldType),
 	)

@@ -46,7 +46,7 @@ type Generator struct {
 	vargen     *srcobj.Vars     // Function variables image
 	decoderMap map[string]func(src srcobj.Source, dest string)
 
-	curRuleName string // Name of currently processing rule
+	ruleName string // Name of currently processing rule
 }
 
 // NewGenerator constructor
@@ -61,8 +61,8 @@ func NewGenerator(goish *gotify.Gotify) *Generator {
 		goish:    goish,
 		gravity:  nil,
 
-		file:        srcobj.NewFile(),
-		curRuleName: "",
+		file:     srcobj.NewFile(),
+		ruleName: "",
 	}
 
 	res.decoderMap = map[string]func(src srcobj.Source, dest string){
@@ -91,8 +91,8 @@ func (g *Generator) varName(name string) string {
 
 // UseRule ...
 func (g *Generator) UseRule(name string, t *token.Token) {
-	if len(g.curRuleName) != 0 {
-		panic(fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.curRuleName))
+	if len(g.ruleName) != 0 {
+		panic(fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.ruleName))
 	}
 	if prev, ok := g.rules[name]; ok {
 		panic(fmt.Errorf("%d: redeclaration of rule `%s` which has already been defined at line %d", t.Line, name, prev.Line))
@@ -102,7 +102,7 @@ func (g *Generator) UseRule(name string, t *token.Token) {
 	g.scopeAbandoned = map[string]bool{}
 	g.vars = map[string]string{}
 	g.namespaces = nil
-	g.curRuleName = name
+	g.ruleName = name
 	g.obj = []*srcobj.Struct{g.file.AddExtractor(name)}
 	g.curObj().AddString("rest")
 	g.body = g.file.AddExtract(name).Body()
@@ -212,7 +212,7 @@ func (g *Generator) Generate(pkgName string, dest io.Writer) {
 
 // Push pushes data
 func (g *Generator) Push() {
-	if len(g.curRuleName) == 0 {
+	if len(g.ruleName) == 0 {
 		panic(fmt.Errorf("no rule has been set up to push it now"))
 	}
 
@@ -225,7 +225,7 @@ func (g *Generator) Push() {
 	g.vars = map[string]string{}
 	g.fields = map[string]Name{}
 	g.scopeAbandoned = map[string]bool{}
-	g.curRuleName = ""
+	g.ruleName = ""
 }
 
 // RegGravity registers center of gravity
