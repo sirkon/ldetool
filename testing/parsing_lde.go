@@ -53,7 +53,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int8 = int8(tmpInt)
 
@@ -66,7 +66,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int16 = int16(tmpInt)
 
@@ -79,7 +79,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int32 = int32(tmpInt)
 
@@ -92,7 +92,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int64 = int64(tmpInt)
 
@@ -105,7 +105,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint8 = uint8(tmpUint)
 
@@ -118,7 +118,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint16 = uint16(tmpUint)
 
@@ -131,7 +131,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint32 = uint32(tmpUint)
 
@@ -144,7 +144,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint64 = uint64(tmpUint)
 
@@ -157,7 +157,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float32 = float32(tmpFloat)
 
@@ -170,7 +170,7 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float64 = float64(tmpFloat)
 
@@ -222,7 +222,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int8 = int8(tmpInt)
 
@@ -235,7 +235,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int16 = int16(tmpInt)
 
@@ -248,7 +248,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int32 = int32(tmpInt)
 
@@ -261,7 +261,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int64 = int64(tmpInt)
 
@@ -274,7 +274,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint8 = uint8(tmpUint)
 
@@ -287,7 +287,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint16 = uint16(tmpUint)
 
@@ -300,7 +300,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint32 = uint32(tmpUint)
 
@@ -313,7 +313,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint64 = uint64(tmpUint)
 
@@ -326,7 +326,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float32 = float32(tmpFloat)
 
@@ -339,7 +339,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float64 = float64(tmpFloat)
 
@@ -379,7 +379,7 @@ func (p *DecodersBounded) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int64 = int64(tmpInt)
 
@@ -421,7 +421,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int8 = int8(tmpInt)
 
@@ -434,7 +434,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int16 = int16(tmpInt)
 
@@ -447,7 +447,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int32 = int32(tmpInt)
 
@@ -460,7 +460,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int64 = int64(tmpInt)
 
@@ -473,7 +473,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint8 = uint8(tmpUint)
 
@@ -486,7 +486,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint16 = uint16(tmpUint)
 
@@ -499,7 +499,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint32 = uint32(tmpUint)
 
@@ -512,7 +512,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint64 = uint64(tmpUint)
 
@@ -525,7 +525,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float32 = float32(tmpFloat)
 
@@ -538,7 +538,7 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float64 = float64(tmpFloat)
 
@@ -590,7 +590,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int8 = int8(tmpInt)
 
@@ -603,7 +603,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int16 = int16(tmpInt)
 
@@ -616,7 +616,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int32 = int32(tmpInt)
 
@@ -629,7 +629,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int64 = int64(tmpInt)
 
@@ -642,7 +642,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint8 = uint8(tmpUint)
 
@@ -655,7 +655,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint16 = uint16(tmpUint)
 
@@ -668,7 +668,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint32 = uint32(tmpUint)
 
@@ -681,7 +681,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Uint64 = uint64(tmpUint)
 
@@ -694,7 +694,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 32); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float32 = float32(tmpFloat)
 
@@ -707,7 +707,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float64 = float64(tmpFloat)
 
@@ -747,7 +747,7 @@ func (p *DecodersBoundedString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
-		return false, nil
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Float64 = float64(tmpFloat)
 
@@ -1515,7 +1515,7 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 		tmp = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
-		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", ' ', string(p.rest))
+		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
 		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
@@ -1544,11 +1544,12 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 	p.Head.Valid = true
 	p.rest = headRest
 headLabel:
+
 	// Checks if the rest starts with `"end"` and pass it
 	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&16777215 == 6581861 {
 		p.rest = p.rest[3:]
 	} else {
-		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), "end")
+		return false, nil
 	}
 
 	return true, nil
@@ -1616,6 +1617,7 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 	p.Head.Valid = true
 	p.rest = headRest
 headLabel:
+
 	// Checks if the rest starts with `"end"` and pass it
 	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&16777215 == 6581861 {
 		p.rest = p.rest[3:]
@@ -1802,6 +1804,7 @@ headLabel:
 	p.Rest.Valid = true
 	p.rest = restRest
 restLabel:
+
 	return true, nil
 }
 

@@ -66,8 +66,12 @@ func (s *Listener) ExitAtomicRule(ctx *parser.AtomicRuleContext) {}
 
 // EnterBaseAction is called when production baseAction is entered.
 func (s *Listener) EnterBaseAction(ctx *parser.BaseActionContext) {
-	if ctx.GetStart().GetText() == "!" {
-		s.ai.ErrorOnMismatch = true
+	if ctx.Stress() != nil {
+		res := &ast.ActionItem{
+			ErrorOnMismatch: true,
+		}
+		s.seq().Append(res)
+		s.ai = nil
 	}
 }
 
@@ -200,7 +204,11 @@ func (s *Listener) EnterAtEnd(ctx *parser.AtEndContext) {
 func (s *Listener) ExitAtEnd(ctx *parser.AtEndContext) {}
 
 // EnterTarget is called when production target is entered.
-func (s *Listener) EnterTarget(ctx *parser.TargetContext) {}
+func (s *Listener) EnterTarget(ctx *parser.TargetContext) {
+	if ctx.Target() != nil {
+		s.target.SetClose()
+	}
+}
 
 // ExitTarget is called when production target is exited.
 func (s *Listener) ExitTarget(ctx *parser.TargetContext) {}

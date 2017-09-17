@@ -10,217 +10,74 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"strconv"
 	"unsafe"
 )
 
-var commaSpaceExpectedSpaceOneSpaceOfColonSpace = []byte(", expected one of: ")
-var commaSpaceExpectedSpaceOneSpaceOfColonSpaceLbrack = []byte(", expected one of: (")
-var errorSpaceInSpaceS49Colon = []byte("Error in S49:")
-var errorSpaceInSpaceS7ColonSpaceEq = []byte("Error in S7: =")
-var lbrack = []byte("(")
-var lineEq = []byte("line=")
-var posLbrack = []byte("Pos(")
-
-// TypeError ...
-type TypeError struct {
+// Orig ...
+type Orig struct {
 	rest    []byte
-	Name    []byte
-	Line    uint32
-	Column  uint32
-	Choices []byte
+	Line    int32
+	Column  int32
+	Message []byte
 }
 
 // Extract ...
-func (p *TypeError) Extract(line []byte) (bool, error) {
+func (p *Orig) Extract(line []byte) (bool, error) {
 	p.rest = line
 	var err error
 	var pos int
 	var tmp []byte
-	var tmpUint uint64
+	var tmpInt int64
 
-	// Checks if the rest starts with `"Error in S49:"` and pass it
-	if bytes.HasPrefix(p.rest, errorSpaceInSpaceS49Colon) {
-		p.rest = p.rest[len(errorSpaceInSpaceS49Colon):]
+	// Checks if the rest starts with `"line "` and pass it
+	if len(p.rest) >= 5 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&1099511627775 == 139140688236 {
+		p.rest = p.rest[5:]
 	} else {
 		return false, nil
 	}
 
-	// Looking for "(" and then pass it
-	pos = bytes.Index(p.rest, lbrack)
-	if pos >= 0 {
-		p.rest = p.rest[pos+len(lbrack):]
-	} else {
-		return false, nil
+	// Take until ':' as Line(int32)
+	pos = -1
+	for i, char := range p.rest {
+		if char == ':' {
+			pos = i
+			break
+		}
 	}
-
-	// Looking for ',' and then pass it
-	pos = bytes.IndexByte(p.rest, ',')
-	if pos >= 0 {
-		p.rest = p.rest[pos+1:]
-	} else {
-		return false, nil
-	}
-
-	// Take until ')' as Name(string)
-	pos = bytes.IndexByte(p.rest, ')')
 	if pos >= 0 {
 		tmp = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
-	p.Name = tmp
-
-	// Looking for "Pos(" and then pass it
-	pos = bytes.Index(p.rest, posLbrack)
-	if pos >= 0 {
-		p.rest = p.rest[pos+len(posLbrack):]
-	} else {
-		return false, nil
-	}
-
-	// Looking for "line=" and then pass it
-	pos = bytes.Index(p.rest, lineEq)
-	if pos >= 0 {
-		p.rest = p.rest[pos+len(lineEq):]
-	} else {
-		return false, nil
-	}
-
-	// Take until ',' as Line(uint32)
-	pos = bytes.IndexByte(p.rest, ',')
-	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
-	} else {
-		return false, nil
-	}
-	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
-	p.Line = uint32(tmpUint)
+	p.Line = int32(tmpInt)
 
-	// Checks if the rest starts with `" column="` and pass it
-	if len(p.rest) >= 8 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&18446744073709551615 == 4426595834849616672 {
-		p.rest = p.rest[8:]
-	} else {
-		return false, nil
+	// Take until ' ' as Column(int32)
+	pos = -1
+	for i, char := range p.rest {
+		if char == ' ' {
+			pos = i
+			break
+		}
 	}
-
-	// Take until ')' as Column(uint32)
-	pos = bytes.IndexByte(p.rest, ')')
 	if pos >= 0 {
 		tmp = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
-	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
-	p.Column = uint32(tmpUint)
+	p.Column = int32(tmpInt)
 
-	// Checks if the rest starts with `", expected one of: "` and pass it
-	if bytes.HasPrefix(p.rest, commaSpaceExpectedSpaceOneSpaceOfColonSpace) {
-		p.rest = p.rest[len(commaSpaceExpectedSpaceOneSpaceOfColonSpace):]
-	} else {
-		return false, nil
-	}
-
-	// Take the rest as Choices(string)
-	p.Choices = p.rest
+	// Take the rest as Message(string)
+	p.Message = p.rest
 	p.rest = p.rest[len(p.rest):]
-	return true, nil
-}
-
-// NoEnd1Error ...
-type NoEnd1Error struct {
-	rest   []byte
-	Line   uint32
-	Column uint32
-}
-
-// Extract ...
-func (p *NoEnd1Error) Extract(line []byte) (bool, error) {
-	p.rest = line
-	var err error
-	var pos int
-	var tmp []byte
-	var tmpUint uint64
-
-	// Checks if the rest starts with `"Error in S7: ="` and pass it
-	if bytes.HasPrefix(p.rest, errorSpaceInSpaceS7ColonSpaceEq) {
-		p.rest = p.rest[len(errorSpaceInSpaceS7ColonSpaceEq):]
-	} else {
-		return false, nil
-	}
-
-	// Looking for ',' and then pass it
-	pos = bytes.IndexByte(p.rest, ',')
-	if pos >= 0 {
-		p.rest = p.rest[pos+1:]
-	} else {
-		return false, nil
-	}
-
-	// Looking for "Pos(" and then pass it
-	pos = bytes.Index(p.rest, posLbrack)
-	if pos >= 0 {
-		p.rest = p.rest[pos+len(posLbrack):]
-	} else {
-		return false, nil
-	}
-
-	// Looking for "line=" and then pass it
-	pos = bytes.Index(p.rest, lineEq)
-	if pos >= 0 {
-		p.rest = p.rest[pos+len(lineEq):]
-	} else {
-		return false, nil
-	}
-
-	// Take until ',' as Line(uint32)
-	pos = bytes.IndexByte(p.rest, ',')
-	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
-	} else {
-		return false, nil
-	}
-	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
-	}
-	p.Line = uint32(tmpUint)
-
-	// Checks if the rest starts with `" column="` and pass it
-	if len(p.rest) >= 8 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&18446744073709551615 == 4426595834849616672 {
-		p.rest = p.rest[8:]
-	} else {
-		return false, nil
-	}
-
-	// Take until ')' as Column(uint32)
-	pos = bytes.IndexByte(p.rest, ')')
-	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
-	} else {
-		return false, nil
-	}
-	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
-	}
-	p.Column = uint32(tmpUint)
-
-	// Checks if the rest starts with `", expected one of: ("` and pass it
-	if bytes.HasPrefix(p.rest, commaSpaceExpectedSpaceOneSpaceOfColonSpaceLbrack) {
-		p.rest = p.rest[len(commaSpaceExpectedSpaceOneSpaceOfColonSpaceLbrack):]
-	} else {
-		return false, nil
-	}
-
 	return true, nil
 }

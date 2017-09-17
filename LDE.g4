@@ -9,9 +9,9 @@ atomicRule
     : Identifier '=' baseAction ';';
 
 baseAction
-    : '(' baseAction ')' baseAction
+    : Stress baseAction
+    | '(' baseAction ')' baseAction
     | '(' baseAction ')'
-    | '!' baseAction
     | atomicAction baseAction
     | atomicAction
     ;
@@ -127,4 +127,8 @@ WS
 
 LineComment
     : '#' ~[\r\n]* -> skip
+    ;
+
+Stress
+    : '!'
     ;

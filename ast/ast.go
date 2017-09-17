@@ -74,6 +74,8 @@ func (ai *ActionItem) String() string {
 			ai.TakeUntilOrRest.Limit.Value, ai.TakeUntilOrRest.Field.Name, ai.TakeUntilOrRest.Field.Type)
 	case ai.PassFirst != nil:
 		return fmt.Sprintf("Passing first %d letters", ai.PassFirst)
+	case ai.ErrorOnMismatch:
+		return fmt.Sprintf("Treating all remaining mismatches in the rule as critical errors")
 
 	default:
 		panic("Must not happen!")

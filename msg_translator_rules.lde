@@ -1,15 +1,4 @@
-TypeError =
-  ^"Error in S49:" _"("
-  _',' Name(string) ')'
-  _"Pos("
-  _"line=" Line(uint32) ','
-  ^" column=" Column(uint32) ')'
-  ^", expected one of: "
-  Choices(string);
-
-NoEnd1Error =
-  ^"Error in S7: =" _',' ^'='
-  _"Pos("
-  _"line=" Line(uint32) ','
-  ^" column=" Column(uint32) ')'
-  ^", expected one of: (";
+Orig = !
+    ^"line "
+    Line(int32) ~':' Column(int32) ~' '
+    Message(string);

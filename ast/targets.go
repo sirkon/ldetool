@@ -32,8 +32,8 @@ func (t *Target) SetString(text string) {
 }
 
 // SetLimit sets target limit
-func (t *Target) SetLimit(lower int) {
-	t.Lower = lower
+func (t *Target) SetLimit(upper int) {
+	t.Upper = upper
 }
 
 // SetBound sets target bound
