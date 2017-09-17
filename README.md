@@ -70,7 +70,7 @@ Line =                                   # Name of the extraction object' type
   ^"first[" First(uint8) ']'[1]          # The rest must starts with "first[" characters, then take the rest until ']' as uint8. It is
                                          # known First is the single character, thus the [1] index.
                                          # under the name of First
-  ^" format[" Format(string) ']'[]       # Take format id. Format is a short word: XML, JSON, BIN. [] after ']' suggests
+  ^" format[" Format(string) ~']'        # Take format id. Format is a short word: XML, JSON, BIN. ~ before lookup oobject suggests
                                          # generator to use for loop scan rather than IndexByte, which is although fast
                                          # has call overhead as it cannot be inlined by Go compiler.
   ?Hidden (^" hidden[" Value(uint8) ']') # Optionally look for " hidden[\d+]"
