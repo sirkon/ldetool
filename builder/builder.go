@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/ast"
-	"github.com/sirkon/ldetool/token"
 
 	"github.com/sirkon/ldetool/generator"
 	"github.com/sirkon/message"
@@ -20,7 +20,7 @@ type Builder struct {
 	recoverPanic bool
 	gotify       *gotify.Gotify
 
-	errToken *token.Token
+	errToken antlr.Token
 }
 
 // NewBuilder constructor
@@ -40,7 +40,7 @@ func (b *Builder) DontRecover() {
 }
 
 // BuildRule builds shit from the data
-func (b *Builder) BuildRule(rule ast.RuleItem) (err error) {
+func (b *Builder) BuildRule(rule *ast.RuleItem) (err error) {
 	if b.recoverPanic {
 		defer func() {
 			if r := recover(); r != nil {
@@ -52,7 +52,7 @@ func (b *Builder) BuildRule(rule ast.RuleItem) (err error) {
 		}()
 	}
 	b.gen.UseRule(rule.Name, rule.NameToken)
-	generators, err := b.composeRules(NewPrefix(), b.gen, &rule.Actions)
+	generators, err := b.composeRules(NewPrefix(), b.gen, rule.Actions)
 	if err != nil {
 		return
 	}
@@ -80,15 +80,15 @@ func (b *Builder) checkField(field ast.Field) error {
 	return nil
 }
 
-func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.ActionSequence) (generators []func(), err error) {
-	if a == nil {
+func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.ActionItem) (generators []func(), err error) {
+	if len(a) == 0 {
 		return
 	}
-	it := a.Head
+	it := a[0]
 	message.Info(it)
 
 	// Set on stress
-	if a.ErrorOnMismatch {
+	if it.ErrorOnMismatch {
 		generators = append(generators, g.Stress)
 	}
 
@@ -291,7 +291,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 			g.OpenOptionalScope(it.Option.Name, it.Option.NameToken)
 		})
 		var newgens []func()
-		newgens, err = b.composeRules(gPrefix.Add(it.Option.Name), g, &it.Option.Actions)
+		newgens, err = b.composeRules(gPrefix.Add(it.Option.Name), g, it.Option.Actions)
 		if err != nil {
 			return
 		}
@@ -309,7 +309,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 		})
 	}
 
-	newgens, err := b.composeRules(gPrefix, g, a.Tail)
+	newgens, err := b.composeRules(gPrefix, g, a[1:])
 	if err != nil {
 		return
 	}
@@ -317,6 +317,6 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a *ast.Act
 }
 
 // ErrorToken returns token where error happened
-func (b *Builder) ErrorToken() *token.Token {
+func (b *Builder) ErrorToken() antlr.Token {
 	return b.errToken
 }

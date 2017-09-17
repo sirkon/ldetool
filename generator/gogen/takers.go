@@ -74,12 +74,10 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 
 	var rest srcobj.Source
 	if upper > 0 {
-		u := fmt.Sprintf("%d", upper)
 		if lower > 0 {
-			l := fmt.Sprintf("%d", lower)
-			rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Raw(l), srcobj.Raw(u))
+			rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
 		} else {
-			rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw(u))
+			rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
 		}
 	} else {
 		rest = srcobj.Raw(g.curRestVar())

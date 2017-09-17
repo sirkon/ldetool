@@ -3,13 +3,13 @@ package generator
 import (
 	"io"
 
-	"github.com/sirkon/ldetool/token"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // Generator describes methods needed of data lookup and extraction
 type Generator interface {
 	// Data handlers
-	AddField(name string, fieldType string, t *token.Token)
+	AddField(name string, fieldType string, t antlr.Token)
 	RegGravity(name string)
 
 	// Pass
@@ -37,7 +37,7 @@ type Generator interface {
 	TakeRest(name, fieldType string)
 
 	// Optionals
-	OpenOptionalScope(name string, t *token.Token)
+	OpenOptionalScope(name string, t antlr.Token)
 	CloseOptionalScope()
 
 	// Stress set mismatch treatment as critical error
@@ -47,7 +47,7 @@ type Generator interface {
 	Relax()
 
 	// UseRule ...
-	UseRule(name string, t *token.Token)
+	UseRule(name string, t antlr.Token)
 
 	// Push is used to signal all the data for current parser was generated
 	Push()

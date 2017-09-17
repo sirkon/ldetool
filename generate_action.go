@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -12,31 +11,21 @@ import (
 
 	"path/filepath"
 
-	"time"
-
-	"bufio"
-
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
-	"github.com/sirkon/ldetool/ast"
 	"github.com/sirkon/ldetool/builder"
 	"github.com/sirkon/ldetool/generator/gogen"
-	"github.com/sirkon/ldetool/lexer"
+	"github.com/sirkon/ldetool/listener"
 	"github.com/sirkon/ldetool/parser"
-	"github.com/sirkon/ldetool/token"
 	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
 
 func generateAction(c *cli.Context) (err error) {
-	inputSource := c.Args()[0]
-	input, err := ioutil.ReadFile(inputSource)
-	if err != nil {
-		return cli.NewExitError(err, 1)
-	}
 
 	et := NewErrorTranslator()
 
-	var errorToken *token.Token
+	var errorToken antlr.Token
 	defer func() {
 		if r := recover(); r != nil {
 			if v, ok := r.(string); !ok && v != "finish" {
@@ -45,7 +34,7 @@ func generateAction(c *cli.Context) (err error) {
 		}
 		if err != nil {
 			if errorToken != nil {
-				err = cli.NewExitError(fmt.Sprintf("%s:%d:%d: %s", c.Args()[0], errorToken.Line, errorToken.Column, err), 1)
+				err = cli.NewExitError(fmt.Sprintf("%s:%d:%d: %s", c.Args()[0], 1, 2, err), 1)
 			} else {
 				err = et.Translate(err)
 				err = cli.NewExitError(fmt.Sprintf("%s:%s", c.Args()[0], err), 1)
@@ -53,56 +42,32 @@ func generateAction(c *cli.Context) (err error) {
 		}
 	}()
 
-	////////////////////////////
-	// Unfortunately, generated parser may hang if no expected element was not found
-	// Thus the workaround, where we just expect parsing to be completed within 2 seconds
-	resultChan := make(chan interface{})
-	go func() {
-		lex := lexer.NewLexer(input)
-		p := parser.NewParser()
-		w, err := p.Parse(lex)
-		if err != nil {
-			return
-		}
-		resultChan <- w
-	}()
-	var w interface{}
-	select {
-	case kkk := <-resultChan:
-		w = kkk
-	case <-time.After(time.Second * 2):
-		var count int
-		var column int
-		scanner := bufio.NewScanner(bytes.NewBuffer(input))
-		i := 0
-		for scanner.Scan() {
-			if len(scanner.Bytes()) > 0 {
-				count = i + 1
-				column = len(scanner.Bytes()) + 1
-			}
-			i++
-		}
-		err = fmt.Errorf("Probably, `\033[1m;\033[0m` missed")
-		errorToken = &token.Token{
-			Pos: token.Pos{
-				Line:   count,
-				Column: column,
-			},
-		}
+	fileName := c.Args()[0]
+	input := antlr.NewFileStream(fileName)
+	if err != nil {
 		return
 	}
-	///////////////
+	lexer := parser.NewLDELexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	p := parser.NewLDEParser(stream)
+	tree := p.Rules()
+	walker := antlr.NewParseTreeWalker()
+	l := listener.New()
 
-	rules, ok := w.([]ast.RuleItem)
-	if !ok {
-		return fmt.Errorf("not a parsing scripts file")
+	walker.Walk(l, tree)
+	p.SetErrorHandler(nil)
+
+	if err != nil {
+		return cli.NewExitError(err, 1)
 	}
+
+	rules := l.Rules()
 	formatDict := getDict(c)
 
-	if strings.HasSuffix(inputSource, ".lde") {
-		inputSource = inputSource[:len(inputSource)-4]
+	if strings.HasSuffix(fileName, ".lde") {
+		fileName = fileName[:len(fileName)-4]
 	}
-	dirPath, fname := filepath.Split(inputSource)
+	dirPath, fname := filepath.Split(fileName)
 	fname = fmt.Sprintf("%s_lde.go", strings.Replace(fname, ".", "_", -1))
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)

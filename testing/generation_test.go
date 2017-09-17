@@ -227,7 +227,7 @@ func TestDecoderOptionals(t *testing.T) {
 
 	ok, err = d.Extract([]byte(`12 head=13`))
 	require.False(t, ok)
-	require.NotNil(t, err)
+	require.Nil(t, err)
 
 	ds := &DecoderOptionalsStress{}
 
