@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -28,8 +29,13 @@ func generateAction(c *cli.Context) (err error) {
 	var errorToken antlr.Token
 	defer func() {
 		if r := recover(); r != nil {
-			if v, ok := r.(string); !ok && v != "finish" {
-				panic(r)
+			switch v := r.(type) {
+			case listener.ListenerError:
+				err = v
+			case string:
+				err = errors.New(v)
+			default:
+				panic(err)
 			}
 		}
 		if err != nil {
@@ -55,7 +61,6 @@ func generateAction(c *cli.Context) (err error) {
 	l := listener.New()
 
 	walker.Walk(l, tree)
-	p.SetErrorHandler(nil)
 
 	if err != nil {
 		return cli.NewExitError(err, 1)

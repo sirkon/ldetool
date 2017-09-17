@@ -5,6 +5,8 @@ package listener // LDE
 import (
 	"strconv"
 
+	"fmt"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/ldetool/ast"
 	"github.com/sirkon/ldetool/parser"
@@ -16,10 +18,19 @@ type appender interface {
 
 // Listener is a complete listener for a parse tree produced by LDEParser.
 type Listener struct {
-	rules   []*ast.RuleItem
-	ai      *ast.ActionItem
-	actions []appender
-	target  *ast.Target
+	rules     []*ast.RuleItem
+	ai        *ast.ActionItem
+	actions   []appender
+	target    *ast.Target
+	expectEnd bool
+}
+
+// ListenerError ...
+type ListenerError string
+
+// Error implementation
+func (le ListenerError) Error() string {
+	return string(le)
 }
 
 func New() *Listener {
@@ -37,7 +48,16 @@ func (s *Listener) VisitTerminal(node antlr.TerminalNode) {}
 func (s *Listener) VisitErrorNode(node antlr.ErrorNode) {}
 
 // EnterEveryRule is called when any rule is entered.
-func (s *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
+func (s *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {
+	if s.expectEnd {
+		token := ctx.GetStart()
+		panic(ListenerError(fmt.Sprintf(
+			"%d:%d: previous action consumed the rest of the string, making more actions doesn't make a sense",
+			token.GetLine(),
+			token.GetColumn(),
+		)))
+	}
+}
 
 // ExitEveryRule is called when any rule is exited.
 func (s *Listener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
@@ -173,7 +193,9 @@ func (s *Listener) EnterTakeUntilRest(ctx *parser.TakeUntilRestContext) {
 }
 
 // ExitTakeUntilRest is called when production takeUntilRest is exited.
-func (s *Listener) ExitTakeUntilRest(ctx *parser.TakeUntilRestContext) {}
+func (s *Listener) ExitTakeUntilRest(ctx *parser.TakeUntilRestContext) {
+	s.expectEnd = true
+}
 
 // EnterOptionalNamedArea is called when production optionalNamedArea is entered.
 func (s *Listener) EnterOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
