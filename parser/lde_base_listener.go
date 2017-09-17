@@ -147,6 +147,12 @@ func (s *BaseLDEListener) EnterLimit(ctx *LimitContext) {}
 // ExitLimit is called when production limit is exited.
 func (s *BaseLDEListener) ExitLimit(ctx *LimitContext) {}
 
+// EnterExact is called when production exact is entered.
+func (s *BaseLDEListener) EnterExact(ctx *ExactContext) {}
+
+// ExitExact is called when production exact is exited.
+func (s *BaseLDEListener) ExitExact(ctx *ExactContext) {}
+
 // EnterFieldType is called when production fieldType is entered.
 func (s *BaseLDEListener) EnterFieldType(ctx *FieldTypeContext) {}
 

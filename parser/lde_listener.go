@@ -71,6 +71,9 @@ type LDEListener interface {
 	// EnterLimit is called when entering the limit production.
 	EnterLimit(c *LimitContext)
 
+	// EnterExact is called when entering the exact production.
+	EnterExact(c *ExactContext)
+
 	// EnterFieldType is called when entering the fieldType production.
 	EnterFieldType(c *FieldTypeContext)
 
@@ -136,6 +139,9 @@ type LDEListener interface {
 
 	// ExitLimit is called when exiting the limit production.
 	ExitLimit(c *LimitContext)
+
+	// ExitExact is called when exiting the exact production.
+	ExitExact(c *ExactContext)
 
 	// ExitFieldType is called when exiting the fieldType production.
 	ExitFieldType(c *FieldTypeContext)

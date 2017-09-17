@@ -74,6 +74,7 @@ atEnd
 target
     : targetLit bound
     | targetLit limit
+    | targetLit exact
     | targetLit
     | '~' target;
 
@@ -87,6 +88,9 @@ bound
 
 limit
     : '[' ':' IntLit ']';
+
+exact
+    : '[' IntLit ']';
 
 fieldType
     : 'int8'

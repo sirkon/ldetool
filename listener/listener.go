@@ -246,6 +246,15 @@ func (s *Listener) EnterLimit(ctx *parser.LimitContext) {
 // ExitLimit is called when production limit is exited.
 func (s *Listener) ExitLimit(ctx *parser.LimitContext) {}
 
+// EnterExact is called when production exact is entered.
+func (s *Listener) EnterExact(ctx *parser.ExactContext) {
+	index, _ := strconv.Atoi(ctx.IntLit().GetText())
+	s.target.SetBound(index, index)
+}
+
+// ExitExact is called when production exact is exited.
+func (s *Listener) ExitExact(ctx *parser.ExactContext) {}
+
 // EnterFieldType is called when production fieldType is entered.
 func (s *Listener) EnterFieldType(ctx *parser.FieldTypeContext) {}
 
