@@ -3,7 +3,7 @@ package ast
 import (
 	"strconv"
 
-	"github.com/sirkon/ldetool/token"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // StartString ...
@@ -17,13 +17,13 @@ type StartChar struct {
 }
 
 // StartsWithString ...
-func StartsWithString(target Attrib) (Attrib, error) {
-	return StartString{Value: string(target.(*token.Token).Lit)}, nil
+func StartsWithString(target antlr.Token) (*StartString, error) {
+	return &StartString{Value: target.GetText()}, nil
 }
 
 // StartsWithChar ...
-func StartsWithChar(target Attrib) (Attrib, error) {
-	return StartChar{Value: string(target.(*token.Token).Lit)}, nil
+func StartsWithChar(target antlr.Token) (*StartChar, error) {
+	return &StartChar{Value: target.GetText()}, nil
 }
 
 // MayBeStartString ...
@@ -37,37 +37,37 @@ type MayBeStartChar struct {
 }
 
 // MayBeStartsWithString ...
-func MayBeStartsWithString(target Attrib) (Attrib, error) {
-	return MayBeStartString{Value: string(target.(*token.Token).Lit)}, nil
+func MayBeStartsWithString(value antlr.Token) (*MayBeStartString, error) {
+	return &MayBeStartString{Value: value.GetText()}, nil
 }
 
 // MayBeStartsWithChar ...
-func MayBeStartsWithChar(target Attrib) (Attrib, error) {
-	return MayBeStartChar{Value: string(target.(*token.Token).Lit)}, nil
+func MayBeStartsWithChar(value antlr.Token) (*MayBeStartChar, error) {
+	return &MayBeStartChar{Value: value.GetText()}, nil
 }
 
 // PassUntil ...
 type PassUntil struct {
-	Limit Target
+	Limit *Target
 }
 
 // PassUntilTarget ...
-func PassUntilTarget(target Attrib) (attr Attrib, err error) {
-	res := PassUntil{
-		Limit: target.(Target),
+func PassUntilTarget() (res *PassUntil, err error) {
+	res = &PassUntil{
+		Limit: NewTarget(),
 	}
 	return res, nil
 }
 
 // PassUntilOrIgnore ...
 type PassUntilOrIgnore struct {
-	Limit Target
+	Limit *Target
 }
 
 // PassUntilTargetOrIgnore ...
-func PassUntilTargetOrIgnore(target Attrib) (attr Attrib, err error) {
-	res := PassUntilOrIgnore{
-		Limit: target.(Target),
+func PassUntilTargetOrIgnore() (res *PassUntilOrIgnore, err error) {
+	res = &PassUntilOrIgnore{
+		Limit: NewTarget(),
 	}
 	return res, nil
 }
@@ -77,15 +77,15 @@ type Field struct {
 	Name string
 	Type string
 
-	NameToken *token.Token
-	TypeToken *token.Token
+	NameToken antlr.Token
+	TypeToken antlr.Token
 }
 
 // NewField constructor
-func NewField(name *token.Token, typeToken *token.Token) Field {
+func NewField(name antlr.Token, typeToken antlr.Token) Field {
 	return Field{
-		Name: string(name.Lit),
-		Type: string(typeToken.Lit),
+		Name: string(name.GetText()),
+		Type: string(typeToken.GetText()),
 
 		NameToken: name,
 		TypeToken: typeToken,
@@ -95,17 +95,17 @@ func NewField(name *token.Token, typeToken *token.Token) Field {
 // Take ...
 type Take struct {
 	Field Field
-	Limit Target
+	Limit *Target
 }
 
 // TakeUntilTarget ...
-func TakeUntilTarget(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
-	f := NewField(field.(*token.Token), fieldType.(*token.Token))
-	res := Take{
+func TakeUntilTarget(field, fieldType antlr.Token) (res *Take, err error) {
+	f := NewField(field, fieldType)
+	res = &Take{
 		Field: f,
-		Limit: target.(Target),
+		Limit: NewTarget(),
 	}
-	return res, nil
+	return
 }
 
 // TakeRest ...
@@ -114,9 +114,9 @@ type TakeRest struct {
 }
 
 // TakeTheRest ...
-func TakeTheRest(field Attrib, fieldType Attrib) (attr Attrib, err error) {
-	f := NewField(field.(*token.Token), fieldType.(*token.Token))
-	res := TakeRest{
+func TakeTheRest(field, fieldType antlr.Token) (*TakeRest, error) {
+	f := NewField(field, fieldType)
+	res := &TakeRest{
 		Field: f,
 	}
 	return res, nil
@@ -126,42 +126,45 @@ func TakeTheRest(field Attrib, fieldType Attrib) (attr Attrib, err error) {
 type AtEnd struct{}
 
 // AtTheEnd ...
-func AtTheEnd() (attr Attrib, err error) {
-	return AtEnd{}, nil
+func AtTheEnd() (*AtEnd, error) {
+	return &AtEnd{}, nil
 }
 
 // Optional ...
 type Optional struct {
 	Name    string
-	Actions ActionSequence
+	Actions []*ActionItem
 
-	NameToken *token.Token
+	NameToken antlr.Token
 }
 
 // Option ...
-func Option(opt Attrib, act Attrib) (attr Attrib, err error) {
-	optName := opt.(*token.Token)
-	res := Optional{
-		Name:    string(optName.Lit),
-		Actions: act.(ActionSequence),
+func Option(opt antlr.Token) (*Optional, error) {
+	res := &Optional{
+		Name:    opt.GetText(),
+		Actions: []*ActionItem{},
 
-		NameToken: optName,
+		NameToken: opt,
 	}
 	return res, nil
+}
+
+func (o *Optional) Append(i *ActionItem) {
+	o.Actions = append(o.Actions, i)
 }
 
 // TakeUntilOrRest ...
 type TakeUntilOrRest struct {
 	Field Field
-	Limit Target
+	Limit *Target
 }
 
 // TakeUntilTargetOrRest ...
-func TakeUntilTargetOrRest(field Attrib, fieldType Attrib, target Attrib) (attr Attrib, err error) {
-	f := NewField(field.(*token.Token), fieldType.(*token.Token))
-	res := TakeUntilOrRest{
+func TakeUntilTargetOrRest(field antlr.Token, fieldType antlr.Token) (res *TakeUntilOrRest, err error) {
+	f := NewField(field, fieldType)
+	res = &TakeUntilOrRest{
 		Field: f,
-		Limit: target.(Target),
+		Limit: NewTarget(),
 	}
 	return res, nil
 }
@@ -170,11 +173,12 @@ func TakeUntilTargetOrRest(field Attrib, fieldType Attrib, target Attrib) (attr 
 type PassFixed int
 
 // PassFirst ...
-func PassFirst(field Attrib) (attr Attrib, err error) {
-	f := field.(*token.Token)
-	value, err := strconv.ParseInt(string(f.Lit), 10, 64)
+func PassFirst(field antlr.Token) (res *PassFixed, err error) {
+	f := field.(antlr.Token)
+	value, err := strconv.ParseInt(string(f.GetText()), 10, 64)
 	if err != nil {
-		return field, err
+		return
 	}
-	return PassFixed(value), nil
+	result := PassFixed(value)
+	return &result, nil
 }

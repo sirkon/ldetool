@@ -6,26 +6,26 @@ import (
 
 	"strings"
 
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
-	"github.com/sirkon/ldetool/token"
 )
 
 // Name provides a link between token and string
 type Name struct {
 	name  string
-	token *token.Token
+	token antlr.Token
 }
 
 // Generator implementation of generator.Generator
 // for Go target
 type Generator struct {
-	rules          map[string]*token.Token // Register rule names to check duplication
-	consts         map[string]string       // string constants for reuse
-	fields         map[string]Name         // Field names obviously should have different names
-	vars           map[string]string       // Function local variables
-	imports        map[string]string       // Set of import paths
-	scopeAbandoned map[string]bool         // Set check if the current scope was abandoned due to mismatch
+	rules          map[string]antlr.Token // Register rule names to check duplication
+	consts         map[string]string      // string constants for reuse
+	fields         map[string]Name        // Field names obviously should have different names
+	vars           map[string]string      // Function local variables
+	imports        map[string]string      // Set of import paths
+	scopeAbandoned map[string]bool        // Set check if the current scope was abandoned due to mismatch
 
 	namespaces []string // Stack of namespaces (each item is a name of optional area)
 
@@ -51,7 +51,7 @@ type Generator struct {
 // NewGenerator constructor
 func NewGenerator(goish *gotify.Gotify) *Generator {
 	res := &Generator{
-		rules:   map[string]*token.Token{},
+		rules:   map[string]antlr.Token{},
 		consts:  map[string]string{},
 		imports: map[string]string{},
 
@@ -89,12 +89,12 @@ func (g *Generator) varName(name string) string {
 }
 
 // UseRule ...
-func (g *Generator) UseRule(name string, t *token.Token) {
+func (g *Generator) UseRule(name string, t antlr.Token) {
 	if len(g.ruleName) != 0 {
 		panic(fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.ruleName))
 	}
 	if prev, ok := g.rules[name]; ok {
-		panic(fmt.Errorf("%d: redeclaration of rule `%s` which has already been defined at line %d", t.Line, name, prev.Line))
+		panic(fmt.Errorf("%d: redeclaration of rule `%s` which has already been defined at line %d", t.GetLine(), name, prev))
 	}
 	g.rules[name] = t
 	g.fields = map[string]Name{}
@@ -115,7 +115,7 @@ func (g *Generator) UseRule(name string, t *token.Token) {
 }
 
 // AddField ...
-func (g *Generator) AddField(name string, fieldType string, t *token.Token) {
+func (g *Generator) AddField(name string, fieldType string, t antlr.Token) {
 	g.addField(g.namespaces, name, t)
 	s := g.curObj()
 	fieldGen, ok := map[string]func(name string){

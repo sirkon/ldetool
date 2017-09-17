@@ -1,6 +1,6 @@
 package main
 
-//go:generate gocc lde_grammar.bnf
+//go:generate antlr4 -visitor -no-visitor -listener -o parser -Dlanguage=Go LDE.g4
 
 import (
 	"os"
@@ -8,11 +8,8 @@ import (
 	"github.com/urfave/cli"
 
 	// These are for testing reasons
-	_ "github.com/sirkon/ldetool/errors"
-	_ "github.com/sirkon/ldetool/lexer"
 	_ "github.com/sirkon/ldetool/parser"
-	_ "github.com/sirkon/ldetool/token"
-	_ "github.com/sirkon/ldetool/util"
+
 	"github.com/sirkon/message"
 )
 

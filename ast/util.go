@@ -4,13 +4,13 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/sirkon/ldetool/token"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // TokenError printer
-func TokenError(t *token.Token) func(format string, args ...interface{}) error {
+func TokenError(t antlr.Token) func(format string, args ...interface{}) error {
 	return func(format string, args ...interface{}) error {
-		prefix := fmt.Sprintf("%d:column %d: ", t.Line, t.Column)
+		prefix := fmt.Sprintf("%d:column %d: ", t.GetLine(), t.GetColumn())
 		return errors.New(prefix + fmt.Sprintf(format, args...))
 	}
 

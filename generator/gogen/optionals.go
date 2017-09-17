@@ -3,12 +3,12 @@ package gogen
 import (
 	"strings"
 
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
-	"github.com/sirkon/ldetool/token"
 )
 
 // OpenOptionalScope ...
-func (g *Generator) OpenOptionalScope(name string, t *token.Token) {
+func (g *Generator) OpenOptionalScope(name string, t antlr.Token) {
 	g.regVar(g.curRestVar(), "[]byte")
 	g.namespaces = append(g.namespaces, name)
 	g.obj = append(g.obj, g.curObj().AddSubstruct(name))

@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/ldetool/generator/gogen/mnemo"
-	"github.com/sirkon/ldetool/token"
 )
 
 // constNameFromContent generates name of the constant based on content
@@ -132,13 +132,13 @@ func (g *Generator) tmpSuspectancy(inputType string) bool {
 	return suspected
 }
 
-func (g *Generator) addField(namespace []string, name string, t *token.Token) string {
+func (g *Generator) addField(namespace []string, name string, t antlr.Token) string {
 	namespace = append(namespace, name)
 	namespaced := strings.Join(namespace, ".")
 	if ppp, ok := g.fields[g.fullName(name)]; ok {
 		panic(fmt.Sprintf(
 			"Field `\033[1m%s\033[0m` redefiniton, previously declared at (%d, %d)",
-			name, ppp.token.Line, ppp.token.Column))
+			name, ppp.token.GetLine(), ppp.token.GetColumn()))
 	}
 	g.fields[g.fullName(name)] = Name{
 		name:  namespaced,
