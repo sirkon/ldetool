@@ -30,8 +30,8 @@ func generateAction(c *cli.Context) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			switch v := r.(type) {
-			case listener.ListenerError:
-				err = v
+			case *ErrorListener:
+				err = fmt.Errorf("%d:%d: %s", v.line, v.col, v.msg)
 			case string:
 				err = errors.New(v)
 			default:
@@ -64,18 +64,18 @@ func generateAction(c *cli.Context) (err error) {
 	lexer := parser.NewLDELexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	p := parser.NewLDEParser(stream)
+	p.RemoveErrorListeners()
+	el := &ErrorListener{}
+	p.AddErrorListener(el)
 	tree := p.Rules()
 	walker := antlr.NewParseTreeWalker()
 	l := listener.New()
 
 	eh := antlr.NewBailErrorStrategy()
+	p.RemoveErrorListeners()
 	p.SetErrorHandler(eh)
 
 	walker.Walk(l, tree)
-
-	if err != nil {
-		return cli.NewExitError(err, 1)
-	}
 
 	rules := l.Rules()
 	formatDict := getDict(c)

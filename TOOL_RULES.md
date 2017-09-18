@@ -26,6 +26,23 @@ Rule and capture names must be public and goish
 |``_"t"[M]``|Symbols of the rest from (M+1)-th position must starts with *t* |``_"ab"[1:3]("1ab2") → "2"``<br>``_?"ab"[2:4]("1ab2") → error``|
 |``_?"t"[M:N]``| |``_?"ab"[1:3]("1ab2") → "2"``<br>``_?"ab"[2:4]("1ab2") → "1ab2"``|
 
+#### Note
+You can put `~` sign before a char or string you are looking for. This means "short" lookup: for loop will be used for
+char lookup instead of `bytes.IndexByte`:
+``_~'c'`` will be translated into
+```go
+pos = -1
+for i, char := range p.rest {
+	if char == 'c' {
+		pos = i
+		break
+	}
+}
+``` 
+This gives a speedup in case of short lookup. Something like ×4 for one character. `bytes.IndexByte` becomes nearly as
+fast as loop version at 5 characters and faster at 6. There is no optimization for strings though, code for strings will
+be the same.
+
 ## Capturing rules
 1. There's currently only Go code generator, so I will base the further description on Go-specific syntax. Capturing rules are all named and these names are mapped into Go struct field names.
 2. Capturing can be limited and unlimited. Limited capture takes all symbols right to the start of some boundary (text or character) or all symbols to the rest. Captured value can be stored in one of the following type. Capturing as numeric type can cause number parsing errors and these are always treated as "serious" ones.
@@ -41,7 +58,7 @@ So, the rules
 |:-----|-----------|---------------------------|---------------|
 |``ID(τ)``|Put the rest into ID as τ|``ID(string)("abc")``|``ID="abc"``<br>``rest=""``|
 |``ID(τ) 'c'``|Put the rest until *c* character into ID |``ID(τ)"t"``||as τ|``ID(int16)'@'("1234@kkk")``|``ID=1234``<br>``rest="kkk"``|
-|``ID(τ)?'c'``|Put the rest until *c* character into ID as τ<br>If character was not found<br>put all symbols of the rest as τ|``ID(int16)?'@'("1234")``|``ID=1234``<br>``rest=""``|
+|``ID(τ)?'c'``|Put the rest until *c* character into ID as τ<br>If character was not found<br>put all symbols of the rest as τ|``ID(int16)?'@'("1234")``<br>``ID(int16)?'@'("1234@m")``|``ID=1234``<br>``rest=""``<br>and<br>``ID=1234``<br>``rest='m'``|
 |``ID(τ)'c'[:N]``|Passing and capturing rules are<br> exactly the same as in cases above|
 |``ID(τ)?'c'[:N]``||
 |``ID(τ)'c'[M:N]``||
@@ -53,6 +70,9 @@ So, the rules
 |``ID(τ)"t"[M:N]``||
 |``ID(τ)?"t"[M:N]``||
 |``?ID(...)``|Optional named group. When its own set of rules failed it marks its ``ID.Valid`` field to false|``?ID(V(int8)' ')("1 b")``|``ID.Valid=true``<br>``ID.V=1``<br>``rest="b"``|
+
+It is possible to use short lookup sign as well:
+``ID(τ)~'c'``
 
 ## Miscellaenous rules
 
