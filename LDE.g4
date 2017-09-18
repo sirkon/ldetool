@@ -1,8 +1,9 @@
 grammar LDE;
 
 rules
-    : atomicRule rules
-    | atomicRule EOF
+    : rules atomicRule
+    | atomicRule
+    | EOF
     ;
 
 atomicRule
