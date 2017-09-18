@@ -17,7 +17,6 @@ func (g *Generator) prepNumeric() {
 	g.regImport("", "strconv")
 	g.regImport("", "unsafe")
 	g.regImport("", "fmt")
-	g.regVar("tmp", "[]byte")
 	g.regVar("err", "error")
 }
 
@@ -38,7 +37,6 @@ func (g *Generator) prepFloat() {
 
 func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string, params ...srcobj.Source) {
 	g.prepNumeric()
-	g.regVar("tmp", "[]byte")
 
 	p := []srcobj.Source{
 		srcobj.Deref(
@@ -127,7 +125,6 @@ func (g *Generator) decodeFloat64(src srcobj.Source, dest string) {
 }
 
 func (g *Generator) decodeString(src srcobj.Source, dest string) {
-	g.regVar("tmp", "[]byte")
 	g.body.Append(srcobj.LineAssign{
 		Receiver: dest,
 		Expr:     src,

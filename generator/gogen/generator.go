@@ -48,6 +48,16 @@ type Generator struct {
 	ruleName string // Name of currently processing rule
 }
 
+// ErrorToken message
+func (g *Generator) ErrorToken(token antlr.Token, format string, params ...interface{}) {
+	panic(fmt.Sprintf(
+		"%d:%d: %s",
+		token.GetLine(),
+		token.GetColumn(),
+		fmt.Sprintf(format, params...),
+	))
+}
+
 // NewGenerator constructor
 func NewGenerator(goish *gotify.Gotify) *Generator {
 	res := &Generator{
@@ -132,6 +142,17 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) {
 		"string":  s.AddString,
 	}[fieldType]
 	if !ok {
+		fieldNames := []string{
+			"int8", "int16", "int32", "int64",
+			"uint8", "uint16", "uint32", "uint64",
+			"float32", "float64",
+			"string",
+		}
+		for i, fieldName := range fieldNames {
+			fieldNames[i] = fmt.Sprintf("\033[1m%s\033[0m", fieldName)
+		}
+		g.ErrorToken(t, "unsupported type `\033[1m%s\033[0m`, must be one of %s",
+			fieldType, strings.Join(fieldNames, ", "))
 		panic(fmt.Errorf("unsupported type %s", fieldType))
 	}
 	fieldGen(name)

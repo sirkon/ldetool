@@ -311,8 +311,6 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 
 // TakeRest ...
 func (g *Generator) TakeRest(name, fieldType string) {
-	g.regVar(g.curRestVar(), "[]byte")
-
 	item := g.fields[g.fullName(name)]
 	g.getterGen(name, fieldType)
 

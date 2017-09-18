@@ -40,7 +40,15 @@ func generateAction(c *cli.Context) (err error) {
 		}
 		if err != nil {
 			if errorToken != nil {
-				err = cli.NewExitError(fmt.Sprintf("%s:%d:%d: %s", c.Args()[0], 1, 2, err), 1)
+				err = cli.NewExitError(
+					fmt.Sprintf(
+						"%s:%d:%d: %s",
+						c.Args()[0],
+						errorToken.GetLine(),
+						errorToken.GetColumn(),
+						err),
+					1,
+				)
 			} else {
 				err = et.Translate(err)
 				err = cli.NewExitError(fmt.Sprintf("%s:%s", c.Args()[0], err), 1)
@@ -59,6 +67,9 @@ func generateAction(c *cli.Context) (err error) {
 	tree := p.Rules()
 	walker := antlr.NewParseTreeWalker()
 	l := listener.New()
+
+	eh := antlr.NewBailErrorStrategy()
+	p.SetErrorHandler(eh)
 
 	walker.Walk(l, tree)
 

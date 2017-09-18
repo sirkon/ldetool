@@ -7,6 +7,8 @@ import (
 
 	"fmt"
 
+	"strings"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/ldetool/ast"
 	"github.com/sirkon/ldetool/parser"
@@ -52,7 +54,7 @@ func (s *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {
 	if s.expectEnd {
 		token := ctx.GetStart()
 		panic(ListenerError(fmt.Sprintf(
-			"%d:%d: previous action consumed the rest of the string, making more actions doesn't make a sense",
+			"%d:%d: previous action consumed the rest of the string, the rest will do nothing",
 			token.GetLine(),
 			token.GetColumn(),
 		)))
@@ -277,8 +279,37 @@ func (s *Listener) EnterExact(ctx *parser.ExactContext) {
 // ExitExact is called when production exact is exited.
 func (s *Listener) ExitExact(ctx *parser.ExactContext) {}
 
+var acceptablesTypeList string
+var acceptableTypesMap = func() map[string]struct{} {
+	acceptableTypes := []string{
+		"int8", "int16", "int32", "int64",
+		"uint8", "uint16", "uint32", "uint64",
+		"float32", "float64",
+		"string",
+	}
+	res := map[string]struct{}{}
+	for i, typeName := range acceptableTypes {
+		res[typeName] = struct{}{}
+		acceptableTypes[i] = fmt.Sprintf("\033[1m%s\033[0m", typeName)
+	}
+	acceptablesTypeList = strings.Join(acceptableTypes, ", ")
+	return res
+}()
+
 // EnterFieldType is called when production fieldType is entered.
-func (s *Listener) EnterFieldType(ctx *parser.FieldTypeContext) {}
+func (s *Listener) EnterFieldType(ctx *parser.FieldTypeContext) {
+	typeName := ctx.Identifier().GetText()
+	if _, ok := acceptableTypesMap[typeName]; ok {
+		return
+	}
+	panic(fmt.Sprintf(
+		"%d:%d: unsupported type `\033[1m%s\033[0m`, must be one of %s",
+		ctx.Identifier().GetSymbol().GetLine(),
+		ctx.Identifier().GetSymbol().GetColumn()+len(typeName)/2,
+		typeName,
+		acceptablesTypeList,
+	))
+}
 
 // ExitFieldType is called when production fieldType is exited.
 func (s *Listener) ExitFieldType(ctx *parser.FieldTypeContext) {}
