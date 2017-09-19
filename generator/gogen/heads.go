@@ -35,7 +35,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 		body.Append(srcobj.Comment(fmt.Sprintf("Checks if the rest starts with `%s` and pass it", anchor)))
 	}
 
-	var rest srcobj.Source = srcobj.Raw(g.curRestVar())
+	var rest = g.rest()
 	if offset != 0 {
 		rest = srcobj.SliceFrom(rest, srcobj.Literal(offset))
 	}
@@ -89,7 +89,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 								"unsafe.Pointer",
 								srcobj.Ref(
 									srcobj.Index{
-										Src:   rest,
+										Src:   g.rest(),
 										Index: srcobj.Literal(offset),
 									},
 								),
@@ -105,7 +105,6 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 			g.abandon()
 		}
 	} else {
-
 		g.regVar(g.curRestVar(), "[]byte")
 		g.regImport("", "bytes")
 		constName := g.constNameFromContent(anchor)
