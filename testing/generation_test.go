@@ -325,3 +325,29 @@ func TestDecoderBranching(t *testing.T) {
 	}
 	require.Equal(t, "data", string(ds.GetHeadData()))
 }
+
+func TestPrefixes(t *testing.T) {
+	p := &Prefixes{}
+	if ok, err := p.Extract([]byte("1234567890123 1234554321 ")); !ok {
+		if err != nil {
+			t.Fatal(err)
+		} else {
+			t.Fatalf("Should not be here")
+		}
+	}
+	require.Equal(t, p.Data, int32(123))
+	require.Equal(t, p.Rest, int32(54321))
+}
+
+func TestFixedLook(t *testing.T) {
+	p := &FixedLook{}
+	if ok, err := p.Extract([]byte("9012345678901234")); !ok {
+		if err != nil {
+			t.Fatal(err)
+		} else {
+			t.Fatalf("Should not be here")
+		}
+	}
+	require.Equal(t, p.Data, int32(90))
+	require.Equal(t, p.Rest, int32(12))
+}

@@ -20,6 +20,56 @@ func (g *Generator) label() string {
 	return g.goish.Private(strings.Join(g.namespaces, "_") + "_label")
 }
 
+func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {
+	g.regImport("", "unsafe")
+	var mask uint64
+	for i := 0; i < len(unquoted); i++ {
+		mask = mask*256 + 255
+	}
+	tmp := make([]byte, 8)
+	copy(tmp, unquoted)
+	prefix := *(*uint64)(unsafe.Pointer(&tmp[0]))
+	var lengthCheck srcobj.Source
+	if offset > 0 {
+		lengthCheck = srcobj.OperatorGE(
+			srcobj.OperatorSub(
+				srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+				srcobj.Literal(offset),
+			),
+			srcobj.Literal(len(unquoted)),
+		)
+	} else {
+		lengthCheck = srcobj.OperatorGE(
+			srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+			srcobj.Literal(len(unquoted)),
+		)
+	}
+
+	return srcobj.OperatorAnd(
+		lengthCheck,
+		srcobj.OperatorEq(
+			srcobj.OperatorBitAnd(
+				srcobj.Deref(
+					srcobj.NewCall(
+						"(*uint64)",
+						srcobj.NewCall(
+							"unsafe.Pointer",
+							srcobj.Ref(
+								srcobj.Index{
+									Src:   g.rest(),
+									Index: srcobj.Literal(offset),
+								},
+							),
+						),
+					),
+				),
+				srcobj.Literal(mask),
+			),
+			srcobj.Literal(prefix),
+		),
+	)
+}
+
 func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 	var unquoted string
 	if err := json.Unmarshal([]byte(anchor), &unquoted); err != nil {
@@ -53,57 +103,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 	var code srcobj.Source
 
 	if len(unquoted) <= 8 {
-		g.regVar(g.curRestVar(), "[]byte")
-		g.regImport("", "unsafe")
-		var mask uint64
-		for i := 0; i < len(unquoted); i++ {
-			mask = mask*256 + 255
-		}
-		tmp := make([]byte, 8)
-		copy(tmp, unquoted)
-		prefix := *(*uint64)(unsafe.Pointer(&tmp[0]))
-		var lengthCheck srcobj.Source
-		if offset > 0 {
-			lengthCheck = srcobj.OperatorGE(
-				srcobj.OperatorSub(
-					srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
-					srcobj.Literal(offset),
-				),
-				srcobj.Literal(len(unquoted)),
-			)
-		} else {
-			lengthCheck = srcobj.OperatorGE(
-				srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
-				srcobj.Literal(len(unquoted)),
-			)
-		}
-
-		code = srcobj.OperatorAnd(
-			lengthCheck,
-			srcobj.OperatorEq(
-				srcobj.OperatorBitAnd(
-					srcobj.Deref(
-						srcobj.NewCall(
-							"(*uint64)",
-							srcobj.NewCall(
-								"unsafe.Pointer",
-								srcobj.Ref(
-									srcobj.Index{
-										Src:   g.rest(),
-										Index: srcobj.Literal(offset),
-									},
-								),
-							),
-						),
-					),
-					srcobj.Literal(mask),
-				),
-				srcobj.Literal(prefix),
-			),
-		)
-		if !ignore {
-			g.abandon()
-		}
+		code = g.shortPrefixCheck(unquoted, anchor, offset)
 	} else {
 		g.regVar(g.curRestVar(), "[]byte")
 		g.regImport("", "bytes")

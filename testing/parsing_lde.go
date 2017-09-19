@@ -16,6 +16,8 @@ import (
 	"unsafe"
 )
 
+var const123456789 = []byte("123456789")
+var const34 = []byte("34")
 var space = []byte(" ")
 
 // Decoders ...
@@ -1822,4 +1824,114 @@ func (p *DoubleOpts) GetRestData() (res []byte) {
 		res = p.Rest.Data
 	}
 	return
+}
+
+// Prefixes ...
+type Prefixes struct {
+	rest []byte
+	Data int32
+	Rest int32
+}
+
+// Extract ...
+func (p *Prefixes) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpInt int64
+
+	// Checks if the rest starts with `"123456789"` and pass it
+	if bytes.HasPrefix(p.rest, const123456789) {
+		p.rest = p.rest[len(const123456789):]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), "123456789")
+	}
+
+	// Take until ' ' as Data(int32)
+	pos = bytes.IndexByte(p.rest, ' ')
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Data", ' ', string(p.rest))
+	}
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Data = int32(tmpInt)
+
+	// Checks if the rest starts with `"12345"` and pass it
+	if len(p.rest) >= 5 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&1099511627775 == 228509037105 {
+		p.rest = p.rest[5:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), "12345")
+	}
+
+	// Take until ' ' as Rest(int32)
+	pos = bytes.IndexByte(p.rest, ' ')
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Rest", ' ', string(p.rest))
+	}
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Rest = int32(tmpInt)
+
+	return true, nil
+}
+
+// FixedLook ...
+type FixedLook struct {
+	rest []byte
+	Data int32
+	Rest int32
+}
+
+// Extract ...
+func (p *FixedLook) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpInt int64
+
+	// Take until 3rd character if it starts "123456789" substring as Data(int32)
+	if len(p.rest) >= len(const123456789)+2 && bytes.HasPrefix(p.rest[2:], const123456789) {
+		pos = 2
+	} else {
+		pos = -1
+	}
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+len(const123456789):]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Data", const123456789, string(p.rest[2:2]))
+	}
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Data = int32(tmpInt)
+
+	// Take until 4th character if it starts "34" substring as Rest(int32)
+	if len(p.rest)-3 >= 2 && *(*uint64)(unsafe.Pointer(&p.rest[3]))&65535 == 13363 {
+		pos = 3
+	} else {
+		pos = -1
+	}
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+len(const34):]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Rest", const34, string(p.rest[3:3]))
+	}
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Rest = int32(tmpInt)
+
+	return true, nil
 }

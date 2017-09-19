@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"encoding/json"
+
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 )
 
@@ -93,20 +95,30 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			fmt.Sprintf(
 				"Take until %s character if it starts %s substring%sas %s(%s)",
 				numerator(lower), anchor, ccc, name, fieldType)))
-		g.regImport("", "bytes")
-		cond := srcobj.OperatorAnd(
-			srcobj.OperatorGE(
-				srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
-				srcobj.OperatorAdd(
-					srcobj.NewCall("len", srcobj.Raw(constName)),
-					srcobj.Literal(lower),
+
+		var unquoted string
+		if err := json.Unmarshal([]byte(anchor), &unquoted); err != nil {
+			panic(fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err))
+		}
+		var cond srcobj.Source
+		if len(unquoted) <= 8 {
+			cond = g.shortPrefixCheck(unquoted, anchor, lower)
+		} else {
+			g.regImport("", "bytes")
+			cond = srcobj.OperatorAnd(
+				srcobj.OperatorGE(
+					srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					srcobj.OperatorAdd(
+						srcobj.NewCall("len", srcobj.Raw(constName)),
+						srcobj.Literal(lower),
+					),
 				),
-			),
-			srcobj.NewCall(
-				"bytes.HasPrefix",
-				srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower)),
-				srcobj.Raw(constName)),
-		)
+				srcobj.NewCall(
+					"bytes.HasPrefix",
+					srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower)),
+					srcobj.Raw(constName)),
+			)
+		}
 		body.Append(srcobj.If{
 			Expr: cond,
 			Then: srcobj.Assign("pos", srcobj.Literal(lower)),

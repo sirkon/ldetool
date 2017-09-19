@@ -139,3 +139,11 @@ DecoderBranchingStress = !
 DoubleOpts = !
 	?Head(^"head=" Data(string) ?' ')
 	?Rest(^"rest=" Data(string) ?' ');
+
+Prefixes = !
+    ^"123456789" Data(int32) ' ' ^"12345" Rest(int32) ' ';
+
+FixedLook = !
+    Data(int32) "123456789"[2] Rest(int32) "34"[3];
+
+
