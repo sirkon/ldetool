@@ -1,5 +1,5 @@
 # ldetool means line data extraction tool
-`ldetool` is a command line utility to generate Go code for parsing log files. 
+`ldetool` is a command line utility to generate Go code for log files parsing. 
 
 ```bash
 go get -u github.com/sirkon/ldetool
