@@ -206,7 +206,8 @@ func (l *Listener) ExitOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
 
 // EnterOptionalArea is called when production optionalArea is entered.
 func (l *Listener) EnterOptionalArea(ctx *parser.OptionalAreaContext) {
-	panic("Not supported")
+	t := ctx.GetStart()
+	panic(fmt.Sprintf("%d:%d: anonymous optional areas are not supported yet", t.GetLine(), t.GetColumn()+2))
 }
 
 // ExitOptionalArea is called when production optionalArea is exited.
