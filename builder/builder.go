@@ -295,6 +295,7 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 		if err != nil {
 			return
 		}
+		message.Infof("End of option \033[1m%s\033[0m", it.Option.Name)
 		generators = append(generators, newgens...)
 		generators = append(generators, func() {
 			g.CloseOptionalScope()

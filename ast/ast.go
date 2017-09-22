@@ -50,7 +50,7 @@ func (ai *ActionItem) String() string {
 	case ai.End != nil:
 		return "AtEnd"
 	case ai.Option != nil:
-		return fmt.Sprintf("Option %s", ai.Option.Name)
+		return fmt.Sprintf("Option \033[1m%s\033[0m", ai.Option.Name)
 	case ai.Pass != nil:
 		return fmt.Sprintf("Pass until \033[1m%s\033[0m", ai.Pass.Limit.Value)
 	case ai.PassOrIgnore != nil:
@@ -75,7 +75,8 @@ func (ai *ActionItem) String() string {
 	case ai.PassFirst != nil:
 		return fmt.Sprintf("Passing first %d letters", ai.PassFirst)
 	case ai.ErrorOnMismatch:
-		return fmt.Sprintf("Treating all remaining mismatches in the rule as critical errors")
+		return fmt.Sprintf(
+			"Treating all mismatches at the root level in the rest of the rule as critical errors")
 
 	default:
 		panic("Must not happen!")
