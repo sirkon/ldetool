@@ -1,24 +1,12 @@
 package gogen
 
 import (
-	"strings"
-
-	"fmt"
-
-	"unsafe"
-
 	"encoding/json"
+	"fmt"
+	"unsafe"
 
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 )
-
-func (g *Generator) valid() string {
-	return "p." + strings.Join(g.namespaces, ".") + ".Valid"
-}
-
-func (g *Generator) label() string {
-	return g.goish.Private(strings.Join(g.namespaces, "_") + "_label")
-}
 
 func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {
 	g.regImport("", "unsafe")

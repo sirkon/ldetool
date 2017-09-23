@@ -90,12 +90,32 @@ func NewGenerator(goish *gotify.Gotify) *Generator {
 	return res
 }
 
+func (g *Generator) valid() string {
+	return "p." + strings.Join(g.namespaces, ".") + ".Valid"
+}
+
+func (g *Generator) label() string {
+	namespaces := make([]string, len(g.namespaces))
+	for i, chunk := range g.namespaces {
+		if len(chunk) == 0 {
+			namespaces[i] = "AnonymousArea"
+		} else {
+			namespaces[i] = chunk
+		}
+	}
+	return g.goish.Private(strings.Join(namespaces, "_") + "_label")
+}
+
 func (g *Generator) curObj() *srcobj.Struct {
 	return g.obj[len(g.obj)-1]
 }
 
 func (g *Generator) varName(name string) string {
 	return "p." + strings.Join(append(g.namespaces, name), ".")
+}
+
+func (g *Generator) anonymous() bool {
+	return len(g.namespaces) > 0 && len(g.namespaces[len(g.namespaces)-1]) == 0
 }
 
 // UseRule ...
@@ -162,8 +182,14 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) {
 func (g *Generator) failure(format string, params ...srcobj.Source) (res srcobj.Source) {
 	if len(g.namespaces) > 0 {
 		g.abandon()
+		var pre srcobj.Source
+		if g.anonymous() {
+			pre = srcobj.Raw("")
+		} else {
+			pre = srcobj.Assign(g.valid(), srcobj.False)
+		}
 		res = srcobj.NewBody(
-			srcobj.Assign(g.valid(), srcobj.False),
+			pre,
 			srcobj.Semicolon,
 			srcobj.Goto(g.label()),
 		)

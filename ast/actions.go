@@ -153,6 +153,28 @@ func (o *Optional) Append(i *ActionItem) {
 	o.Actions = append(o.Actions, i)
 }
 
+// AnonymousOption ...
+type AnonymousOption struct {
+	Name    string
+	Actions []*ActionItem
+
+	StartToken antlr.Token
+}
+
+// Anonymous ...
+func Anonymous(opt antlr.Token) (*AnonymousOption, error) {
+	res := &AnonymousOption{
+		Actions: []*ActionItem{},
+
+		StartToken: opt,
+	}
+	return res, nil
+}
+
+func (a *AnonymousOption) Append(i *ActionItem) {
+	a.Actions = append(a.Actions, i)
+}
+
 // TakeUntilOrRest ...
 type TakeUntilOrRest struct {
 	Field Field

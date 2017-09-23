@@ -32,6 +32,7 @@ func (r *RuleItem) Append(ai *ActionItem) {
 type ActionItem struct {
 	End                  *AtEnd
 	Option               *Optional
+	Anonymous            *AnonymousOption
 	Pass                 *PassUntil
 	PassOrIgnore         *PassUntilOrIgnore
 	StartWithChar        *StartChar
@@ -51,6 +52,8 @@ func (ai *ActionItem) String() string {
 		return "AtEnd"
 	case ai.Option != nil:
 		return fmt.Sprintf("Option \033[1m%s\033[0m", ai.Option.Name)
+	case ai.Anonymous != nil:
+		return fmt.Sprintf("Anonymous option")
 	case ai.Pass != nil:
 		return fmt.Sprintf("Pass until \033[1m%s\033[0m", ai.Pass.Limit.Value)
 	case ai.PassOrIgnore != nil:

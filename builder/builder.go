@@ -20,6 +20,8 @@ type Builder struct {
 	recoverPanic bool
 	gotify       *gotify.Gotify
 
+	anonDepth int
+
 	errToken antlr.Token
 }
 
@@ -94,6 +96,13 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 
 	// TakeUntilOrRest
 	if it.TakeUntilOrRest != nil {
+		if b.anonDepth > 0 {
+			panic(fmt.Sprintf(
+				"%d:%d: cannot take in anonymous area",
+				it.TakeUntilOrRest.Field.NameToken.GetLine(),
+				it.TakeUntilOrRest.Field.NameToken.GetColumn()+2,
+			))
+		}
 		item := it.TakeUntilOrRest
 		if err = b.checkField(item.Field); err != nil {
 			return
@@ -117,6 +126,13 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 
 	// TakeUntil
 	if it.Take != nil {
+		if b.anonDepth > 0 {
+			panic(fmt.Sprintf(
+				"%d:%d: cannot take in anonymous area",
+				it.Take.Field.NameToken.GetLine(),
+				it.Take.Field.NameToken.GetColumn()+2,
+			))
+		}
 		item := it.Take
 		if err = b.checkField(item.Field); err != nil {
 			return
@@ -146,6 +162,13 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 
 	// TakeRest
 	if it.TakeRest != nil {
+		if b.anonDepth > 0 {
+			panic(fmt.Sprintf(
+				"%d:%d: cannot take in anonymous area",
+				it.TakeRest.Field.NameToken.GetLine(),
+				it.TakeRest.Field.NameToken.GetColumn()+2,
+			))
+		}
 		if err = b.checkField(it.TakeRest.Field); err != nil {
 			return
 		}
@@ -282,6 +305,13 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 
 	// Optional area
 	if it.Option != nil {
+		if b.anonDepth > 0 {
+			panic(fmt.Sprintf(
+				"%d:%d: cannot create named optional area in anonymous one",
+				it.Option.NameToken.GetLine(),
+				it.Option.NameToken.GetColumn()+2,
+			))
+		}
 		if b.gotify.Public(it.Option.Name) != it.Option.Name {
 			b.errToken = it.Option.NameToken
 			err = fmt.Errorf("Wrong option identifier %s, must be %s", it.Option.Name, b.gotify.Public(it.Option.Name))
@@ -300,6 +330,25 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 		generators = append(generators, func() {
 			g.CloseOptionalScope()
 		})
+	}
+
+	// Optional area
+	if it.Anonymous != nil {
+		b.anonDepth++
+		generators = append(generators, func() {
+			g.OpenOptionalScope("", it.Anonymous.StartToken)
+		})
+		var newgens []func()
+		newgens, err = b.composeRules(gPrefix, g, it.Anonymous.Actions)
+		if err != nil {
+			return
+		}
+		message.Infof("End of anonymous option")
+		generators = append(generators, newgens...)
+		generators = append(generators, func() {
+			g.CloseOptionalScope()
+		})
+		b.anonDepth--
 	}
 
 	// AtEnd
