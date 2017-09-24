@@ -8,6 +8,7 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
+	"github.com/sirkon/ldetool/generator"
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 )
 
@@ -32,7 +33,9 @@ type Generator struct {
 	critical bool           // Treat mismatch errors as critical
 	goish    *gotify.Gotify // identifier gotification service
 
-	// gravity is not used yet, planned to clarify mismatch position against the rule, something like
+	platformType generator.PlatformType
+
+	// gravity is not used yet, planned for mismatch position  clarification against the rule, something like
 	// "Could not find string `name=` right before Parameter.Name field" or
 	// "Could not find string 'FETCH' between Time and Timeout fields", etc
 	gravity []string
@@ -46,6 +49,10 @@ type Generator struct {
 	decoderMap map[string]func(src srcobj.Source, dest string)
 
 	ruleName string // Name of currently processing rule
+}
+
+func (g *Generator) PlatformType(t generator.PlatformType) {
+	g.platformType = t
 }
 
 // ErrorToken message
@@ -72,6 +79,8 @@ func NewGenerator(goish *gotify.Gotify) *Generator {
 
 		file:     srcobj.NewFile(),
 		ruleName: "",
+
+		platformType: generator.Universal,
 	}
 
 	res.decoderMap = map[string]func(src srcobj.Source, dest string){

@@ -3,20 +3,33 @@ package gogen
 import (
 	"encoding/json"
 	"fmt"
-	"unsafe"
 
+	"encoding/binary"
+
+	"github.com/sirkon/ldetool/generator"
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 )
 
 func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {
 	g.regImport("", "unsafe")
 	var mask uint64
+	var byteMask = make([]byte, 8)
 	for i := 0; i < len(unquoted); i++ {
-		mask = mask*256 + 255
+		byteMask[i] = 255
+	}
+	if g.platformType == generator.LittleEndian {
+		mask = binary.LittleEndian.Uint64(byteMask)
+	} else {
+		mask = binary.BigEndian.Uint64(byteMask)
 	}
 	tmp := make([]byte, 8)
 	copy(tmp, unquoted)
-	prefix := *(*uint64)(unsafe.Pointer(&tmp[0]))
+	var prefix uint64
+	if g.platformType == generator.LittleEndian {
+		prefix = binary.LittleEndian.Uint64(tmp)
+	} else {
+		prefix = binary.BigEndian.Uint64(tmp)
+	}
 	var lengthCheck srcobj.Source
 	if offset > 0 {
 		lengthCheck = srcobj.OperatorGE(
@@ -90,7 +103,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 	var shift srcobj.Source = srcobj.Literal(len(unquoted) + offset)
 	var code srcobj.Source
 
-	if len(unquoted) <= 8 {
+	if len(unquoted) <= 8 && g.platformType != generator.Universal {
 		code = g.shortPrefixCheck(unquoted, anchor, offset)
 	} else {
 		g.regVar(g.curRestVar(), "[]byte")

@@ -6,6 +6,7 @@ import (
 
 	"encoding/json"
 
+	"github.com/sirkon/ldetool/generator"
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 )
 
@@ -101,7 +102,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			panic(fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err))
 		}
 		var cond srcobj.Source
-		if len(unquoted) <= 8 {
+		if len(unquoted) <= 8 && g.platformType != generator.Universal {
 			cond = g.shortPrefixCheck(unquoted, anchor, lower)
 		} else {
 			g.regImport("", "bytes")

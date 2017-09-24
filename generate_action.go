@@ -15,6 +15,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/builder"
+	"github.com/sirkon/ldetool/generator"
 	"github.com/sirkon/ldetool/generator/gogen"
 	"github.com/sirkon/ldetool/listener"
 	"github.com/sirkon/ldetool/parser"
@@ -88,6 +89,11 @@ func generateAction(c *cli.Context) (err error) {
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)
 	gen := gogen.NewGenerator(gfy)
+	if c.Bool("little-endian") {
+		gen.PlatformType(generator.LittleEndian)
+	} else if c.Bool("big-endian") {
+		gen.PlatformType(generator.BigEndian)
+	}
 	b := builder.NewBuilder(c.String("package"), gen, tmpDest, gfy)
 	b.DontRecover()
 	for _, rule := range rules {

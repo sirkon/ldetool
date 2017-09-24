@@ -42,6 +42,14 @@ func main() {
 					Value: "",
 					Usage: "Package name for generated files",
 				},
+				cli.BoolFlag{
+					Name:  "big-endian",
+					Usage: "Target architecture is big endian",
+				},
+				cli.BoolFlag{
+					Name:  "little-endian",
+					Usage: "Target architecture is little endian",
+				},
 			},
 			UsageText: "ldetool generate [command options] <lde file path>",
 			Action:    generateAction,
@@ -55,6 +63,9 @@ func main() {
 				}
 				if len(c.String("package")) == 0 {
 					return cli.NewExitError("Package name is required", 1)
+				}
+				if c.Bool("big-endian") && c.Bool("little-endian") {
+					return cli.NewExitError("Target architecture cannot be both little and big endian", 1)
 				}
 				return nil
 			},

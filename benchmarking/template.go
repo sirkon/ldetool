@@ -1,5 +1,5 @@
 
-// line 1 "template.ragel"
+//line template.ragel:1
 package main
 
 // Ragel based parsing
@@ -9,9 +9,9 @@ type Ragel struct {
 }
 
 
-// line 10 "template.ragel"
+//line template.ragel:10
 
-// line 15 "template.go"
+//line template.go:15
 const fields_start int = 1
 const fields_first_final int = 5
 const fields_error int = 0
@@ -19,19 +19,19 @@ const fields_error int = 0
 const fields_en_main int = 1
 
 
-// line 11 "template.ragel"
+//line template.ragel:11
 
 // Extract extracts field from
 func (r *Ragel) Extract(data []byte) (ok bool, error error) {
     cs, p, pe := 0, 0, len(data)
     var pos = 0
     
-// line 30 "template.go"
+//line template.go:30
 	{
 	cs = fields_start
 	}
 
-// line 35 "template.go"
+//line template.go:35
 	{
 	if p == pe {
 		goto _test_eof
@@ -52,8 +52,7 @@ func (r *Ragel) Extract(data []byte) (ok bool, error error) {
 	}
 	goto st_out
 tr0:
-// line 18 "template.ragel"
-
+//line template.ragel:18
  r.Name = data[pos:p+1]  
 	goto st1
 	st1:
@@ -61,7 +60,7 @@ tr0:
 			goto _test_eof1
 		}
 	st_case_1:
-// line 65 "template.go"
+//line template.go:64
 		if data[p] == 124 {
 			goto st2
 		}
@@ -94,13 +93,11 @@ tr0:
 		}
 		goto st4
 tr4:
-// line 17 "template.ragel"
-
+//line template.ragel:17
  pos = p + 1             
 	goto st5
 tr5:
-// line 19 "template.ragel"
-
+//line template.ragel:19
  r.Count = data[pos:p+1] 
 	goto st5
 	st5:
@@ -108,7 +105,7 @@ tr5:
 			goto _test_eof5
 		}
 	st_case_5:
-// line 112 "template.go"
+//line template.go:109
 		if data[p] == 124 {
 			goto st0
 		}
@@ -128,7 +125,7 @@ st_case_0:
 	_out: {}
 	}
 
-// line 26 "template.ragel"
+//line template.ragel:26
 
     return true, nil
 }

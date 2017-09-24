@@ -55,4 +55,7 @@ type Generator interface {
 	// Generate code at the place
 	Generate(pkgName string, dest io.Writer)
 	ErrorToken(token antlr.Token, format string, params ...interface{})
+
+	// PlatformType to generate code for
+	PlatformType(t PlatformType)
 }
