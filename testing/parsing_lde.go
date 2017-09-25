@@ -1522,7 +1522,7 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 		headRest = headRest[5:]
 	} else {
 		p.Head.Valid = false
-		goto headLabel
+		goto decoderoptionalsHeadLabel
 	}
 
 	// Take until ' ' as Data(string)
@@ -1532,11 +1532,11 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 		headRest = headRest[pos+1:]
 	} else {
 		p.Head.Valid = false
-		goto headLabel
+		goto decoderoptionalsHeadLabel
 	}
 	p.Head.Valid = true
 	p.rest = headRest
-headLabel:
+decoderoptionalsHeadLabel:
 
 	// Checks if the rest starts with `"end"` and pass it
 	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&16777215 == 6581861 {
@@ -1594,7 +1594,7 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 		headRest = headRest[5:]
 	} else {
 		p.Head.Valid = false
-		goto headLabel
+		goto decoderoptionalsstressHeadLabel
 	}
 
 	// Take until ' ' as Data(string)
@@ -1604,11 +1604,11 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 		headRest = headRest[pos+1:]
 	} else {
 		p.Head.Valid = false
-		goto headLabel
+		goto decoderoptionalsstressHeadLabel
 	}
 	p.Head.Valid = true
 	p.rest = headRest
-headLabel:
+decoderoptionalsstressHeadLabel:
 
 	// Checks if the rest starts with `"end"` and pass it
 	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&16777215 == 6581861 {
@@ -1752,7 +1752,7 @@ func (p *DoubleOpts) Extract(line []byte) (bool, error) {
 		headRest = headRest[5:]
 	} else {
 		p.Head.Valid = false
-		goto headLabel
+		goto doubleoptsHeadLabel
 	}
 
 	// Take until ' ' (or all the rest if not found) as Data(string)
@@ -1766,7 +1766,7 @@ func (p *DoubleOpts) Extract(line []byte) (bool, error) {
 	}
 	p.Head.Valid = true
 	p.rest = headRest
-headLabel:
+doubleoptsHeadLabel:
 	restRest = p.rest
 
 	// Checks if the rest starts with `"rest="` and pass it
@@ -1774,7 +1774,7 @@ headLabel:
 		restRest = restRest[5:]
 	} else {
 		p.Rest.Valid = false
-		goto restLabel
+		goto doubleoptsRestLabel
 	}
 
 	// Take until ' ' (or all the rest if not found) as Data(string)
@@ -1788,7 +1788,7 @@ headLabel:
 	}
 	p.Rest.Valid = true
 	p.rest = restRest
-restLabel:
+doubleoptsRestLabel:
 
 	return true, nil
 }

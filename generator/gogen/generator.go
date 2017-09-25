@@ -28,6 +28,9 @@ type Generator struct {
 	imports        map[string]string      // Set of import paths
 	scopeAbandoned map[string]bool        // Set check if the current scope was abandoned due to mismatch
 
+	labels    map[string]struct{} // Label name must be unique
+	labelName string              // Current label name, set on scope enter and add field actions
+
 	namespaces []string // Stack of namespaces (each item is a name of optional area)
 
 	critical bool           // Treat mismatch errors as critical
@@ -103,7 +106,7 @@ func (g *Generator) valid() string {
 	return "p." + strings.Join(g.namespaces, ".") + ".Valid"
 }
 
-func (g *Generator) label() string {
+func (g *Generator) regLabel() {
 	namespaces := make([]string, len(g.namespaces))
 	for i, chunk := range g.namespaces {
 		if len(chunk) == 0 {
@@ -112,7 +115,23 @@ func (g *Generator) label() string {
 			namespaces[i] = chunk
 		}
 	}
-	return g.goish.Private(strings.Join(namespaces, "_") + "_label")
+	suffix := ""
+	i := 1
+	for {
+		labelName := g.goish.Private(strings.Join(namespaces, "_")+"_label") + suffix
+		labelName = g.goish.Private(g.goish.Package(g.ruleName) + "_" + labelName)
+		if _, ok := g.labels[labelName]; !ok {
+			g.labelName = labelName
+			break
+		}
+		i++
+		suffix = fmt.Sprintf("%d", i)
+	}
+	g.labels[g.labelName] = struct{}{}
+}
+
+func (g *Generator) label() string {
+	return g.labelName
 }
 
 func (g *Generator) curObj() *srcobj.Struct {
@@ -138,6 +157,7 @@ func (g *Generator) UseRule(name string, t antlr.Token) {
 	g.rules[name] = t
 	g.fields = map[string]Name{}
 	g.scopeAbandoned = map[string]bool{}
+	g.labels = map[string]struct{}{}
 	g.vars = map[string]string{}
 	g.namespaces = nil
 	g.ruleName = name

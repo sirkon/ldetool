@@ -137,7 +137,8 @@ func (g *Generator) addField(namespace []string, name string, t antlr.Token) str
 	namespaced := strings.Join(namespace, ".")
 	if ppp, ok := g.fields[g.fullName(name)]; ok {
 		panic(fmt.Sprintf(
-			"Field `\033[1m%s\033[0m` redefiniton, previously declared at (%d, %d)",
+			"%d:%d: Field `\033[1m%s\033[0m` redefiniton, previously declared at (%d, %d)",
+			t.GetLine(), t.GetColumn(),
 			name, ppp.token.GetLine(), ppp.token.GetColumn()))
 	}
 	g.fields[g.fullName(name)] = Name{

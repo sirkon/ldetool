@@ -9,6 +9,7 @@ import (
 func (g *Generator) OpenOptionalScope(name string, t antlr.Token) {
 	g.regVar(g.curRestVar(), "[]byte")
 	g.namespaces = append(g.namespaces, name)
+	g.regLabel()
 	if !g.anonymous() {
 		g.obj = append(g.obj, g.curObj().AddSubstruct(name))
 	}
@@ -16,7 +17,9 @@ func (g *Generator) OpenOptionalScope(name string, t antlr.Token) {
 		Receiver: g.curRestVar(),
 		Expr:     srcobj.Raw(g.prevRestVar()),
 	})
-	g.addField(g.namespaces, name, t)
+	if len(name) > 0 {
+		g.addField(g.namespaces, name, t)
+	}
 }
 
 // CloseOptionalScope ...
