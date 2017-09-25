@@ -351,3 +351,30 @@ func TestFixedLook(t *testing.T) {
 	require.Equal(t, p.Data, int32(90))
 	require.Equal(t, p.Rest, int32(12))
 }
+
+func TestAnonymousAreas(t *testing.T) {
+	p := &AnonymousAreas{}
+	src := "  data=1234end  "
+	ok, err := p.Extract([]byte(src))
+	require.Nil(t, err)
+	require.True(t, ok)
+	require.Equal(t, "end", string(p.Data))
+
+	src = "1234end"
+	ok, err = p.Extract([]byte(src))
+	require.Nil(t, err)
+	require.True(t, ok)
+	require.Equal(t, "end", string(p.Data))
+
+	src = "  data=end"
+	ok, err = p.Extract([]byte(src))
+	require.Nil(t, err)
+	require.True(t, ok)
+	require.Equal(t, "end", string(p.Data))
+
+	src = "end  "
+	ok, err = p.Extract([]byte(src))
+	require.Nil(t, err)
+	require.True(t, ok)
+	require.Equal(t, "end", string(p.Data))
+}

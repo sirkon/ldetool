@@ -146,4 +146,13 @@ Prefixes = !
 FixedLook = !
     Data(int32) "123456789"[2] Rest(int32) "34"[3];
 
+AnonymousAreas = !
+    ? (
+        _~'d' ^"ata="
+    )
+    ? (
+        ^"1234"
+    )
+    Data(string) ? " ";
+
 

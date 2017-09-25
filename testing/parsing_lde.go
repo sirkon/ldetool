@@ -1918,3 +1918,62 @@ func (p *FixedLook) Extract(line []byte) (bool, error) {
 
 	return true, nil
 }
+
+// AnonymousAreas ...
+type AnonymousAreas struct {
+	rest []byte
+	Data []byte
+}
+
+// Extract ...
+func (p *AnonymousAreas) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var pos int
+	var rest []byte
+	rest = p.rest
+
+	// Looking for 'd' and then pass it
+	pos = -1
+	for i, char := range rest {
+		if char == 'd' {
+			pos = i
+			break
+		}
+	}
+	if pos >= 0 {
+		rest = rest[pos+1:]
+	} else {
+		goto anonymousareasAnonymousAreaLabel
+	}
+
+	// Checks if the rest starts with `"ata="` and pass it
+	if len(rest) >= 4 && *(*uint64)(unsafe.Pointer(&rest[0]))&4294967295 == 1029796961 {
+		rest = rest[4:]
+	} else {
+		goto anonymousareasAnonymousAreaLabel
+	}
+	p.rest = rest
+anonymousareasAnonymousAreaLabel:
+	rest = p.rest
+
+	// Checks if the rest starts with `"1234"` and pass it
+	if len(rest) >= 4 && *(*uint64)(unsafe.Pointer(&rest[0]))&4294967295 == 875770417 {
+		rest = rest[4:]
+	} else {
+		goto anonymousareasAnonymousAreaLabel2
+	}
+	p.rest = rest
+anonymousareasAnonymousAreaLabel2:
+
+	// Take until " " (or all the rest if not found) as Data(string)
+	pos = bytes.Index(p.rest, space)
+	if pos >= 0 {
+		p.Data = p.rest[:pos]
+		p.rest = p.rest[pos+len(space):]
+	} else {
+		p.Data = p.rest
+		p.rest = p.rest[len(p.rest):]
+	}
+
+	return true, nil
+}
