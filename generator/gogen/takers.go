@@ -68,7 +68,6 @@ func numerator(num int) string {
 func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, expand bool) {
 	g.regVar("pos", "int")
 	g.regVar(g.curRestVar(), "[]byte")
-	g.regVar("tmp", "[]byte")
 
 	item := g.fields[g.fullName(name)]
 	g.getterGen(name, fieldType)
@@ -154,19 +153,35 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			srcobj.Stringify(rest),
 		)
 	} else {
-		alternative = srcobj.NewBody(
-			srcobj.LineAssign{
-				Receiver: "tmp",
-				Expr:     srcobj.Raw(g.curRestVar()),
-			},
-			srcobj.LineAssign{
-				Receiver: g.curRestVar(),
-				Expr: srcobj.SliceFrom(
-					srcobj.Raw(g.curRestVar()),
-					srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
-				),
-			},
-		)
+		if fieldType == "string" {
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: g.varName(item.name),
+					Expr:     g.rest(),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+		} else {
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.Raw(g.curRestVar()),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+		}
 	}
 
 	var offset srcobj.Source
@@ -175,11 +190,11 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 		srcobj.NewCall("len", srcobj.Raw(constName)),
 	)
 
-	body.Append(srcobj.If{
-		Expr: srcobj.OperatorGE(srcobj.Raw("pos"), srcobj.Raw("0")),
-		Then: srcobj.NewBody(
+	var mainPath srcobj.Source
+	if fieldType == "string" {
+		mainPath = srcobj.NewBody(
 			srcobj.LineAssign{
-				Receiver: "tmp",
+				Receiver: "p." + item.name,
 				Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
 			},
 			srcobj.LineAssign{
@@ -189,19 +204,41 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 					offset,
 				),
 			},
-		),
+		)
+	} else {
+		mainPath = srcobj.NewBody(
+			srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						offset,
+					),
+				},
+			),
+		)
+	}
+	body.Append(srcobj.If{
+		Expr: srcobj.OperatorGE(srcobj.Raw("pos"), srcobj.Raw("0")),
+		Then: mainPath,
 		Else: alternative,
 	})
 
-	decoder := g.decoderMap[fieldType]
-	decoder(srcobj.Raw("tmp"), "p."+item.name)
+	if fieldType != "string" {
+		g.regVar("tmp", "[]byte")
+		decoder := g.decoderMap[fieldType]
+		decoder(srcobj.Raw("tmp"), "p."+item.name)
+	}
 }
 
 // TakeBeforeChar ...
 func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, expand bool) {
 	g.regVar("pos", "int")
 	g.regVar(g.curRestVar(), "[]byte")
-	g.regVar("tmp", "[]byte")
 
 	item := g.fields[g.fullName(name)]
 	g.getterGen(name, fieldType)
@@ -279,19 +316,35 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 			srcobj.Stringify(rest),
 		)
 	} else {
-		alternative = srcobj.NewBody(
-			srcobj.LineAssign{
-				Receiver: "tmp",
-				Expr:     srcobj.Raw(g.curRestVar()),
-			},
-			srcobj.LineAssign{
-				Receiver: g.curRestVar(),
-				Expr: srcobj.SliceFrom(
-					srcobj.Raw(g.curRestVar()),
-					srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
-				),
-			},
-		)
+		if fieldType == "string" {
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "p." + item.name,
+					Expr:     g.rest(),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+		} else {
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.Raw(g.curRestVar()),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+		}
 	}
 
 	var offset srcobj.Source
@@ -300,11 +353,11 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 		srcobj.Literal(1),
 	)
 
-	body.Append(srcobj.If{
-		Expr: srcobj.OperatorGE(srcobj.Raw("pos"), srcobj.Raw("0")),
-		Then: srcobj.NewBody(
+	var mainPath srcobj.Source
+	if fieldType == "string" {
+		mainPath = srcobj.NewBody(
 			srcobj.LineAssign{
-				Receiver: "tmp",
+				Receiver: "p." + item.name,
 				Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
 			},
 			srcobj.LineAssign{
@@ -314,12 +367,35 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 					offset,
 				),
 			},
-		),
+		)
+	} else {
+		mainPath = srcobj.NewBody(
+			srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						offset,
+					),
+				},
+			),
+		)
+	}
+	body.Append(srcobj.If{
+		Expr: srcobj.OperatorGE(srcobj.Raw("pos"), srcobj.Raw("0")),
+		Then: mainPath,
 		Else: alternative,
 	})
 
-	decoder := g.decoderMap[fieldType]
-	decoder(srcobj.Raw("tmp"), "p."+item.name)
+	if fieldType != "string" {
+		g.regVar("tmp", "[]byte")
+		decoder := g.decoderMap[fieldType]
+		decoder(srcobj.Raw("tmp"), "p."+item.name)
+	}
 }
 
 // TakeRest ...
@@ -330,18 +406,40 @@ func (g *Generator) TakeRest(name, fieldType string) {
 	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Take the rest as %s(%s)", name, fieldType)))
 
-	decoder := g.decoderMap[fieldType]
-	decoder(g.rest(), g.varName(item.name))
-	body.Append(
-		srcobj.Assign(
-			g.curRestVar(),
-			srcobj.SliceFrom(
-				srcobj.Raw(g.curRestVar()),
-				srcobj.NewCall(
-					"len",
+	if fieldType == "string" {
+		body.Append(
+			srcobj.Assign(
+				g.varName(item.name),
+				g.rest(),
+			),
+		)
+		body.Append(srcobj.Raw("\n"))
+		body.Append(
+			srcobj.Assign(
+				g.curRestVar(),
+				srcobj.SliceFrom(
 					srcobj.Raw(g.curRestVar()),
+					srcobj.NewCall(
+						"len",
+						srcobj.Raw(g.curRestVar()),
+					),
 				),
 			),
-		),
-	)
+		)
+	} else {
+		decoder := g.decoderMap[fieldType]
+		decoder(g.rest(), g.varName(item.name))
+		body.Append(
+			srcobj.Assign(
+				g.curRestVar(),
+				srcobj.SliceFrom(
+					srcobj.Raw(g.curRestVar()),
+					srcobj.NewCall(
+						"len",
+						srcobj.Raw(g.curRestVar()),
+					),
+				),
+			),
+		)
+	}
 }

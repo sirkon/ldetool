@@ -179,12 +179,11 @@ func (p *Decoders) Extract(line []byte) (bool, error) {
 	// Take until ' ' as String(string)
 	pos = bytes.IndexByte(p.rest, ' ')
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -348,12 +347,11 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 	// Take until ' ' as String(string)
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -547,12 +545,11 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	// Take until " " as String(string)
 	pos = bytes.Index(p.rest, space)
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -716,12 +713,11 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	// Take until " " as String(string)
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, nil
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -915,12 +911,11 @@ func (p *DecodersStress) Extract(line []byte) (bool, error) {
 	// Take until ' ' as String(string)
 	pos = bytes.IndexByte(p.rest, ' ')
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field String", ' ', string(p.rest))
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -1084,12 +1079,11 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 	// Take until ' ' as String(string)
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field String", ' ', string(p.rest[:8]))
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -1283,12 +1277,11 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	// Take until " " as String(string)
 	pos = bytes.Index(p.rest, space)
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", space, string(p.rest))
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -1452,12 +1445,11 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	// Take until " " as String(string)
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.String = p.rest[:pos]
 		p.rest = p.rest[pos+len(space):]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", space, string(p.rest[:8]))
 	}
-	p.String = tmp
 
 	return true, nil
 }
@@ -1536,13 +1528,12 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 	// Take until ' ' as Data(string)
 	pos = bytes.IndexByte(headRest, ' ')
 	if pos >= 0 {
-		tmp = headRest[:pos]
+		p.Head.Data = headRest[:pos]
 		headRest = headRest[pos+1:]
 	} else {
 		p.Head.Valid = false
 		goto headLabel
 	}
-	p.Head.Data = tmp
 	p.Head.Valid = true
 	p.rest = headRest
 headLabel:
@@ -1609,13 +1600,12 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 	// Take until ' ' as Data(string)
 	pos = bytes.IndexByte(headRest, ' ')
 	if pos >= 0 {
-		tmp = headRest[:pos]
+		p.Head.Data = headRest[:pos]
 		headRest = headRest[pos+1:]
 	} else {
 		p.Head.Valid = false
 		goto headLabel
 	}
-	p.Head.Data = tmp
 	p.Head.Valid = true
 	p.rest = headRest
 headLabel:
@@ -1652,7 +1642,6 @@ func (p *DecoderBranching) Extract(line []byte) (bool, error) {
 	p.rest = line
 	var headRest []byte
 	var pos int
-	var tmp []byte
 
 	// Checks if the rest starts with `"start "` and pass it
 	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 35684507284595 {
@@ -1668,13 +1657,12 @@ func (p *DecoderBranching) Extract(line []byte) (bool, error) {
 	// Take until ' ' (or all the rest if not found) as Data(string)
 	pos = bytes.IndexByte(headRest, ' ')
 	if pos >= 0 {
-		tmp = headRest[:pos]
+		p.Head.Data = headRest[:pos]
 		headRest = headRest[pos+1:]
 	} else {
-		tmp = headRest
+		p.Head.Data = headRest
 		headRest = headRest[len(headRest):]
 	}
-	p.Head.Data = tmp
 	p.Head.Valid = true
 	p.rest = headRest
 
@@ -1703,7 +1691,6 @@ func (p *DecoderBranchingStress) Extract(line []byte) (bool, error) {
 	p.rest = line
 	var headRest []byte
 	var pos int
-	var tmp []byte
 
 	// Checks if the rest starts with `"start "` and pass it
 	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 35684507284595 {
@@ -1719,13 +1706,12 @@ func (p *DecoderBranchingStress) Extract(line []byte) (bool, error) {
 	// Take until ' ' (or all the rest if not found) as Data(string)
 	pos = bytes.IndexByte(headRest, ' ')
 	if pos >= 0 {
-		tmp = headRest[:pos]
+		p.Head.Data = headRest[:pos]
 		headRest = headRest[pos+1:]
 	} else {
-		tmp = headRest
+		p.Head.Data = headRest
 		headRest = headRest[len(headRest):]
 	}
-	p.Head.Data = tmp
 	p.Head.Valid = true
 	p.rest = headRest
 
@@ -1759,7 +1745,6 @@ func (p *DoubleOpts) Extract(line []byte) (bool, error) {
 	var headRest []byte
 	var pos int
 	var restRest []byte
-	var tmp []byte
 	headRest = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
@@ -1773,13 +1758,12 @@ func (p *DoubleOpts) Extract(line []byte) (bool, error) {
 	// Take until ' ' (or all the rest if not found) as Data(string)
 	pos = bytes.IndexByte(headRest, ' ')
 	if pos >= 0 {
-		tmp = headRest[:pos]
+		p.Head.Data = headRest[:pos]
 		headRest = headRest[pos+1:]
 	} else {
-		tmp = headRest
+		p.Head.Data = headRest
 		headRest = headRest[len(headRest):]
 	}
-	p.Head.Data = tmp
 	p.Head.Valid = true
 	p.rest = headRest
 headLabel:
@@ -1796,13 +1780,12 @@ headLabel:
 	// Take until ' ' (or all the rest if not found) as Data(string)
 	pos = bytes.IndexByte(restRest, ' ')
 	if pos >= 0 {
-		tmp = restRest[:pos]
+		p.Rest.Data = restRest[:pos]
 		restRest = restRest[pos+1:]
 	} else {
-		tmp = restRest
+		p.Rest.Data = restRest
 		restRest = restRest[len(restRest):]
 	}
-	p.Rest.Data = tmp
 	p.Rest.Valid = true
 	p.rest = restRest
 restLabel:
