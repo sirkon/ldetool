@@ -64,8 +64,7 @@ See [more details](https://github.com/sirkon/ldetool/blob/master/TOOL_RULES.md) 
 ```perl
 # filename: line.lde
 Line =                                   # Name of the extraction object' type
-  ^'['                                   # The line must start with [
-  Time(string) ']'                       # Take everything as a string for Time right to ']' character
+  ^'[' Time(string) ']'                  # The line must start with [, then take everything as a struct field Time string right to ']' character
   ^" FETCH "                             # Current rest must starts with " FETCH " string
   ^"first[" First(uint8) ']'[1]          # The rest must starts with "first[" characters, then take the rest until ']' as uint8. It is
                                          # known First is the single character, thus the [1] index.
