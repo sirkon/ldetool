@@ -18,6 +18,24 @@ type appender interface {
 	Append(i *ast.ActionItem)
 }
 
+var reservedWords = map[string]struct{}{
+	"Valid":   struct{}{},
+	"Extract": struct{}{},
+}
+
+func checkReserved(token antlr.Token) {
+	if _, ok := reservedWords[token.GetText()]; !ok {
+		return
+	}
+	panic(
+		fmt.Sprintf("%d:%d: \033[1m%s\033[0m is reserved identifier",
+			token.GetLine(),
+			token.GetColumn()+1,
+			token.GetText(),
+		),
+	)
+}
+
 // Listener is a complete listener for a parse tree produced by LDEParser.
 type Listener struct {
 	rules     []*ast.RuleItem
@@ -164,6 +182,7 @@ func (l *Listener) ExitMayPassUntil(ctx *parser.MayPassUntilContext) {}
 
 // EnterTakeUntil is called when production takeUntil is entered.
 func (l *Listener) EnterTakeUntil(ctx *parser.TakeUntilContext) {
+	checkReserved(ctx.Identifier().GetSymbol())
 	l.ai.Take, _ = ast.TakeUntilTarget(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 	l.target = l.ai.Take.Limit
 }
@@ -173,6 +192,7 @@ func (l *Listener) ExitTakeUntil(ctx *parser.TakeUntilContext) {}
 
 // EnterTakeUntilOrRest is called when production takeUntilOrRest is entered.
 func (l *Listener) EnterTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {
+	checkReserved(ctx.Identifier().GetSymbol())
 	l.ai.TakeUntilOrRest, _ = ast.TakeUntilTargetOrRest(
 		ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart(),
 	)
@@ -184,6 +204,7 @@ func (l *Listener) ExitTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {}
 
 // EnterTakeUntilRest is called when production takeUntilRest is entered.
 func (l *Listener) EnterTakeUntilRest(ctx *parser.TakeUntilRestContext) {
+	checkReserved(ctx.Identifier().GetSymbol())
 	l.ai.TakeRest, _ = ast.TakeTheRest(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 }
 
@@ -194,6 +215,7 @@ func (l *Listener) ExitTakeUntilRest(ctx *parser.TakeUntilRestContext) {
 
 // EnterOptionalNamedArea is called when production optionalNamedArea is entered.
 func (l *Listener) EnterOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
+	checkReserved(ctx.Identifier().GetSymbol())
 	l.ai.Option, _ = ast.Option(ctx.Identifier().GetSymbol())
 
 	l.actions = append(l.actions, l.ai.Option)
