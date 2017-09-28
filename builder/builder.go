@@ -244,6 +244,8 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 				generators = append(generators, func() {
 					g.LookupFixedChar(l.Value, lower, false)
 				})
+			default:
+				panic("Integrity error")
 			}
 		} else {
 			// It is either short or limited/bounded lookup
@@ -256,7 +258,8 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 				generators = append(generators, func() {
 					g.LookupChar(l.Value, lower, upper, false)
 				})
-
+			default:
+				panic("Integrity error")
 			}
 		}
 	}

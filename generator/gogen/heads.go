@@ -206,6 +206,7 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
 		},
 		Else: failure,
 	})
+	g.body.Append(body)
 }
 
 // HeadChar checks if rest starts with the given char

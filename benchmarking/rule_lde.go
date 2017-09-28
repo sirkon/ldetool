@@ -9,9 +9,7 @@
 
 package main
 
-import (
-	"bytes"
-)
+import ()
 
 // Line ...
 type Line struct {
@@ -24,36 +22,58 @@ type Line struct {
 func (p *Line) Extract(line []byte) (bool, error) {
 	p.rest = line
 	var pos int
-	var tmp []byte
 
 	// Take until '|' as Name(string)
-	pos = bytes.IndexByte(p.rest, '|')
-	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
-	} else {
-		return false, nil
+	pos = -1
+	for i, char := range p.rest {
+		if char == '|' {
+			pos = i
+			break
+		}
 	}
-	p.Name = tmp
-
-	// Looking for '|' and then pass it
-	pos = bytes.IndexByte(p.rest, '|')
 	if pos >= 0 {
-		p.rest = p.rest[pos+1:]
-	} else {
-		return false, nil
-	}
-
-	// Looking for '|' and then pass it
-	pos = bytes.IndexByte(p.rest, '|')
-	if pos >= 0 {
+		p.Name = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
 
 	// Looking for '|' and then pass it
-	pos = bytes.IndexByte(p.rest, '|')
+	pos = -1
+	for i, char := range p.rest {
+		if char == '|' {
+			pos = i
+			break
+		}
+	}
+	if pos >= 0 {
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+
+	// Looking for '|' and then pass it
+	pos = -1
+	for i, char := range p.rest {
+		if char == '|' {
+			pos = i
+			break
+		}
+	}
+	if pos >= 0 {
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+
+	// Looking for '|' and then pass it
+	pos = -1
+	for i, char := range p.rest {
+		if char == '|' {
+			pos = i
+			break
+		}
+	}
 	if pos >= 0 {
 		p.rest = p.rest[pos+1:]
 	} else {
@@ -61,14 +81,19 @@ func (p *Line) Extract(line []byte) (bool, error) {
 	}
 
 	// Take until '|' as Count(string)
-	pos = bytes.IndexByte(p.rest, '|')
+	pos = -1
+	for i, char := range p.rest {
+		if char == '|' {
+			pos = i
+			break
+		}
+	}
 	if pos >= 0 {
-		tmp = p.rest[:pos]
+		p.Count = p.rest[:pos]
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, nil
 	}
-	p.Count = tmp
 
 	return true, nil
 }

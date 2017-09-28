@@ -155,4 +155,9 @@ AnonymousAreas = !
     )
     Data(string) ? " ";
 
-
+Split = !
+    Name(string) ~'|'
+    _ '|'[1]
+    _ '|'[1]
+    _ '|'[1]
+    Count(string) '|'[1];

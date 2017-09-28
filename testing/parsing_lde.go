@@ -1498,8 +1498,8 @@ type DecoderOptionals struct {
 func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 	p.rest = line
 	var err error
-	var headRest []byte
 	var pos int
+	var rest1 []byte
 	var tmp []byte
 	var tmpInt int64
 
@@ -1515,27 +1515,27 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int8 = int8(tmpInt)
-	headRest = p.rest
+	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(headRest) >= 5 && *(*uint64)(unsafe.Pointer(&headRest[0]))&1099511627775 == 263677109608 {
-		headRest = headRest[5:]
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+		rest1 = rest1[5:]
 	} else {
 		p.Head.Valid = false
 		goto decoderoptionalsHeadLabel
 	}
 
 	// Take until ' ' as Data(string)
-	pos = bytes.IndexByte(headRest, ' ')
+	pos = bytes.IndexByte(rest1, ' ')
 	if pos >= 0 {
-		p.Head.Data = headRest[:pos]
-		headRest = headRest[pos+1:]
+		p.Head.Data = rest1[:pos]
+		rest1 = rest1[pos+1:]
 	} else {
 		p.Head.Valid = false
 		goto decoderoptionalsHeadLabel
 	}
 	p.Head.Valid = true
-	p.rest = headRest
+	p.rest = rest1
 decoderoptionalsHeadLabel:
 
 	// Checks if the rest starts with `"end"` and pass it
@@ -1570,8 +1570,8 @@ type DecoderOptionalsStress struct {
 func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 	p.rest = line
 	var err error
-	var headRest []byte
 	var pos int
+	var rest1 []byte
 	var tmp []byte
 	var tmpInt int64
 
@@ -1587,27 +1587,27 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Int8 = int8(tmpInt)
-	headRest = p.rest
+	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(headRest) >= 5 && *(*uint64)(unsafe.Pointer(&headRest[0]))&1099511627775 == 263677109608 {
-		headRest = headRest[5:]
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+		rest1 = rest1[5:]
 	} else {
 		p.Head.Valid = false
 		goto decoderoptionalsstressHeadLabel
 	}
 
 	// Take until ' ' as Data(string)
-	pos = bytes.IndexByte(headRest, ' ')
+	pos = bytes.IndexByte(rest1, ' ')
 	if pos >= 0 {
-		p.Head.Data = headRest[:pos]
-		headRest = headRest[pos+1:]
+		p.Head.Data = rest1[:pos]
+		rest1 = rest1[pos+1:]
 	} else {
 		p.Head.Valid = false
 		goto decoderoptionalsstressHeadLabel
 	}
 	p.Head.Valid = true
-	p.rest = headRest
+	p.rest = rest1
 decoderoptionalsstressHeadLabel:
 
 	// Checks if the rest starts with `"end"` and pass it
@@ -1640,31 +1640,31 @@ type DecoderBranching struct {
 // Extract ...
 func (p *DecoderBranching) Extract(line []byte) (bool, error) {
 	p.rest = line
-	var headRest []byte
 	var pos int
+	var rest1 []byte
 
 	// Checks if the rest starts with `"start "` and pass it
 	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 35684507284595 {
 		p.rest = p.rest[6:]
 	}
-	headRest = p.rest
+	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(headRest) >= 5 && *(*uint64)(unsafe.Pointer(&headRest[0]))&1099511627775 == 263677109608 {
-		headRest = headRest[5:]
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+		rest1 = rest1[5:]
 	}
 
 	// Take until ' ' (or all the rest if not found) as Data(string)
-	pos = bytes.IndexByte(headRest, ' ')
+	pos = bytes.IndexByte(rest1, ' ')
 	if pos >= 0 {
-		p.Head.Data = headRest[:pos]
-		headRest = headRest[pos+1:]
+		p.Head.Data = rest1[:pos]
+		rest1 = rest1[pos+1:]
 	} else {
-		p.Head.Data = headRest
-		headRest = headRest[len(headRest):]
+		p.Head.Data = rest1
+		rest1 = rest1[len(rest1):]
 	}
 	p.Head.Valid = true
-	p.rest = headRest
+	p.rest = rest1
 
 	return true, nil
 }
@@ -1689,31 +1689,31 @@ type DecoderBranchingStress struct {
 // Extract ...
 func (p *DecoderBranchingStress) Extract(line []byte) (bool, error) {
 	p.rest = line
-	var headRest []byte
 	var pos int
+	var rest1 []byte
 
 	// Checks if the rest starts with `"start "` and pass it
 	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 35684507284595 {
 		p.rest = p.rest[6:]
 	}
-	headRest = p.rest
+	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(headRest) >= 5 && *(*uint64)(unsafe.Pointer(&headRest[0]))&1099511627775 == 263677109608 {
-		headRest = headRest[5:]
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+		rest1 = rest1[5:]
 	}
 
 	// Take until ' ' (or all the rest if not found) as Data(string)
-	pos = bytes.IndexByte(headRest, ' ')
+	pos = bytes.IndexByte(rest1, ' ')
 	if pos >= 0 {
-		p.Head.Data = headRest[:pos]
-		headRest = headRest[pos+1:]
+		p.Head.Data = rest1[:pos]
+		rest1 = rest1[pos+1:]
 	} else {
-		p.Head.Data = headRest
-		headRest = headRest[len(headRest):]
+		p.Head.Data = rest1
+		rest1 = rest1[len(rest1):]
 	}
 	p.Head.Valid = true
-	p.rest = headRest
+	p.rest = rest1
 
 	return true, nil
 }
@@ -1742,52 +1742,51 @@ type DoubleOpts struct {
 // Extract ...
 func (p *DoubleOpts) Extract(line []byte) (bool, error) {
 	p.rest = line
-	var headRest []byte
 	var pos int
-	var restRest []byte
-	headRest = p.rest
+	var rest1 []byte
+	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(headRest) >= 5 && *(*uint64)(unsafe.Pointer(&headRest[0]))&1099511627775 == 263677109608 {
-		headRest = headRest[5:]
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+		rest1 = rest1[5:]
 	} else {
 		p.Head.Valid = false
 		goto doubleoptsHeadLabel
 	}
 
 	// Take until ' ' (or all the rest if not found) as Data(string)
-	pos = bytes.IndexByte(headRest, ' ')
+	pos = bytes.IndexByte(rest1, ' ')
 	if pos >= 0 {
-		p.Head.Data = headRest[:pos]
-		headRest = headRest[pos+1:]
+		p.Head.Data = rest1[:pos]
+		rest1 = rest1[pos+1:]
 	} else {
-		p.Head.Data = headRest
-		headRest = headRest[len(headRest):]
+		p.Head.Data = rest1
+		rest1 = rest1[len(rest1):]
 	}
 	p.Head.Valid = true
-	p.rest = headRest
+	p.rest = rest1
 doubleoptsHeadLabel:
-	restRest = p.rest
+	rest1 = p.rest
 
 	// Checks if the rest starts with `"rest="` and pass it
-	if len(restRest) >= 5 && *(*uint64)(unsafe.Pointer(&restRest[0]))&1099511627775 == 263946724722 {
-		restRest = restRest[5:]
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263946724722 {
+		rest1 = rest1[5:]
 	} else {
 		p.Rest.Valid = false
 		goto doubleoptsRestLabel
 	}
 
 	// Take until ' ' (or all the rest if not found) as Data(string)
-	pos = bytes.IndexByte(restRest, ' ')
+	pos = bytes.IndexByte(rest1, ' ')
 	if pos >= 0 {
-		p.Rest.Data = restRest[:pos]
-		restRest = restRest[pos+1:]
+		p.Rest.Data = rest1[:pos]
+		rest1 = rest1[pos+1:]
 	} else {
-		p.Rest.Data = restRest
-		restRest = restRest[len(restRest):]
+		p.Rest.Data = rest1
+		rest1 = rest1[len(rest1):]
 	}
 	p.Rest.Valid = true
-	p.rest = restRest
+	p.rest = rest1
 doubleoptsRestLabel:
 
 	return true, nil
@@ -1929,40 +1928,40 @@ type AnonymousAreas struct {
 func (p *AnonymousAreas) Extract(line []byte) (bool, error) {
 	p.rest = line
 	var pos int
-	var rest []byte
-	rest = p.rest
+	var rest1 []byte
+	rest1 = p.rest
 
 	// Looking for 'd' and then pass it
 	pos = -1
-	for i, char := range rest {
+	for i, char := range rest1 {
 		if char == 'd' {
 			pos = i
 			break
 		}
 	}
 	if pos >= 0 {
-		rest = rest[pos+1:]
+		rest1 = rest1[pos+1:]
 	} else {
 		goto anonymousareasAnonymousAreaLabel
 	}
 
 	// Checks if the rest starts with `"ata="` and pass it
-	if len(rest) >= 4 && *(*uint64)(unsafe.Pointer(&rest[0]))&4294967295 == 1029796961 {
-		rest = rest[4:]
+	if len(rest1) >= 4 && *(*uint64)(unsafe.Pointer(&rest1[0]))&4294967295 == 1029796961 {
+		rest1 = rest1[4:]
 	} else {
 		goto anonymousareasAnonymousAreaLabel
 	}
-	p.rest = rest
+	p.rest = rest1
 anonymousareasAnonymousAreaLabel:
-	rest = p.rest
+	rest1 = p.rest
 
 	// Checks if the rest starts with `"1234"` and pass it
-	if len(rest) >= 4 && *(*uint64)(unsafe.Pointer(&rest[0]))&4294967295 == 875770417 {
-		rest = rest[4:]
+	if len(rest1) >= 4 && *(*uint64)(unsafe.Pointer(&rest1[0]))&4294967295 == 875770417 {
+		rest1 = rest1[4:]
 	} else {
 		goto anonymousareasAnonymousAreaLabel2
 	}
-	p.rest = rest
+	p.rest = rest1
 anonymousareasAnonymousAreaLabel2:
 
 	// Take until " " (or all the rest if not found) as Data(string)
@@ -1973,6 +1972,70 @@ anonymousareasAnonymousAreaLabel2:
 	} else {
 		p.Data = p.rest
 		p.rest = p.rest[len(p.rest):]
+	}
+
+	return true, nil
+}
+
+// Split ...
+type Split struct {
+	rest  []byte
+	Name  []byte
+	Count []byte
+}
+
+// Extract ...
+func (p *Split) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var pos int
+
+	// Take until '|' as Name(string)
+	pos = -1
+	for i, char := range p.rest {
+		if char == '|' {
+			pos = i
+			break
+		}
+	}
+	if pos >= 0 {
+		p.Name = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Name", '|', string(p.rest))
+	}
+
+	// Checks if rest[1:] starts with '|' and pass it
+	if len(p.rest) >= 1+1 && p.rest[1] == '|' {
+		p.rest = p.rest[1+1:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m)` is expected to start with \033[1m%s\033[0m", string(p.rest), '|')
+	}
+
+	// Checks if rest[1:] starts with '|' and pass it
+	if len(p.rest) >= 1+1 && p.rest[1] == '|' {
+		p.rest = p.rest[1+1:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m)` is expected to start with \033[1m%s\033[0m", string(p.rest), '|')
+	}
+
+	// Checks if rest[1:] starts with '|' and pass it
+	if len(p.rest) >= 1+1 && p.rest[1] == '|' {
+		p.rest = p.rest[1+1:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m)` is expected to start with \033[1m%s\033[0m", string(p.rest), '|')
+	}
+
+	// Take until 2nd character if it is'|' as Count(string)
+	if len(p.rest) >= 1+1 && p.rest[1] == '|' {
+		pos = 1
+	} else {
+		pos = -1
+	}
+	if pos >= 0 {
+		p.Count = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", '|', string(p.rest[1:1]))
 	}
 
 	return true, nil

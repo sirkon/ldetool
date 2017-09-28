@@ -378,3 +378,17 @@ func TestAnonymousAreas(t *testing.T) {
 	require.True(t, ok)
 	require.Equal(t, "end", string(p.Data))
 }
+
+func TestSplit(t *testing.T) {
+	p := &Split{}
+	src := []byte("Name|1|2|3|4|5")
+	if ok, err := p.Extract(src); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.NotNil(t, err)
+	}
+
+	require.Equal(t, "Name", string(p.Name))
+	require.Equal(t, "4", string(p.Count))
+}

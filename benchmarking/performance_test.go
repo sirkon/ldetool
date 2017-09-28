@@ -26,12 +26,12 @@ func RandStringRunes(n int) string {
 }
 
 func name() string {
-	length := rand.Int()%128 + 1
+	length := rand.Int()%4 + 1
 	return RandStringRunes(length)
 }
 
 func randInt() uint64 {
-	return rand.Uint64()
+	return rand.Uint64() % 1000
 }
 
 var samples [][]byte
