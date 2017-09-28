@@ -65,9 +65,9 @@ func (l *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {
 	if l.expectEnd {
 		token := ctx.GetStart()
 		panic(fmt.Sprintf(
-			"%d:%d: previous action consumed the rest of the string, the rest will do nothing",
+			"%d:%d: previous action consumed the rest of the string, the remaining ops will do nothing",
 			token.GetLine(),
-			token.GetColumn(),
+			token.GetColumn()+1,
 		))
 	}
 }
@@ -321,9 +321,9 @@ func (l *Listener) EnterFieldType(ctx *parser.FieldTypeContext) {
 		return
 	}
 	panic(fmt.Sprintf(
-		"%d:%d: unsupported type `\033[1m%l\033[0m`, must be one of %l",
+		"%d:%d: unsupported type `\033[1m%s\033[0m`, must be one of %s",
 		ctx.Identifier().GetSymbol().GetLine(),
-		ctx.Identifier().GetSymbol().GetColumn()+len(typeName)/2,
+		ctx.Identifier().GetSymbol().GetColumn()+1,
 		typeName,
 		acceptablesTypeList,
 	))

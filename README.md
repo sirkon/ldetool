@@ -29,15 +29,34 @@ It turned out most of things to retrieve data are repetitive and we are writing 
 
 ##### Typical operations:
 1. Check if the rest starts with the certain string or character and pass it
-1. Look for the char or substring in the rest and pass it
+2. Just pass first N characters
+3. Look for the char or substring (in what follows we shall call this character or string the __target__) in the rest and pass it
+4. Take all data from the rest up to the target and save it somewhere having some type with conversion if possible (string to numeric)
+5. Take the rest and save it somewhere
+6. Take until the target or the the whole rest if not found and save it somewhere
+7. Optional areas: there should be a possibility to ignore some subset of the extraction rule if it wasn't successful for the rest and roll the rest back to
+    the start of failed attempt, like this:
+    ```perl
+    Rule = 
+        ?Start( 
+            ^" start=" Time(string) ' '
+        )
+        ^" rest=\"" Rest(string) '"';
     ```
-    0x23a719bdf5589bc.Receive() -> ID[alissa] Country[RU] … 
+    Both lines
     ```
-    We obviously only need data after `-> ` in this case, so we just need to find `-> ` and pass it. We also may have
-    some apriori knowledge of the length of chunk where the `-> ` might be found, thus the next command.
-2. Look for the char or substring in the first N characters of the rest and pass it
-3. Take all data from the rest up to the certain string or character and save it under some name.
-4. etc
+    start=2017-09-28T16:58:23 rest="The rest is here"
+    rest="Just the rest"
+    ```
+    must should pass the extraction with the result
+    ```
+    (Start="2017-09-28T16:58:23", Rest="The rest is here"),
+    (Start="", Rest="Just the rest")
+    ```
+8. Target can bo not just a string or character: there might be some kind of limitations, such as apriori knowledge of
+    where the target actually is, some range or even exact position. Also, `bytes.IndexByte` works great for character
+    lookup, it can use vector CPU instruction for speed bump, but it is not [inlined](https://github.com/golang/go/issues/21759#issuecomment-327124437)
+    and call overhead can be quite significant for closer targets, where the naive loop search can be faster.
 
 So, we wrote a code generator for this purpose. The code turned to be even faster than one we used to write, since we actually
 were trying to reduce amount of code introducing helper abstractions what have some cost while the generator just put raw code.
@@ -120,7 +139,6 @@ Now, we have
             return
         }
         return p.Hidden.Value
-        …
     }    
     ```
     
