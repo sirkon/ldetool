@@ -4,3 +4,33 @@ Line =
 	_ ~'|'
 	_ ~'|'
 	Count(string) ~'|';
+
+
+CRMod = !
+	^'[' _' ' Time(string) ']'
+	_'[' ChatID(uint64) '.'
+	_"reqid '" ReqID(string) '\''
+	_"from" _'(' UIN(string) ')'
+	_"FLAGS[set:" FlagsSet(string) ','
+	^" unset:" FlagsUnset(string) ']'
+	^" FIELDS[changed:" FieldsChanged(string) ']'
+	?AnkVer (^" ank_ver[" Value(string) ']')
+	?ListVer (^" list_ver[" Value(string) ']')
+	^" name[" Name(string) ']'
+	?About (^" about[" Value(string) ~']')
+	?Rules (^" rules[" Value(string) ~']')
+	?Nick (^" nick[" Value(string) ']')
+	?Location(^" location[" Value(string) ']')
+	?Stamp(^" stamp[" Value(string) ']')
+	?Regions(^" regions[" Value(string) ~']')
+	?Flags(^" flags[" Value(string) ']')
+	^" created[" Created(int64) '='
+	?Creator(_"creator[" Value(string) ']')
+	?AvatarLastCheck(_"avatars_lastcheck[" Value(int64) ']')
+	?AvatarsLastMod(_"cavatar_lastmod[" Value(int64) ']')
+	^" origin[" Origin(string) ~']'
+	^" abuse"  _"drugs["[1] Drugs(int16) ~']'
+	^" abuse"  _"spam["[1] Spam(int16) ~']'
+	^" abuse" _"porno["[1] Pron(int16) ~']'
+	?Violation (^" abuse" _"violation["[1] Value(int16) ~']')
+	?AbuseOther (^" abuse" _"other["[1] Value(int16) ~']');

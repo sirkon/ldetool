@@ -215,3 +215,51 @@ Using Ragel for log parsing hardly makes any sense though, because it doesn't se
     PASS
     ok  	github.com/sirkon/ldetool/benchmarking	6.106s
     ```
+
+##### Automated comparison against Go regex on real world sample 
+1. LDE rule first
+    ```perl
+    CRMod = !
+        ^'[' _' ' Time(string) ']'
+        _'[' ChatID(uint64) '.'
+        _"reqid '" ReqID(string) '\''
+        _"from" _'(' UIN(string) ')'
+        _"FLAGS[set:" FlagsSet(string) ','
+        ^" unset:" FlagsUnset(string) ']'
+        ^" FIELDS[changed:" FieldsChanged(string) ']'
+        ?AnkVer (^" ank_ver[" Value(string) ']')
+        ?ListVer (^" list_ver[" Value(string) ']')
+        ^" name[" Name(string) ']'
+        ?About (^" about[" Value(string) ~']')
+        ?Rules (^" rules[" Value(string) ~']')
+        ?Nick (^" nick[" Value(string) ']')
+        ?Location(^" location[" Value(string) ']')
+        ?Stamp(^" stamp[" Value(string) ']')
+        ?Regions(^" regions[" Value(string) ~']')
+        ?Flags(^" flags[" Value(string) ']')
+        ^" created[" Created(int64) '='
+        ?Creator(_"creator[" Value(string) ']')
+        ?AvatarLastCheck(_"avatars_lastcheck[" Value(int64) ']')
+        ?AvatarsLastMod(_"cavatar_lastmod[" Value(int64) ']')
+        ^" origin[" Origin(string) ~']'
+        ^" abuse"  _"drugs["[1] Drugs(int16) ~']'
+        ^" abuse"  _"spam["[1] Spam(int16) ~']'
+        ^" abuse" _"porno["[1] Pron(int16) ~']'
+        ?Violation (^" abuse" _"violation["[1] Value(int16) ~']')
+        ?AbuseOther (^" abuse" _"other["[1] Value(int16) ~']');
+    ``` 
+    You see, we have all data translated into types needed and usable error messages.
+2. Regex, about 490 characters hard to debug language without any boilerplate. Good luck optimizing this mess. 
+    ```
+    \[\S* (.*?)\][^[]*\[(\d+)\..*?reqid '(.*?)' from.*?\((.*?)\).*?FLAGS\[set:(.*?), unset:(.*?)\] FIELDS\[changed:(.*?)\](:? ank_ver\[(.*?)\])?(:? list_ver\[(.*?)\])? name\[(.*?)\](:? about\[(.*?)\])?(:? stamp\[(.*?)\])?(:? regions\[(.*?)\])?(:? flags\[(.*?)\])? created\[(\d+)=.*?\](:? creator\[(.*?)\])?(:? avatars_lastcheck\[(\d+)\])?(:? cavatar_lastmod\[(\d+)\])? origin\[(.*?)\] abuse.*drugs\[(\d+)\] abuse.*spam\[(\d+)\] abuse.*porno\[(\d+)\](:? abuse.violation\[(\d+)\])?(:? abuse.other\[(\d+)\])?
+    ```
+```
+$ go test -v -bench '.*Complex.*' github.com/sirkon/ldetool/benchmarking
+
+BenchmarkLDEComplex-4            1000000              2116 ns/op
+BenchmarkRegexComplex-4             1000           2169577 ns/op
+PASS
+ok      github.com/sirkon/ldetool/benchmarking  4.537s
+```
+You see, specialized solution about 1000 times faster, much more easy to write and debug and does a lot of boilerplate
+beneath. 
