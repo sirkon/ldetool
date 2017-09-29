@@ -16,6 +16,7 @@ import (
 	"unsafe"
 )
 
+var ba = []byte("ba")
 var const123456789 = []byte("123456789")
 var const34 = []byte("34")
 var space = []byte(" ")
@@ -371,10 +372,10 @@ func (p *DecodersBounded) Extract(line []byte) (bool, error) {
 	var tmpInt int64
 
 	// Take until ' ' as Int64(int64)
-	pos = bytes.IndexByte(p.rest[8:16], ' ') + 8
+	pos = bytes.IndexByte(p.rest[8:16], ' ')
 	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
+		tmp = p.rest[:pos+8]
+		p.rest = p.rest[pos+1+8:]
 	} else {
 		return false, nil
 	}
@@ -737,10 +738,10 @@ func (p *DecodersBoundedString) Extract(line []byte) (bool, error) {
 	var tmpFloat float64
 
 	// Take until " " as Float64(float64)
-	pos = bytes.Index(p.rest[8:16], space) + 8
+	pos = bytes.Index(p.rest[8:16], space)
 	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+len(space):]
+		tmp = p.rest[:pos+8]
+		p.rest = p.rest[pos+len(space)+8:]
 	} else {
 		return false, nil
 	}
@@ -1103,10 +1104,10 @@ func (p *DecodersBoundedStress) Extract(line []byte) (bool, error) {
 	var tmpInt int64
 
 	// Take until ' ' as Int64(int64)
-	pos = bytes.IndexByte(p.rest[8:16], ' ') + 8
+	pos = bytes.IndexByte(p.rest[8:16], ' ')
 	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
+		tmp = p.rest[:pos+8]
+		p.rest = p.rest[pos+1+8:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", ' ', string(p.rest[8:16]))
 	}
@@ -1469,10 +1470,10 @@ func (p *DecodersBoundedStringStress) Extract(line []byte) (bool, error) {
 	var tmpFloat float64
 
 	// Take until " " as Float64(float64)
-	pos = bytes.Index(p.rest[8:16], space) + 8
+	pos = bytes.Index(p.rest[8:16], space)
 	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+len(space):]
+		tmp = p.rest[:pos+8]
+		p.rest = p.rest[pos+len(space)+8:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", space, string(p.rest[8:16]))
 	}
@@ -2036,6 +2037,52 @@ func (p *Split) Extract(line []byte) (bool, error) {
 		p.rest = p.rest[pos+1:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", '|', string(p.rest[1:1]))
+	}
+
+	return true, nil
+}
+
+// Shift1 ...
+type Shift1 struct {
+	rest []byte
+	B    []byte
+}
+
+// Extract ...
+func (p *Shift1) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var pos int
+
+	// Take until "ba" as B(string)
+	pos = bytes.Index(p.rest[3:12], ba)
+	if pos >= 0 {
+		p.B = p.rest[:pos+3]
+		p.rest = p.rest[pos+len(ba)+3:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field B", ba, string(p.rest[3:12]))
+	}
+
+	return true, nil
+}
+
+// Shift2 ...
+type Shift2 struct {
+	rest []byte
+	B    []byte
+}
+
+// Extract ...
+func (p *Shift2) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var pos int
+
+	// Take until 'b' as B(string)
+	pos = bytes.IndexByte(p.rest[3:12], 'b')
+	if pos >= 0 {
+		p.B = p.rest[:pos+3]
+		p.rest = p.rest[pos+1+3:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field B", 'b', string(p.rest[3:12]))
 	}
 
 	return true, nil

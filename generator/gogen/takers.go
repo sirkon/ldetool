@@ -132,9 +132,6 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			Src:    rest,
 			Needle: srcobj.Raw(constName),
 		}
-		if lower > 0 {
-			detector = srcobj.OperatorAdd(detector, srcobj.Literal(lower))
-		}
 		body.Append(srcobj.Trim(detector))
 		body.Append(srcobj.Raw("\n"))
 	} else {
@@ -189,13 +186,20 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 		srcobj.Raw("pos"),
 		srcobj.NewCall("len", srcobj.Raw(constName)),
 	)
+	if lower > 0 && upper != lower {
+		offset = srcobj.OperatorAdd(offset, srcobj.Literal(lower))
+	}
 
+	var takeOff srcobj.Source = srcobj.Raw("pos")
+	if lower > 0 && upper != lower {
+		takeOff = srcobj.OperatorAdd(takeOff, srcobj.Literal(lower))
+	}
 	var mainPath srcobj.Source
 	if fieldType == "string" {
 		mainPath = srcobj.NewBody(
 			srcobj.LineAssign{
 				Receiver: "p." + item.name,
-				Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
+				Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), takeOff),
 			},
 			srcobj.LineAssign{
 				Receiver: g.curRestVar(),
@@ -210,7 +214,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			srcobj.NewBody(
 				srcobj.LineAssign{
 					Receiver: "tmp",
-					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
+					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), takeOff),
 				},
 				srcobj.LineAssign{
 					Receiver: g.curRestVar(),
@@ -295,9 +299,6 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 			Src:    rest,
 			Needle: srcobj.Raw(char),
 		}
-		if lower > 0 {
-			detector = srcobj.OperatorAdd(detector, srcobj.Literal(lower))
-		}
 		body.Append(srcobj.Trim(detector))
 		body.Append(srcobj.Raw("\n"))
 	} else {
@@ -352,13 +353,21 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 		srcobj.Raw("pos"),
 		srcobj.Literal(1),
 	)
+	if lower > 0 && upper != lower {
+		offset = srcobj.OperatorAdd(offset, srcobj.Literal(lower))
+	}
+
+	var takeOff srcobj.Source = srcobj.Raw("pos")
+	if lower > 0 && upper != lower {
+		takeOff = srcobj.OperatorAdd(takeOff, srcobj.Literal(lower))
+	}
 
 	var mainPath srcobj.Source
 	if fieldType == "string" {
 		mainPath = srcobj.NewBody(
 			srcobj.LineAssign{
 				Receiver: "p." + item.name,
-				Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
+				Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), takeOff),
 			},
 			srcobj.LineAssign{
 				Receiver: g.curRestVar(),
@@ -373,7 +382,7 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 			srcobj.NewBody(
 				srcobj.LineAssign{
 					Receiver: "tmp",
-					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw("pos")),
+					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), takeOff),
 				},
 				srcobj.LineAssign{
 					Receiver: g.curRestVar(),

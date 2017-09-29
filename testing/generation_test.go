@@ -392,3 +392,16 @@ func TestSplit(t *testing.T) {
 	require.Equal(t, "Name", string(p.Name))
 	require.Equal(t, "4", string(p.Count))
 }
+
+func TestShift(t *testing.T) {
+	p := &Shift1{}
+	src := []byte("1233330000000000000000000000000000000000000000000000003")
+	if ok, _ := p.Extract(src); ok {
+		t.Errorf("Rule Shift1 must give a error on \033[1m%s\033[0m", string(src))
+	}
+
+	p2 := &Shift2{}
+	if ok, _ := p2.Extract(src); ok {
+		t.Errorf("Rule Shift2 must give a error on \033[1m%s\033[0m", string(src))
+	}
+}
