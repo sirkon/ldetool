@@ -53,6 +53,15 @@ func OperatorLT(op1, op2 Source) Source {
 	}
 }
 
+// OperatorLE generate Greater or Equal comparison
+func OperatorLE(op1, op2 Source) Source {
+	return hardToAccessBinaryOperator{
+		operand1: op1,
+		operand2: op2,
+		operator: "<=",
+	}
+}
+
 // OperatorAssign generate assignment
 func OperatorAssign(op1, op2 Source) Source {
 	return hardToAccessBinaryOperator{

@@ -64,8 +64,17 @@ func numerator(num int) string {
 	}
 }
 
+func (g *Generator) sliceTooLarge(upper int) srcobj.Source {
+	return srcobj.ReturnError(
+		"Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`",
+		srcobj.Literal(upper),
+		srcobj.NewCall("len", g.rest()),
+		srcobj.Stringify(g.rest()),
+	)
+}
+
 // TakeBeforeStringEx ...
-func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, expand bool) {
+func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand bool) {
 	g.regVar("pos", "int")
 	g.regVar(g.curRestVar(), "[]byte")
 
@@ -124,24 +133,39 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			Then: srcobj.Assign("pos", srcobj.Literal(lower)),
 			Else: srcobj.Assign("pos", srcobj.Literal(-1)),
 		})
-	} else if lower >= 0 {
-		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%sas %s(%s)", anchor, ccc, name, fieldType)))
-		g.regImport("", "bytes")
-		var detector srcobj.Source = srcobj.LookupStringLong{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(constName),
-		}
-		body.Append(srcobj.Trim(detector))
-		body.Append(srcobj.Raw("\n"))
 	} else {
 		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%sas %s(%s)", anchor, ccc, name, fieldType)))
-		body.Append(srcobj.LookupStringShort{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(constName),
-		})
+		var lookup srcobj.Source
+		if close {
+			lookup = srcobj.LookupStringShort{
+				Var:    "pos",
+				Src:    rest,
+				Needle: srcobj.Raw(constName),
+			}
+		} else {
+			g.regImport("", "bytes")
+			var detector srcobj.Source = srcobj.LookupStringLong{
+				Var:    "pos",
+				Src:    rest,
+				Needle: srcobj.Raw(constName),
+			}
+			lookup = srcobj.NewBody(srcobj.Trim(detector), srcobj.Raw("\n"))
+		}
+
+		if upper > 0 {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorLT(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(upper),
+					),
+					Then: g.sliceTooLarge(upper),
+				},
+			)
+		}
+		body.Append(lookup)
 	}
+
 	var alternative srcobj.Source
 	if !expand {
 		alternative = g.failure(
@@ -240,7 +264,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 }
 
 // TakeBeforeChar ...
-func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, expand bool) {
+func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand bool) {
 	g.regVar("pos", "int")
 	g.regVar(g.curRestVar(), "[]byte")
 
@@ -291,23 +315,37 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 			Then: srcobj.Assign("pos", srcobj.Literal(lower)),
 			Else: srcobj.Assign("pos", srcobj.Literal(-1)),
 		})
-	} else if lower >= 0 {
-		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%sas %s(%s)", char, ccc, name, fieldType)))
-		g.regImport("", "bytes")
-		var detector srcobj.Source = srcobj.LookupByteLong{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(char),
-		}
-		body.Append(srcobj.Trim(detector))
-		body.Append(srcobj.Raw("\n"))
 	} else {
 		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%sas %s(%s)", char, ccc, name, fieldType)))
-		body.Append(srcobj.LookupByteShort{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(char),
-		})
+		var lookup srcobj.Source
+		if close {
+			lookup = srcobj.LookupByteShort{
+				Var:    "pos",
+				Src:    rest,
+				Needle: srcobj.Raw(char),
+			}
+		} else {
+			g.regImport("", "bytes")
+			var detector srcobj.Source = srcobj.LookupByteLong{
+				Var:    "pos",
+				Src:    rest,
+				Needle: srcobj.Raw(char),
+			}
+			lookup = srcobj.NewBody(srcobj.Trim(detector), srcobj.Raw("\n"))
+		}
+
+		if upper > 0 {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorLT(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(upper),
+					),
+					Then: g.sliceTooLarge(upper),
+				},
+			)
+		}
+		body.Append(lookup)
 	}
 	var alternative srcobj.Source
 	if !expand {

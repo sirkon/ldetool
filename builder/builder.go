@@ -113,13 +113,15 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 			generators = append(generators, func() {
 				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
 				g.TakeBeforeString(
-					item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper, true)
+					item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper,
+					item.Limit.Close, true)
 			})
 		case ast.Char:
 			generators = append(generators, func() {
 				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
 				g.TakeBeforeChar(
-					item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper, true)
+					item.Field.Name, item.Field.Type, item.Limit.Value, item.Limit.Lower, item.Limit.Upper,
+					item.Limit.Close, true)
 			})
 		}
 	}
@@ -140,22 +142,20 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 		g.RegGravity(gPrefix.Add(item.Field.Name).String())
 		lower := item.Limit.Lower
 		upper := item.Limit.Upper
-		if item.Limit.Close {
-			lower = -1
-			upper = -1
-		}
 		switch item.Limit.Type {
 		case ast.String:
 			generators = append(generators, func() {
 				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
 				g.TakeBeforeString(
-					item.Field.Name, item.Field.Type, item.Limit.Value, lower, upper, false)
+					item.Field.Name, item.Field.Type, item.Limit.Value, lower, upper,
+					item.Limit.Close, false)
 			})
 		case ast.Char:
 			generators = append(generators, func() {
 				g.AddField(item.Field.Name, item.Field.Type, item.Field.NameToken)
 				g.TakeBeforeChar(
-					item.Field.Name, item.Field.Type, item.Limit.Value, lower, upper, false)
+					item.Field.Name, item.Field.Type, item.Limit.Value, lower, upper,
+					item.Limit.Close, false)
 			})
 		}
 	}

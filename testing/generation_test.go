@@ -29,7 +29,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 	require.False(t, ok)
 
 	dl := &DecodersLimited{}
-	ok, err = dl.Extract([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
+	ok, err = dl.Extract([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest               `))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,7 +45,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 	require.Equal(t, float32(9), dl.Float32)
 	require.Equal(t, float64(11e7), dl.Float64)
 	require.Equal(t, "abcdef", string(dl.String))
-	require.Equal(t, "rest", string(dl.rest))
+	require.Equal(t, "rest               ", string(dl.rest))
 
 	db := &DecodersBounded{}
 	ok, err = db.Extract([]byte(`11122321312313         `))
@@ -404,4 +404,23 @@ func TestShift(t *testing.T) {
 	if ok, _ := p2.Extract(src); ok {
 		t.Errorf("Rule Shift2 must give a error on \033[1m%s\033[0m", string(src))
 	}
+
+	src = []byte("ba12ba              ")
+	p3 := &Shift3{}
+	if ok, err := p3.Extract(src); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Errorf("Rule Shift2 must give a error on \033[1m%s\033[0m", string(src))
+	}
+	require.Equal(t, string(p3.B), "ba12")
+
+	p4 := &Shift4{}
+	if ok, err := p4.Extract(src); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Errorf("Rule Shift2 must give a error on \033[1m%s\033[0m", string(src))
+	}
+	require.Equal(t, string(p4.B), "ba12")
 }

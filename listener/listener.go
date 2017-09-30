@@ -271,11 +271,11 @@ func (l *Listener) ExitTargetLit(ctx *parser.TargetLitContext) {}
 
 // EnterBound is called when production bound is entered.
 func (l *Listener) EnterBound(ctx *parser.BoundContext) {
-	if l.target.Close {
-		panic(fmt.Sprintf(
-			"%d:%d: short lookup does not make a sense on bounded areas",
-			ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
-	}
+	//if l.target.Close {
+	//	panic(fmt.Sprintf(
+	//		"%d:%d: short lookup does not make a sense on bounded areas",
+	//		ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
+	//}
 	lower, _ := strconv.Atoi(ctx.IntLit(0).GetText())
 	upper, _ := strconv.Atoi(ctx.IntLit(1).GetText())
 	l.target.SetBound(lower, upper)
@@ -286,11 +286,11 @@ func (l *Listener) ExitBound(ctx *parser.BoundContext) {}
 
 // EnterLimit is called when production limit is entered.
 func (l *Listener) EnterLimit(ctx *parser.LimitContext) {
-	if l.target.Close {
-		panic(fmt.Sprintf(
-			"%d:%d: short lookup does not make a sense on limited areas",
-			ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
-	}
+	//if l.target.Close {
+	//	panic(fmt.Sprintf(
+	//		"%d:%d: short lookup does not make a sense on limited areas",
+	//		ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
+	//}
 	upper, _ := strconv.Atoi(ctx.IntLit().GetText())
 	l.target.SetLimit(upper)
 }
