@@ -65,16 +65,14 @@ func numerator(num int) string {
 }
 
 func (g *Generator) sliceTooLarge(upper int) srcobj.Source {
-	return srcobj.ReturnError(
-		"Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
+	return g.failure("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
 		srcobj.Literal(upper),
 		srcobj.NewCall("len", g.rest()),
-		srcobj.Stringify(g.rest()),
-	)
+		srcobj.Stringify(g.rest()))
 }
 
 func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
-	return srcobj.ReturnError(
+	return g.failure(
 		"Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
 		srcobj.Literal(lower),
 		srcobj.NewCall("len", g.rest()),

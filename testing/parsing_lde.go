@@ -407,7 +407,7 @@ func (p *DecodersBounded) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int64(int64)
 	if len(p.rest) < 16 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 16, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.IndexByte(p.rest[8:16], ' ')
 	if pos >= 0 {
@@ -620,7 +620,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int8(int8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -636,7 +636,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int16(int16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -652,7 +652,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int32(int32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -668,7 +668,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int64(int64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -684,7 +684,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint8(uint8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -700,7 +700,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint16(uint16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -716,7 +716,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint32(uint32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -732,7 +732,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint64(uint64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -748,7 +748,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float32(float32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -764,7 +764,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float64(float64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -780,7 +780,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as String(string)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -809,7 +809,7 @@ func (p *DecodersBoundedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float64(float64)
 	if len(p.rest) < 16 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 16, len(p.rest), string(p.rest))
+		return false, nil
 	}
 	pos = bytes.Index(p.rest[8:16], space)
 	if pos >= 0 {
@@ -2394,11 +2394,45 @@ func (p *LookupJump) Extract(line []byte) (bool, error) {
 	}
 	// Looking for "@@" and then pass it
 	pos = bytes.Index(p.rest[2:], dogs)
-	pos = bytes.Index(p.rest[2:], dogs)
 	if pos >= 0 {
 		p.rest = p.rest[pos+len(dogs)+2:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", dogs, string(p.rest[2:]))
+	}
+
+	return true, nil
+}
+
+// TargetConstraintsCheck ...
+type TargetConstraintsCheck struct {
+	rest []byte
+}
+
+// Extract ...
+func (p *TargetConstraintsCheck) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var pos int
+
+	// Looking for ' ' and then pass it
+	if len(p.rest) < 1 {
+		return false, nil
+	}
+	pos = bytes.IndexByte(p.rest[1:], ' ')
+	if pos >= 0 {
+		p.rest = p.rest[pos+1+1:]
+	} else {
+		return false, nil
+	}
+
+	// Looking for ' ' and then pass it
+	if len(p.rest) < 1 {
+		return false, fmt.Errorf("Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 1, len(p.rest), string(p.rest))
+	}
+	pos = bytes.IndexByte(p.rest[1:], ' ')
+	if pos >= 0 {
+		p.rest = p.rest[pos+1+1:]
+	} else {
+		return false, fmt.Errorf("Cannot find \033[1m%c\033[0m in `\033[1m%s\033[0m`", ' ', string(p.rest[1:]))
 	}
 
 	return true, nil

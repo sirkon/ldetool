@@ -452,3 +452,24 @@ func TestLookupJump(t *testing.T) {
 	}
 	require.Equal(t, "123", string(p.rest))
 }
+
+func TestTargetConstraintsCheck(t *testing.T) {
+	p := &TargetConstraintsCheck{}
+	src := []byte(" 1")
+
+	ok, err := p.Extract(src)
+	require.False(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	src = []byte("1 1")
+	ok, err = p.Extract(src)
+	require.False(t, ok)
+	require.NotNil(t, err)
+
+	src = []byte("1 1 abcdef")
+	ok, err = p.Extract(src)
+	require.True(t, ok)
+	require.Equal(t, "abcdef", string(p.rest))
+}
