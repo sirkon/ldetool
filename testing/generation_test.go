@@ -426,7 +426,7 @@ func TestShift(t *testing.T) {
 }
 
 func TestJump(t *testing.T) {
-	p := Jump{}
+	p := &Jump{}
 	src := []byte("1  34 15@@1@@@")
 	if ok, err := p.Extract(src); !ok {
 		if err != nil {
@@ -439,4 +439,16 @@ func TestJump(t *testing.T) {
 	require.Equal(t, "15", string(p.Third))
 	require.Equal(t, "1@", string(p.Fourth))
 	require.Equal(t, "", string(p.rest))
+}
+
+func TestLookupJump(t *testing.T) {
+	p := &LookupJump{}
+	src := []byte("1  3445@@123")
+	if ok, err := p.Extract(src); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.NotNil(t, err)
+	}
+	require.Equal(t, "123", string(p.rest))
 }

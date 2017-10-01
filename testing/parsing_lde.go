@@ -2367,3 +2367,39 @@ func (p *Jump) Extract(line []byte) (bool, error) {
 
 	return true, nil
 }
+
+// LookupJump ...
+type LookupJump struct {
+	rest []byte
+}
+
+// Extract ...
+func (p *LookupJump) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var pos int
+
+	// Looking for ' ' and then pass it
+	if len(p.rest) < 2 {
+		return false, fmt.Errorf("Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.rest), string(p.rest))
+	}
+	pos = bytes.IndexByte(p.rest[2:], ' ')
+	if pos >= 0 {
+		p.rest = p.rest[pos+1+2:]
+	} else {
+		return false, fmt.Errorf("Cannot find \033[1m%c\033[0m in `\033[1m%s\033[0m`", ' ', string(p.rest[2:]))
+	}
+
+	if len(p.rest) < 2 {
+		return false, fmt.Errorf("Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.rest), string(p.rest))
+	}
+	// Looking for "@@" and then pass it
+	pos = bytes.Index(p.rest[2:], dogs)
+	pos = bytes.Index(p.rest[2:], dogs)
+	if pos >= 0 {
+		p.rest = p.rest[pos+len(dogs)+2:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", dogs, string(p.rest[2:]))
+	}
+
+	return true, nil
+}

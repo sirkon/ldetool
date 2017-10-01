@@ -179,3 +179,7 @@ Jump = !
     Second(string) ~' '[2:]
     Third(string) "@@"[2:]
     Fourth(string) "@@"[2:];
+
+LookupJump = !
+    _' '[2:]
+    _"@@"[2:];
