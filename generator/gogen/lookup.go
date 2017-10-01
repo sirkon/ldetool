@@ -70,21 +70,7 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 		}
 		lookup = srcobj.NewBody(srcobj.Trim(detector), srcobj.Raw("\n"))
 	}
-
 	body.Append(lookup)
-	if close {
-		body.Append(srcobj.LookupStringShort{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(constName),
-		})
-	} else {
-		body.Append(srcobj.LookupStringLong{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(constName),
-		})
-	}
 
 	var failure srcobj.Source
 	if !ignore {
