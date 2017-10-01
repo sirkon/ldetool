@@ -225,13 +225,8 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 		l := it.Pass.Limit
 		var lower int
 		var upper int
-		if l.Close {
-			lower = -1
-			upper = -1
-		} else {
-			lower = l.Lower
-			upper = l.Upper
-		}
+		lower = l.Lower
+		upper = l.Upper
 
 		if lower == upper && lower > 0 {
 			// Fixed position check
@@ -252,11 +247,11 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupString(l.Value, lower, upper, false)
+					g.LookupString(l.Value, lower, upper, l.Close, false)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupChar(l.Value, lower, upper, false)
+					g.LookupChar(l.Value, lower, upper, l.Close, false)
 				})
 			default:
 				panic("Integrity error")
@@ -270,13 +265,8 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 		l := it.PassOrIgnore.Limit
 		var lower int
 		var upper int
-		if l.Close {
-			lower = -1
-			upper = -1
-		} else {
-			lower = l.Lower
-			upper = l.Upper
-		}
+		lower = l.Lower
+		upper = l.Upper
 
 		if lower == upper && lower > 0 {
 			// Fixed position check
@@ -295,11 +285,11 @@ func (b *Builder) composeRules(gPrefix Prefix, g generator.Generator, a []*ast.A
 			switch l.Type {
 			case ast.String:
 				generators = append(generators, func() {
-					g.LookupString(l.Value, lower, upper, true)
+					g.LookupString(l.Value, lower, upper, l.Close, true)
 				})
 			case ast.Char:
 				generators = append(generators, func() {
-					g.LookupChar(l.Value, lower, upper, true)
+					g.LookupChar(l.Value, lower, upper, l.Close, true)
 				})
 
 			}

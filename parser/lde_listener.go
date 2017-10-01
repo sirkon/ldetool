@@ -71,6 +71,9 @@ type LDEListener interface {
 	// EnterLimit is called when entering the limit production.
 	EnterLimit(c *LimitContext)
 
+	// EnterJump is called when entering the jump production.
+	EnterJump(c *JumpContext)
+
 	// EnterExact is called when entering the exact production.
 	EnterExact(c *ExactContext)
 
@@ -139,6 +142,9 @@ type LDEListener interface {
 
 	// ExitLimit is called when exiting the limit production.
 	ExitLimit(c *LimitContext)
+
+	// ExitJump is called when exiting the jump production.
+	ExitJump(c *JumpContext)
 
 	// ExitExact is called when exiting the exact production.
 	ExitExact(c *ExactContext)

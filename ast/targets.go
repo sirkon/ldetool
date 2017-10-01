@@ -41,3 +41,8 @@ func (t *Target) SetBound(lower, upper int) {
 	t.Lower = lower
 	t.Upper = upper
 }
+
+// SetJump sets target offset jump
+func (t *Target) SetJump(lower int) {
+	t.Lower = lower
+}

@@ -173,3 +173,9 @@ Shift3 = !
 
 Shift4 = !
     B(string) ~'b'[3:12];
+
+Jump = !
+    First(string) ' '[2:]
+    Second(string) ~' '[2:]
+    Third(string) "@@"[2:]
+    Fourth(string) "@@"[2:];

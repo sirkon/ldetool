@@ -7,7 +7,7 @@ import (
 )
 
 // LookupString ...
-func (g *Generator) LookupString(anchor string, lower, upper int, ignore bool) {
+func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore bool) {
 	g.regVar("pos", "int")
 	g.regVar(g.curRestVar(), "[]byte")
 	g.regImport("", "bytes")
@@ -15,28 +15,71 @@ func (g *Generator) LookupString(anchor string, lower, upper int, ignore bool) {
 	constName := g.constNameFromContent(anchor)
 
 	var rest srcobj.Source
-	if upper > 0 {
-		u := fmt.Sprintf("%d", upper)
-		if lower > 0 {
-			l := fmt.Sprintf("%d", lower)
-			rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Raw(l), srcobj.Raw(u))
-		} else {
-			rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw(u))
-		}
-	} else {
+	switch {
+	case lower > 0 && upper > 0:
+		rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
+
+	case lower == 0 && upper > 0:
+		rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
+
+	case lower > 0 && upper == 0:
+		rest = srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))
+
+	default:
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
 	body := g.indent()
+
+	var lookup srcobj.Source
+	if upper > 0 {
+		body.Append(
+			srcobj.If{
+				Expr: srcobj.OperatorLT(
+					srcobj.NewCall("len", g.rest()),
+					srcobj.Literal(upper),
+				),
+				Then: g.sliceTooLarge(upper),
+			},
+		)
+	} else if lower > 0 {
+		body.Append(
+			srcobj.If{
+				Expr: srcobj.OperatorLT(
+					srcobj.NewCall("len", g.rest()),
+					srcobj.Literal(lower),
+				),
+				Then: g.jumpTooLarge(lower),
+			},
+		)
+	}
+
 	body.Append(srcobj.Comment(fmt.Sprintf("Looking for %s and then pass it", anchor)))
-	if lower >= 0 {
-		body.Append(srcobj.LookupStringLong{
+	if close {
+		lookup = srcobj.LookupStringShort{
+			Var:    "pos",
+			Src:    rest,
+			Needle: srcobj.Raw(constName),
+		}
+	} else {
+		g.regImport("", "bytes")
+		var detector srcobj.Source = srcobj.LookupStringLong{
+			Var:    "pos",
+			Src:    rest,
+			Needle: srcobj.Raw(constName),
+		}
+		lookup = srcobj.NewBody(srcobj.Trim(detector), srcobj.Raw("\n"))
+	}
+
+	body.Append(lookup)
+	if close {
+		body.Append(srcobj.LookupStringShort{
 			Var:    "pos",
 			Src:    rest,
 			Needle: srcobj.Raw(constName),
 		})
 	} else {
-		body.Append(srcobj.LookupStringShort{
+		body.Append(srcobj.LookupStringLong{
 			Var:    "pos",
 			Src:    rest,
 			Needle: srcobj.Raw(constName),
@@ -88,34 +131,57 @@ func (g *Generator) LookupFixedString(anchor string, offset int, ignore bool) {
 }
 
 // LookupCharEx ...
-func (g *Generator) LookupChar(char string, lower, upper int, ignore bool) {
+func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool) {
 	g.regVar("pos", "int")
 	g.regVar(g.curRestVar(), "[]byte")
 
 	var rest srcobj.Source
-	if upper > 0 {
-		u := fmt.Sprintf("%d", upper)
-		if lower > 0 {
-			l := fmt.Sprintf("%d", lower)
-			rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Raw(l), srcobj.Raw(u))
-		} else {
-			rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw(u))
-		}
-	} else {
+	switch {
+	case lower > 0 && upper > 0:
+		rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
+
+	case lower == 0 && upper > 0:
+		rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
+
+	case lower > 0 && upper == 0:
+		rest = srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))
+
+	default:
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
 	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Looking for %s and then pass it", char)))
-	if lower >= 0 {
-		g.regImport("", "bytes")
-		body.Append(srcobj.LookupByteLong{
+	if upper > 0 {
+		body.Append(
+			srcobj.If{
+				Expr: srcobj.OperatorLT(
+					srcobj.NewCall("len", g.rest()),
+					srcobj.Literal(upper),
+				),
+				Then: g.sliceTooLarge(upper),
+			},
+		)
+	} else if lower > 0 {
+		body.Append(
+			srcobj.If{
+				Expr: srcobj.OperatorLT(
+					srcobj.NewCall("len", g.rest()),
+					srcobj.Literal(lower),
+				),
+				Then: g.jumpTooLarge(lower),
+			},
+		)
+	}
+	if close {
+		body.Append(srcobj.LookupByteShort{
 			Var:    "pos",
 			Src:    rest,
 			Needle: srcobj.Raw(char),
 		})
 	} else {
-		body.Append(srcobj.LookupByteShort{
+		g.regImport("", "bytes")
+		body.Append(srcobj.LookupByteLong{
 			Var:    "pos",
 			Src:    rest,
 			Needle: srcobj.Raw(char),

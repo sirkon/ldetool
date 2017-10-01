@@ -76,6 +76,7 @@ target
     : targetLit bound
     | targetLit limit
     | targetLit exact
+    | targetLit jump
     | targetLit
     | '~' target;
 
@@ -88,10 +89,16 @@ bound
     ;
 
 limit
-    : '[' ':' IntLit ']';
+    : '[' ':' IntLit ']'
+    ;
+
+jump
+    : '[' IntLit ':' ']'
+    ;
 
 exact
-    : '[' IntLit ']';
+    : '[' IntLit ']'
+    ;
 
 fieldType
     : Identifier;

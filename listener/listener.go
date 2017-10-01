@@ -278,6 +278,15 @@ func (l *Listener) EnterBound(ctx *parser.BoundContext) {
 	//}
 	lower, _ := strconv.Atoi(ctx.IntLit(0).GetText())
 	upper, _ := strconv.Atoi(ctx.IntLit(1).GetText())
+	if lower == 0 {
+		token := ctx.IntLit(0).GetSymbol()
+		panic(fmt.Sprintf("%d:%d offset value must be greater than 0", token.GetLine(), token.GetColumn()+1))
+	}
+	if upper < lower {
+		token := ctx.IntLit(1).GetSymbol()
+		panic(fmt.Sprintf("%d:%d: upper bound must be greater than lower",
+			token.GetLine(), token.GetColumn()+1))
+	}
 	l.target.SetBound(lower, upper)
 }
 
@@ -292,11 +301,28 @@ func (l *Listener) EnterLimit(ctx *parser.LimitContext) {
 	//		ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
 	//}
 	upper, _ := strconv.Atoi(ctx.IntLit().GetText())
+	if upper == 0 {
+		token := ctx.IntLit().GetSymbol()
+		panic(fmt.Sprintf("%d:%d upper bound must be greater than 0", token.GetLine(), token.GetColumn()+1))
+	}
 	l.target.SetLimit(upper)
 }
 
 // ExitLimit is called when production limit is exited.
 func (l *Listener) ExitLimit(ctx *parser.LimitContext) {}
+
+// EnterJump is called when production jump is entered.
+func (l *Listener) EnterJump(ctx *parser.JumpContext) {
+	lower, _ := strconv.Atoi(ctx.IntLit().GetText())
+	if lower == 0 {
+		token := ctx.IntLit().GetSymbol()
+		panic(fmt.Sprintf("%d:%d offset value must be greater than 0", token.GetLine(), token.GetColumn()+1))
+	}
+	l.target.SetJump(lower)
+}
+
+// ExitJump is called when production jump is exited.
+func (l *Listener) ExitJump(ctx *parser.JumpContext) {}
 
 // EnterExact is called when production exact is entered.
 func (l *Listener) EnterExact(ctx *parser.ExactContext) {

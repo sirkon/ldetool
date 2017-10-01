@@ -66,8 +66,17 @@ func numerator(num int) string {
 
 func (g *Generator) sliceTooLarge(upper int) srcobj.Source {
 	return srcobj.ReturnError(
-		"Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`",
+		"Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
 		srcobj.Literal(upper),
+		srcobj.NewCall("len", g.rest()),
+		srcobj.Stringify(g.rest()),
+	)
+}
+
+func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
+	return srcobj.ReturnError(
+		"Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
+		srcobj.Literal(lower),
 		srcobj.NewCall("len", g.rest()),
 		srcobj.Stringify(g.rest()),
 	)
@@ -84,13 +93,17 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	constName := g.constNameFromContent(anchor)
 
 	var rest srcobj.Source
-	if upper > 0 {
-		if lower > 0 {
-			rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
-		} else {
-			rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
-		}
-	} else {
+	switch {
+	case lower > 0 && upper > 0:
+		rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
+
+	case lower == 0 && upper > 0:
+		rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
+
+	case lower > 0 && upper == 0:
+		rest = srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))
+
+	default:
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
@@ -160,6 +173,16 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 						srcobj.Literal(upper),
 					),
 					Then: g.sliceTooLarge(upper),
+				},
+			)
+		} else if lower > 0 {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorLT(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(lower),
+					),
+					Then: g.jumpTooLarge(lower),
 				},
 			)
 		}
@@ -272,15 +295,17 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 	g.getterGen(name, fieldType)
 
 	var rest srcobj.Source
-	if upper > 0 {
-		u := fmt.Sprintf("%d", upper)
-		if lower > 0 {
-			l := fmt.Sprintf("%d", lower)
-			rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Raw(l), srcobj.Raw(u))
-		} else {
-			rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Raw(u))
-		}
-	} else {
+	switch {
+	case lower > 0 && upper > 0:
+		rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
+
+	case lower == 0 && upper > 0:
+		rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
+
+	case lower > 0 && upper == 0:
+		rest = srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))
+
+	default:
 		rest = srcobj.Raw(g.curRestVar())
 	}
 
@@ -342,6 +367,16 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 						srcobj.Literal(upper),
 					),
 					Then: g.sliceTooLarge(upper),
+				},
+			)
+		} else if lower > 0 {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorLT(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(lower),
+					),
+					Then: g.jumpTooLarge(lower),
 				},
 			)
 		}

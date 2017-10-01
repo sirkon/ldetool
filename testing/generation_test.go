@@ -424,3 +424,19 @@ func TestShift(t *testing.T) {
 	}
 	require.Equal(t, string(p4.B), "ba12")
 }
+
+func TestJump(t *testing.T) {
+	p := Jump{}
+	src := []byte("1  34 15@@1@@@")
+	if ok, err := p.Extract(src); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.NotNil(t, err)
+	}
+	require.Equal(t, "1 ", string(p.First))
+	require.Equal(t, "34", string(p.Second))
+	require.Equal(t, "15", string(p.Third))
+	require.Equal(t, "1@", string(p.Fourth))
+	require.Equal(t, "", string(p.rest))
+}

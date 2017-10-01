@@ -147,6 +147,12 @@ func (s *BaseLDEListener) EnterLimit(ctx *LimitContext) {}
 // ExitLimit is called when production limit is exited.
 func (s *BaseLDEListener) ExitLimit(ctx *LimitContext) {}
 
+// EnterJump is called when production jump is entered.
+func (s *BaseLDEListener) EnterJump(ctx *JumpContext) {}
+
+// ExitJump is called when production jump is exited.
+func (s *BaseLDEListener) ExitJump(ctx *JumpContext) {}
+
 // EnterExact is called when production exact is entered.
 func (s *BaseLDEListener) EnterExact(ctx *ExactContext) {}
 

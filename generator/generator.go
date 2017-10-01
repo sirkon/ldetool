@@ -23,9 +23,9 @@ type Generator interface {
 	HeadChar(char string, ignore bool)
 
 	// Lookups
-	LookupString(anchor string, lower, upper int, ignore bool)
+	LookupString(anchor string, lower, upper int, close, ignore bool)
 	LookupFixedString(anchor string, offset int, ignore bool)
-	LookupChar(anchor string, lower, upper int, ignore bool)
+	LookupChar(anchor string, lower, upper int, close, ignore bool)
 	LookupFixedChar(anchor string, offset int, ignore bool)
 
 	// Takes

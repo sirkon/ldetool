@@ -19,6 +19,7 @@ import (
 var ba = []byte("ba")
 var const123456789 = []byte("123456789")
 var const34 = []byte("34")
+var dogs = []byte("@@")
 var space = []byte(" ")
 
 // Decoders ...
@@ -217,7 +218,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int8(int8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -233,7 +234,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int16(int16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -249,7 +250,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int32(int32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -265,7 +266,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int64(int64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -281,7 +282,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint8(uint8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -297,7 +298,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint16(uint16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -313,7 +314,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint32(uint32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -329,7 +330,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint64(uint64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -345,7 +346,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Float32(float32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -361,7 +362,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Float64(float64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -377,7 +378,7 @@ func (p *DecodersLimited) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as String(string)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -406,7 +407,7 @@ func (p *DecodersBounded) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int64(int64)
 	if len(p.rest) < 16 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 16, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 16, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[8:16], ' ')
 	if pos >= 0 {
@@ -619,7 +620,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int8(int8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -635,7 +636,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int16(int16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -651,7 +652,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int32(int32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -667,7 +668,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int64(int64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -683,7 +684,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint8(uint8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -699,7 +700,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint16(uint16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -715,7 +716,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint32(uint32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -731,7 +732,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint64(uint64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -747,7 +748,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float32(float32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -763,7 +764,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float64(float64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -779,7 +780,7 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as String(string)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -808,7 +809,7 @@ func (p *DecodersBoundedString) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float64(float64)
 	if len(p.rest) < 16 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 16, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 16, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[8:16], space)
 	if pos >= 0 {
@@ -1021,7 +1022,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int8(int8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1037,7 +1038,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int16(int16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1053,7 +1054,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int32(int32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1069,7 +1070,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int64(int64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1085,7 +1086,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint8(uint8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1101,7 +1102,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint16(uint16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1117,7 +1118,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint32(uint32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1133,7 +1134,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Uint64(uint64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1149,7 +1150,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Float32(float32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1165,7 +1166,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Float64(float64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1181,7 +1182,7 @@ func (p *DecodersLimitedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as String(string)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[:8], ' ')
 	if pos >= 0 {
@@ -1210,7 +1211,7 @@ func (p *DecodersBoundedStress) Extract(line []byte) (bool, error) {
 
 	// Take until ' ' as Int64(int64)
 	if len(p.rest) < 16 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 16, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 16, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[8:16], ' ')
 	if pos >= 0 {
@@ -1423,7 +1424,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int8(int8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1439,7 +1440,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int16(int16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1455,7 +1456,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int32(int32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1471,7 +1472,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Int64(int64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1487,7 +1488,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint8(uint8)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1503,7 +1504,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint16(uint16)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1519,7 +1520,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint32(uint32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1535,7 +1536,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Uint64(uint64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1551,7 +1552,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float32(float32)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1567,7 +1568,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float64(float64)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1583,7 +1584,7 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as String(string)
 	if len(p.rest) < 8 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 8, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 8, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[:8], space)
 	if pos >= 0 {
@@ -1612,7 +1613,7 @@ func (p *DecodersBoundedStringStress) Extract(line []byte) (bool, error) {
 
 	// Take until " " as Float64(float64)
 	if len(p.rest) < 16 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 16, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 16, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[8:16], space)
 	if pos >= 0 {
@@ -2199,7 +2200,7 @@ func (p *Shift1) Extract(line []byte) (bool, error) {
 
 	// Take until "ba" as B(string)
 	if len(p.rest) < 12 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 12, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 12, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[3:12], ba)
 	if pos >= 0 {
@@ -2225,7 +2226,7 @@ func (p *Shift2) Extract(line []byte) (bool, error) {
 
 	// Take until 'b' as B(string)
 	if len(p.rest) < 12 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 12, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 12, len(p.rest), string(p.rest))
 	}
 	pos = bytes.IndexByte(p.rest[3:12], 'b')
 	if pos >= 0 {
@@ -2251,7 +2252,7 @@ func (p *Shift3) Extract(line []byte) (bool, error) {
 
 	// Take until "ba" as B(string)
 	if len(p.rest) < 12 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 12, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 12, len(p.rest), string(p.rest))
 	}
 	pos = bytes.Index(p.rest[3:12], ba)
 	if pos >= 0 {
@@ -2277,7 +2278,7 @@ func (p *Shift4) Extract(line []byte) (bool, error) {
 
 	// Take until 'b' as B(string)
 	if len(p.rest) < 12 {
-		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest `\033[1m%s\033[0m`", 12, len(p.rest), string(p.rest))
+		return false, fmt.Errorf("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 12, len(p.rest), string(p.rest))
 	}
 	pos = -1
 	for i, char := range p.rest[3:12] {
@@ -2291,6 +2292,77 @@ func (p *Shift4) Extract(line []byte) (bool, error) {
 		p.rest = p.rest[pos+1+3:]
 	} else {
 		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field B", 'b', string(p.rest[3:12]))
+	}
+
+	return true, nil
+}
+
+// Jump ...
+type Jump struct {
+	rest   []byte
+	First  []byte
+	Second []byte
+	Third  []byte
+	Fourth []byte
+}
+
+// Extract ...
+func (p *Jump) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var pos int
+
+	// Take until ' ' as First(string)
+	if len(p.rest) < 2 {
+		return false, fmt.Errorf("Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.rest), string(p.rest))
+	}
+	pos = bytes.IndexByte(p.rest[2:], ' ')
+	if pos >= 0 {
+		p.First = p.rest[:pos+2]
+		p.rest = p.rest[pos+1+2:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field First", ' ', string(p.rest[2:]))
+	}
+
+	// Take until ' ' as Second(string)
+	if len(p.rest) < 2 {
+		return false, fmt.Errorf("Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.rest), string(p.rest))
+	}
+	pos = -1
+	for i, char := range p.rest[2:] {
+		if char == ' ' {
+			pos = i
+			break
+		}
+	}
+	if pos >= 0 {
+		p.Second = p.rest[:pos+2]
+		p.rest = p.rest[pos+1+2:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Second", ' ', string(p.rest[2:]))
+	}
+
+	// Take until "@@" as Third(string)
+	if len(p.rest) < 2 {
+		return false, fmt.Errorf("Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.rest), string(p.rest))
+	}
+	pos = bytes.Index(p.rest[2:], dogs)
+	if pos >= 0 {
+		p.Third = p.rest[:pos+2]
+		p.rest = p.rest[pos+len(dogs)+2:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Third", dogs, string(p.rest[2:]))
+	}
+
+	// Take until "@@" as Fourth(string)
+	if len(p.rest) < 2 {
+		return false, fmt.Errorf("Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.rest), string(p.rest))
+	}
+	pos = bytes.Index(p.rest[2:], dogs)
+	if pos >= 0 {
+		p.Fourth = p.rest[:pos+2]
+		p.rest = p.rest[pos+len(dogs)+2:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Fourth", dogs, string(p.rest[2:]))
 	}
 
 	return true, nil
