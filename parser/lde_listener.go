@@ -20,17 +20,11 @@ type LDEListener interface {
 	// EnterAtomicAction is called when entering the atomicAction production.
 	EnterAtomicAction(c *AtomicActionContext)
 
-	// EnterPassStringPrefix is called when entering the passStringPrefix production.
-	EnterPassStringPrefix(c *PassStringPrefixContext)
+	// EnterPassTargetPrefix is called when entering the passTargetPrefix production.
+	EnterPassTargetPrefix(c *PassTargetPrefixContext)
 
-	// EnterPassCharPrefix is called when entering the passCharPrefix production.
-	EnterPassCharPrefix(c *PassCharPrefixContext)
-
-	// EnterMayPassStringPrefix is called when entering the mayPassStringPrefix production.
-	EnterMayPassStringPrefix(c *MayPassStringPrefixContext)
-
-	// EnterMayPassCharPrefix is called when entering the mayPassCharPrefix production.
-	EnterMayPassCharPrefix(c *MayPassCharPrefixContext)
+	// EnterMayBePassTargetPrefix is called when entering the mayBePassTargetPrefix production.
+	EnterMayBePassTargetPrefix(c *MayBePassTargetPrefixContext)
 
 	// EnterPassChars is called when entering the passChars production.
 	EnterPassChars(c *PassCharsContext)
@@ -92,17 +86,11 @@ type LDEListener interface {
 	// ExitAtomicAction is called when exiting the atomicAction production.
 	ExitAtomicAction(c *AtomicActionContext)
 
-	// ExitPassStringPrefix is called when exiting the passStringPrefix production.
-	ExitPassStringPrefix(c *PassStringPrefixContext)
+	// ExitPassTargetPrefix is called when exiting the passTargetPrefix production.
+	ExitPassTargetPrefix(c *PassTargetPrefixContext)
 
-	// ExitPassCharPrefix is called when exiting the passCharPrefix production.
-	ExitPassCharPrefix(c *PassCharPrefixContext)
-
-	// ExitMayPassStringPrefix is called when exiting the mayPassStringPrefix production.
-	ExitMayPassStringPrefix(c *MayPassStringPrefixContext)
-
-	// ExitMayPassCharPrefix is called when exiting the mayPassCharPrefix production.
-	ExitMayPassCharPrefix(c *MayPassCharPrefixContext)
+	// ExitMayBePassTargetPrefix is called when exiting the mayBePassTargetPrefix production.
+	ExitMayBePassTargetPrefix(c *MayBePassTargetPrefixContext)
 
 	// ExitPassChars is called when exiting the passChars production.
 	ExitPassChars(c *PassCharsContext)

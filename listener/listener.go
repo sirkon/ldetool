@@ -38,11 +38,14 @@ func checkReserved(token antlr.Token) {
 
 // Listener is a complete listener for a parse tree produced by LDEParser.
 type Listener struct {
-	rules     []*ast.RuleItem
-	ai        *ast.ActionItem
-	actions   []appender
-	target    *ast.Target
-	expectEnd bool
+	rules         []*ast.RuleItem
+	ai            *ast.ActionItem
+	actions       []appender
+	target        *ast.Target
+	optional      bool
+	exactPosition int
+	stateIsPrefix bool
+	expectEnd     bool
 }
 
 func New() *Listener {
@@ -121,38 +124,36 @@ func (l *Listener) EnterAtomicAction(ctx *parser.AtomicActionContext) {
 // ExitAtomicAction is called when production atomicAction is exited.
 func (l *Listener) ExitAtomicAction(ctx *parser.AtomicActionContext) {}
 
-// EnterPassStringPrefix is called when production passStringPrefix is entered.
-func (l *Listener) EnterPassStringPrefix(ctx *parser.PassStringPrefixContext) {
-	//l.ai.StartWithString, _ = ast.StartsWithString(token.)
-	l.ai.StartWithString, _ = ast.StartsWithString(ctx.StringLit().GetSymbol())
+// EnterPassTargetPrefix is called when production passTargetPrefix is entered.
+func (l *Listener) EnterPassTargetPrefix(ctx *parser.PassTargetPrefixContext) {
+	l.stateIsPrefix = true
+	l.exactPosition = 0
+	if ctx.IntLit() != nil {
+		l.exactPosition, _ = strconv.Atoi(ctx.IntLit().GetText())
+	}
 }
 
-// ExitPassStringPrefix is called when production passStringPrefix is exited.
-func (l *Listener) ExitPassStringPrefix(ctx *parser.PassStringPrefixContext) {}
-
-// EnterPassCharPrefix is called when production passCharPrefix is entered.
-func (l *Listener) EnterPassCharPrefix(ctx *parser.PassCharPrefixContext) {
-	l.ai.StartWithChar, _ = ast.StartsWithChar(ctx.CharLit().GetSymbol())
+// ExitPassTargetPrefix is called when production passTargetPrefix is exited.
+func (l *Listener) ExitPassTargetPrefix(ctx *parser.PassTargetPrefixContext) {
+	l.stateIsPrefix = false
+	l.optional = false
 }
 
-// ExitPassCharPrefix is called when production passCharPrefix is exited.
-func (l *Listener) ExitPassCharPrefix(ctx *parser.PassCharPrefixContext) {}
-
-// EnterMayPassStringPrefix is called when production mayPassStringPrefix is entered.
-func (l *Listener) EnterMayPassStringPrefix(ctx *parser.MayPassStringPrefixContext) {
-	l.ai.MayBeStartWithString, _ = ast.MayBeStartsWithString(ctx.StringLit().GetSymbol())
+// EnterMayBePassTargetPrefix is called when production mayBePassTargetPrefix is entered.
+func (l *Listener) EnterMayBePassTargetPrefix(ctx *parser.MayBePassTargetPrefixContext) {
+	l.stateIsPrefix = true
+	l.optional = true
+	l.exactPosition = 0
+	if ctx.IntLit() != nil {
+		l.exactPosition, _ = strconv.Atoi(ctx.IntLit().GetText())
+	}
 }
 
-// ExitMayPassStringPrefix is called when production mayPassStringPrefix is exited.
-func (l *Listener) ExitMayPassStringPrefix(ctx *parser.MayPassStringPrefixContext) {}
-
-// EnterMayPassCharPrefix is called when production mayPassCharPrefix is entered.
-func (l *Listener) EnterMayPassCharPrefix(ctx *parser.MayPassCharPrefixContext) {
-	l.ai.MayBeStartWithChar, _ = ast.MayBeStartsWithChar(ctx.CharLit().GetSymbol())
+// ExitMayBePassTargetPrefix is called when production mayBePassTargetPrefix is exited.
+func (l *Listener) ExitMayBePassTargetPrefix(ctx *parser.MayBePassTargetPrefixContext) {
+	l.stateIsPrefix = false
+	l.optional = false
 }
-
-// ExitMayPassCharPrefix is called when production mayPassCharPrefix is exited.
-func (l *Listener) ExitMayPassCharPrefix(ctx *parser.MayPassCharPrefixContext) {}
 
 // EnterPassChars is called when production passChars is entered.
 func (l *Listener) EnterPassChars(ctx *parser.PassCharsContext) {
@@ -258,9 +259,57 @@ func (l *Listener) ExitTarget(ctx *parser.TargetContext) {}
 // EnterTargetLit is called when production targetLit is entered.
 func (l *Listener) EnterTargetLit(ctx *parser.TargetLitContext) {
 	if ctx.StringLit() != nil {
-		l.target.SetString(ctx.StringLit().GetText())
+		if l.stateIsPrefix {
+			if l.optional {
+				if l.exactPosition == 0 {
+					l.ai.MayBeStartWithString, _ = ast.MayBeStartsWithString(ctx.StringLit().GetSymbol())
+				} else {
+					l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
+					l.ai.PassOrIgnore.Limit.Type = ast.String
+					l.ai.PassOrIgnore.Limit.Value = ctx.StringLit().GetSymbol().GetText()
+					l.ai.PassOrIgnore.Limit.Lower = l.exactPosition
+					l.ai.PassOrIgnore.Limit.Upper = l.exactPosition
+				}
+			} else {
+				if l.exactPosition == 0 {
+					l.ai.StartWithString, _ = ast.StartsWithString(ctx.StringLit().GetSymbol())
+				} else {
+					l.ai.Pass, _ = ast.PassUntilTarget()
+					l.ai.Pass.Limit.Type = ast.String
+					l.ai.Pass.Limit.Value = ctx.StringLit().GetSymbol().GetText()
+					l.ai.Pass.Limit.Lower = l.exactPosition
+					l.ai.Pass.Limit.Upper = l.exactPosition
+				}
+			}
+		} else {
+			l.target.SetString(ctx.StringLit().GetText())
+		}
 	} else if ctx.CharLit() != nil {
-		l.target.SetChar(ctx.CharLit().GetText())
+		if l.stateIsPrefix {
+			if l.optional {
+				if l.exactPosition == 0 {
+					l.ai.MayBeStartWithChar, _ = ast.MayBeStartsWithChar(ctx.CharLit().GetSymbol())
+				} else {
+					l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
+					l.ai.PassOrIgnore.Limit.Type = ast.Char
+					l.ai.PassOrIgnore.Limit.Value = ctx.CharLit().GetSymbol().GetText()
+					l.ai.PassOrIgnore.Limit.Lower = l.exactPosition
+					l.ai.PassOrIgnore.Limit.Upper = l.exactPosition
+				}
+			} else {
+				if l.exactPosition == 0 {
+					l.ai.StartWithChar, _ = ast.StartsWithChar(ctx.CharLit().GetSymbol())
+				} else {
+					l.ai.Pass, _ = ast.PassUntilTarget()
+					l.ai.Pass.Limit.Type = ast.Char
+					l.ai.Pass.Limit.Value = ctx.CharLit().GetSymbol().GetText()
+					l.ai.Pass.Limit.Lower = l.exactPosition
+					l.ai.Pass.Limit.Upper = l.exactPosition
+				}
+			}
+		} else {
+			l.target.SetChar(ctx.CharLit().GetText())
+		}
 	} else {
 		panic("Integerity error")
 	}

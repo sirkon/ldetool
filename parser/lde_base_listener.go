@@ -45,29 +45,17 @@ func (s *BaseLDEListener) EnterAtomicAction(ctx *AtomicActionContext) {}
 // ExitAtomicAction is called when production atomicAction is exited.
 func (s *BaseLDEListener) ExitAtomicAction(ctx *AtomicActionContext) {}
 
-// EnterPassStringPrefix is called when production passStringPrefix is entered.
-func (s *BaseLDEListener) EnterPassStringPrefix(ctx *PassStringPrefixContext) {}
+// EnterPassTargetPrefix is called when production passTargetPrefix is entered.
+func (s *BaseLDEListener) EnterPassTargetPrefix(ctx *PassTargetPrefixContext) {}
 
-// ExitPassStringPrefix is called when production passStringPrefix is exited.
-func (s *BaseLDEListener) ExitPassStringPrefix(ctx *PassStringPrefixContext) {}
+// ExitPassTargetPrefix is called when production passTargetPrefix is exited.
+func (s *BaseLDEListener) ExitPassTargetPrefix(ctx *PassTargetPrefixContext) {}
 
-// EnterPassCharPrefix is called when production passCharPrefix is entered.
-func (s *BaseLDEListener) EnterPassCharPrefix(ctx *PassCharPrefixContext) {}
+// EnterMayBePassTargetPrefix is called when production mayBePassTargetPrefix is entered.
+func (s *BaseLDEListener) EnterMayBePassTargetPrefix(ctx *MayBePassTargetPrefixContext) {}
 
-// ExitPassCharPrefix is called when production passCharPrefix is exited.
-func (s *BaseLDEListener) ExitPassCharPrefix(ctx *PassCharPrefixContext) {}
-
-// EnterMayPassStringPrefix is called when production mayPassStringPrefix is entered.
-func (s *BaseLDEListener) EnterMayPassStringPrefix(ctx *MayPassStringPrefixContext) {}
-
-// ExitMayPassStringPrefix is called when production mayPassStringPrefix is exited.
-func (s *BaseLDEListener) ExitMayPassStringPrefix(ctx *MayPassStringPrefixContext) {}
-
-// EnterMayPassCharPrefix is called when production mayPassCharPrefix is entered.
-func (s *BaseLDEListener) EnterMayPassCharPrefix(ctx *MayPassCharPrefixContext) {}
-
-// ExitMayPassCharPrefix is called when production mayPassCharPrefix is exited.
-func (s *BaseLDEListener) ExitMayPassCharPrefix(ctx *MayPassCharPrefixContext) {}
+// ExitMayBePassTargetPrefix is called when production mayBePassTargetPrefix is exited.
+func (s *BaseLDEListener) ExitMayBePassTargetPrefix(ctx *MayBePassTargetPrefixContext) {}
 
 // EnterPassChars is called when production passChars is entered.
 func (s *BaseLDEListener) EnterPassChars(ctx *PassCharsContext) {}

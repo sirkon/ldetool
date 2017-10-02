@@ -18,10 +18,8 @@ baseAction
     ;
 
 atomicAction
-    : passStringPrefix
-    | passCharPrefix
-    | mayPassStringPrefix
-    | mayPassCharPrefix
+    : passTargetPrefix
+    | mayBePassTargetPrefix
     | passChars
     | passUntil
     | mayPassUntil
@@ -32,17 +30,15 @@ atomicAction
     | optionalArea
     | atEnd;
 
-passStringPrefix
-    : '^' StringLit;
+passTargetPrefix
+    : '^' targetLit '[' IntLit ']'
+    | '^' targetLit
+    ;
 
-passCharPrefix
-    : '^' CharLit;
-
-mayPassStringPrefix
-    : '?' '^' StringLit;
-
-mayPassCharPrefix
-    : '?' '^' CharLit;
+mayBePassTargetPrefix
+    : '?' '^' targetLit '[' IntLit ']'
+    | '?' '^' targetLit
+    ;
 
 passChars
     : '_' '[' IntLit ':' ']';
