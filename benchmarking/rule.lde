@@ -29,8 +29,8 @@ CRMod = !
 	?AvatarLastCheck(_"avatars_lastcheck[" Value(int64) ']')
 	?AvatarsLastMod(_"cavatar_lastmod[" Value(int64) ']')
 	^" origin[" Origin(string) ~']'
-	^" abuse"  ^"drugs["[1] Drugs(int16) ~']'
-	^" abuse"  ^"spam["[1] Spam(int16) ~']'
+	^" abuse" ^"drugs["[1] Drugs(int16) ~']'
+	^" abuse" ^"spam["[1] Spam(int16) ~']'
 	^" abuse" ^"porno["[1] Pron(int16) ~']'
 	?Violation (^" abuse" ^"violation["[1] Value(int16) ~']')
 	?AbuseOther (^" abuse" ^"other["[1] Value(int16) ~']');

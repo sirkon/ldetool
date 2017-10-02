@@ -157,7 +157,7 @@ AnonymousAreas = !
 
 Split = !
     Name(string) ~'|'
-    _ '|'[1]
+    ^ '|'[1]
     ^ '|'[1]
     ^ '|'[1]
     Count(string) '|'[1];

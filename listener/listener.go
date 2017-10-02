@@ -38,14 +38,18 @@ func checkReserved(token antlr.Token) {
 
 // Listener is a complete listener for a parse tree produced by LDEParser.
 type Listener struct {
-	rules         []*ast.RuleItem
-	ai            *ast.ActionItem
-	actions       []appender
-	target        *ast.Target
-	optional      bool
-	exactPosition int
-	stateIsPrefix bool
-	expectEnd     bool
+	rules   []*ast.RuleItem
+	ai      *ast.ActionItem
+	actions []appender
+	target  *ast.Target
+
+	prefixJump int
+
+	optional       bool
+	lookup         bool
+	stateIsPrefix  bool
+	expectEnd      bool
+	mustNotBeExact bool
 }
 
 func New() *Listener {
@@ -127,9 +131,9 @@ func (l *Listener) ExitAtomicAction(ctx *parser.AtomicActionContext) {}
 // EnterPassTargetPrefix is called when production passTargetPrefix is entered.
 func (l *Listener) EnterPassTargetPrefix(ctx *parser.PassTargetPrefixContext) {
 	l.stateIsPrefix = true
-	l.exactPosition = 0
+	l.prefixJump = 0
 	if ctx.IntLit() != nil {
-		l.exactPosition, _ = strconv.Atoi(ctx.IntLit().GetText())
+		l.prefixJump, _ = strconv.Atoi(ctx.IntLit().GetText())
 	}
 }
 
@@ -143,9 +147,9 @@ func (l *Listener) ExitPassTargetPrefix(ctx *parser.PassTargetPrefixContext) {
 func (l *Listener) EnterMayBePassTargetPrefix(ctx *parser.MayBePassTargetPrefixContext) {
 	l.stateIsPrefix = true
 	l.optional = true
-	l.exactPosition = 0
+	l.prefixJump = 0
 	if ctx.IntLit() != nil {
-		l.exactPosition, _ = strconv.Atoi(ctx.IntLit().GetText())
+		l.prefixJump, _ = strconv.Atoi(ctx.IntLit().GetText())
 	}
 }
 
@@ -167,19 +171,39 @@ func (l *Listener) ExitPassChars(ctx *parser.PassCharsContext) {}
 func (l *Listener) EnterPassUntil(ctx *parser.PassUntilContext) {
 	l.ai.Pass, _ = ast.PassUntilTarget()
 	l.target = l.ai.Pass.Limit
+	l.lookup = true
 }
 
 // ExitPassUntil is called when production passUntil is exited.
-func (l *Listener) ExitPassUntil(ctx *parser.PassUntilContext) {}
+func (l *Listener) ExitPassUntil(ctx *parser.PassUntilContext) {
+	l.lookup = false
+	if l.mustNotBeExact {
+		panic(fmt.Sprintf(
+			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			ctx.GetStart().GetLine(),
+			ctx.GetStart().GetColumn()+1,
+		))
+	}
+}
 
 // EnterMayPassUntil is called when production mayPassUntil is entered.
 func (l *Listener) EnterMayPassUntil(ctx *parser.MayPassUntilContext) {
 	l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
 	l.target = l.ai.PassOrIgnore.Limit
+	l.lookup = true
 }
 
 // ExitMayPassUntil is called when production mayPassUntil is exited.
-func (l *Listener) ExitMayPassUntil(ctx *parser.MayPassUntilContext) {}
+func (l *Listener) ExitMayPassUntil(ctx *parser.MayPassUntilContext) {
+	l.lookup = false
+	if l.mustNotBeExact {
+		panic(fmt.Sprintf(
+			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			ctx.GetStart().GetLine(),
+			ctx.GetStart().GetColumn()+1,
+		))
+	}
+}
 
 // EnterTakeUntil is called when production takeUntil is entered.
 func (l *Listener) EnterTakeUntil(ctx *parser.TakeUntilContext) {
@@ -258,58 +282,37 @@ func (l *Listener) ExitTarget(ctx *parser.TargetContext) {}
 
 // EnterTargetLit is called when production targetLit is entered.
 func (l *Listener) EnterTargetLit(ctx *parser.TargetLitContext) {
-	if ctx.StringLit() != nil {
-		if l.stateIsPrefix {
-			if l.optional {
-				if l.exactPosition == 0 {
+	if l.stateIsPrefix {
+		if l.prefixJump == 0 {
+			if ctx.StringLit() != nil {
+				if l.optional {
 					l.ai.MayBeStartWithString, _ = ast.MayBeStartsWithString(ctx.StringLit().GetSymbol())
 				} else {
-					l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
-					l.ai.PassOrIgnore.Limit.Type = ast.String
-					l.ai.PassOrIgnore.Limit.Value = ctx.StringLit().GetSymbol().GetText()
-					l.ai.PassOrIgnore.Limit.Lower = l.exactPosition
-					l.ai.PassOrIgnore.Limit.Upper = l.exactPosition
-				}
-			} else {
-				if l.exactPosition == 0 {
 					l.ai.StartWithString, _ = ast.StartsWithString(ctx.StringLit().GetSymbol())
-				} else {
-					l.ai.Pass, _ = ast.PassUntilTarget()
-					l.ai.Pass.Limit.Type = ast.String
-					l.ai.Pass.Limit.Value = ctx.StringLit().GetSymbol().GetText()
-					l.ai.Pass.Limit.Lower = l.exactPosition
-					l.ai.Pass.Limit.Upper = l.exactPosition
 				}
-			}
-		} else {
-			l.target.SetString(ctx.StringLit().GetText())
-		}
-	} else if ctx.CharLit() != nil {
-		if l.stateIsPrefix {
-			if l.optional {
-				if l.exactPosition == 0 {
+			} else if ctx.CharLit() != nil {
+				if l.optional {
 					l.ai.MayBeStartWithChar, _ = ast.MayBeStartsWithChar(ctx.CharLit().GetSymbol())
 				} else {
-					l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
-					l.ai.PassOrIgnore.Limit.Type = ast.Char
-					l.ai.PassOrIgnore.Limit.Value = ctx.CharLit().GetSymbol().GetText()
-					l.ai.PassOrIgnore.Limit.Lower = l.exactPosition
-					l.ai.PassOrIgnore.Limit.Upper = l.exactPosition
-				}
-			} else {
-				if l.exactPosition == 0 {
 					l.ai.StartWithChar, _ = ast.StartsWithChar(ctx.CharLit().GetSymbol())
-				} else {
-					l.ai.Pass, _ = ast.PassUntilTarget()
-					l.ai.Pass.Limit.Type = ast.Char
-					l.ai.Pass.Limit.Value = ctx.CharLit().GetSymbol().GetText()
-					l.ai.Pass.Limit.Lower = l.exactPosition
-					l.ai.Pass.Limit.Upper = l.exactPosition
 				}
 			}
+			return
 		} else {
-			l.target.SetChar(ctx.CharLit().GetText())
+			if l.optional {
+				l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
+				l.target = l.ai.PassOrIgnore.Limit
+			} else {
+				l.ai.Pass, _ = ast.PassUntilTarget()
+				l.target = l.ai.Pass.Limit
+			}
+			l.target.SetBound(l.prefixJump, l.prefixJump)
 		}
+	}
+	if ctx.StringLit() != nil {
+		l.target.SetString(ctx.StringLit().GetText())
+	} else if ctx.CharLit() != nil {
+		l.target.SetChar(ctx.CharLit().GetText())
 	} else {
 		panic("Integerity error")
 	}
@@ -375,6 +378,10 @@ func (l *Listener) ExitJump(ctx *parser.JumpContext) {}
 
 // EnterExact is called when production exact is entered.
 func (l *Listener) EnterExact(ctx *parser.ExactContext) {
+	if l.lookup {
+		l.mustNotBeExact = true
+		return
+	}
 	index, _ := strconv.Atoi(ctx.IntLit().GetText())
 	l.target.SetBound(index, index)
 }
