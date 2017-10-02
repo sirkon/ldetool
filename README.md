@@ -251,7 +251,7 @@ Using Ragel for log parsing hardly makes any sense though, because it doesn't se
     You see, we have all data translated into types needed and usable error messages.
 2. Regex, about 490 characters hard to debug language without any boilerplate. Good luck optimizing this mess. 
     ```
-    \[\S* (.*?)\][^[]*\[(\d+)\..*?reqid '(.*?)' from.*?\((.*?)\).*?FLAGS\[set:(.*?), unset:(.*?)\] FIELDS\[changed:(.*?)\](:? ank_ver\[(.*?)\])?(:? list_ver\[(.*?)\])? name\[(.*?)\](:? about\[(.*?)\])?(:? stamp\[(.*?)\])?(:? regions\[(.*?)\])?(:? flags\[(.*?)\])? created\[(\d+)=.*?\](:? creator\[(.*?)\])?(:? avatars_lastcheck\[(\d+)\])?(:? cavatar_lastmod\[(\d+)\])? origin\[(.*?)\] abuse.*drugs\[(\d+)\] abuse.*spam\[(\d+)\] abuse.*porno\[(\d+)\](:? abuse.violation\[(\d+)\])?(:? abuse.other\[(\d+)\])?
+    \[\S* (.*?)\][^[]*\[(\d+)\..*?reqid '(.*?)' from.*?\((.*?)\).*?FLAGS\[set:(.*?), unset:(.*?)\] FIELDS\[changed:(.*?)\](:? ank_ver\[(.*?)\])?(:? list_ver\[(.*?)\])? name\[(.*?)\](:? about\[(.*?)\])?(:? stamp\[(.*?)\])?(:? regions\[(.*?)\])?(:? flags\[(.*?)\])? created\[(\d+)=.*?\](:?.*?creator\[(.*?)\])?(:?.*?avatars_lastcheck\[(\d+)\])?(:?.*?cavatar_lastmod\[(\d+)\])? origin\[(.*?)\] abuse.*drugs\[(\d+)\] abuse.*spam\[(\d+)\] abuse.*porno\[(\d+)\](:? abuse.violation\[(\d+)\])?(:? abuse.other\[(\d+)\])?
     ```
 ```
 $ go test -v -bench '.*Complex.*' github.com/sirkon/ldetool/benchmarking
@@ -261,5 +261,5 @@ BenchmarkRegexComplex-4             1000           2169577 ns/op
 PASS
 ok      github.com/sirkon/ldetool/benchmarking  4.537s
 ```
-You see, specialized solution about 1000 times faster, much more easy to write and debug and does a lot of boilerplate
-beneath — we have numeric fields converted on successful extraction, we have an error where we failed on action processing, etc. We only have an empty set of captured groups in case of regex. 
+You see, specialized solution about 1000 times faster, much easier to write and debug and does a lot of boilerplating
+beneath — we have numeric fields converted on successful extraction, we have errors where we failed on action processing, etc. We have nothing of it with regexes.
