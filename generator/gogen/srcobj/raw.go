@@ -18,3 +18,8 @@ func (r Raw) Dump(w io.Writer) error {
 func Literal(data interface{}) Source {
 	return Raw(fmt.Sprintf("%v", data))
 }
+
+// HexU64 generates hexadecimal representation of uint64 fed
+func HexU64(data uint64) Source {
+	return Raw(fmt.Sprintf("0x%x", data))
+}

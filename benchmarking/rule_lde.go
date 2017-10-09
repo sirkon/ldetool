@@ -306,7 +306,7 @@ func (p *CRMod) Extract(line []byte) (bool, error) {
 	}
 
 	// Checks if the rest starts with `" unset:"` and pass it
-	if len(p.rest) >= 7 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&72057594037927935 == 16453527726355744 {
+	if len(p.rest) >= 7 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffffff == 0x3a7465736e7520 {
 		p.rest = p.rest[7:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " unset:")
@@ -382,7 +382,7 @@ crmodAnkVerLabel:
 crmodListVerLabel:
 
 	// Checks if the rest starts with `" name["` and pass it
-	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 100491184926240 {
+	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffff == 0x5b656d616e20 {
 		p.rest = p.rest[6:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " name[")
@@ -399,7 +399,7 @@ crmodListVerLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `" about["` and pass it
-	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&72057594037927935 == 25742270609383712 {
+	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffffff == 0x5b74756f626120 {
 		rest1 = rest1[7:]
 	} else {
 		p.About.Valid = false
@@ -427,7 +427,7 @@ crmodAboutLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `" rules["` and pass it
-	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&72057594037927935 == 25741102329197088 {
+	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffffff == 0x5b73656c757220 {
 		rest1 = rest1[7:]
 	} else {
 		p.Rules.Valid = false
@@ -455,7 +455,7 @@ crmodRulesLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `" nick["` and pass it
-	if len(rest1) >= 6 && *(*uint64)(unsafe.Pointer(&rest1[0]))&281474976710655 == 100516787482144 {
+	if len(rest1) >= 6 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffff == 0x5b6b63696e20 {
 		rest1 = rest1[6:]
 	} else {
 		p.Nick.Valid = false
@@ -499,7 +499,7 @@ crmodLocationLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `" stamp["` and pass it
-	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&72057594037927935 == 25737837969437472 {
+	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffffff == 0x5b706d61747320 {
 		rest1 = rest1[7:]
 	} else {
 		p.Stamp.Valid = false
@@ -549,7 +549,7 @@ crmodRegionsLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `" flags["` and pass it
-	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&72057594037927935 == 25741110733989408 {
+	if len(rest1) >= 7 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffffff == 0x5b7367616c6620 {
 		rest1 = rest1[7:]
 	} else {
 		p.Flags.Valid = false
@@ -667,7 +667,7 @@ crmodAvatarLastCheckLabel:
 crmodAvatarsLastModLabel:
 
 	// Checks if the rest starts with `" origin["` and pass it
-	if len(p.rest) >= 8 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&18446744073709551615 == 6588319197761269536 {
+	if len(p.rest) >= 8 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffffffff == 0x5b6e696769726f20 {
 		p.rest = p.rest[8:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " origin[")
@@ -689,14 +689,14 @@ crmodAvatarsLastModLabel:
 	}
 
 	// Checks if the rest starts with `" abuse"` and pass it
-	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 111546565026080 {
+	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffff == 0x657375626120 {
 		p.rest = p.rest[6:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " abuse")
 	}
 
 	// Checks if rest[1:] starts with `"drugs["` and pass it
-	if len(p.rest)-1 >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[1]))&281474976710655 == 100551215116900 {
+	if len(p.rest)-1 >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[1]))&0xffffffffffff == 0x5b7367757264 {
 		p.rest = p.rest[7:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest[1:]), "drugs[")
@@ -722,14 +722,14 @@ crmodAvatarsLastModLabel:
 	p.Drugs = int16(tmpInt)
 
 	// Checks if the rest starts with `" abuse"` and pass it
-	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 111546565026080 {
+	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffff == 0x657375626120 {
 		p.rest = p.rest[6:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " abuse")
 	}
 
 	// Checks if rest[1:] starts with `"spam["` and pass it
-	if len(p.rest)-1 >= 5 && *(*uint64)(unsafe.Pointer(&p.rest[1]))&1099511627775 == 392677126259 {
+	if len(p.rest)-1 >= 5 && *(*uint64)(unsafe.Pointer(&p.rest[1]))&0xffffffffff == 0x5b6d617073 {
 		p.rest = p.rest[6:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest[1:]), "spam[")
@@ -755,14 +755,14 @@ crmodAvatarsLastModLabel:
 	p.Spam = int16(tmpInt)
 
 	// Checks if the rest starts with `" abuse"` and pass it
-	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 111546565026080 {
+	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffff == 0x657375626120 {
 		p.rest = p.rest[6:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " abuse")
 	}
 
 	// Checks if rest[1:] starts with `"porno["` and pass it
-	if len(p.rest)-1 >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[1]))&281474976710655 == 100534152490864 {
+	if len(p.rest)-1 >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[1]))&0xffffffffffff == 0x5b6f6e726f70 {
 		p.rest = p.rest[7:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest[1:]), "porno[")
@@ -789,7 +789,7 @@ crmodAvatarsLastModLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `" abuse"` and pass it
-	if len(rest1) >= 6 && *(*uint64)(unsafe.Pointer(&rest1[0]))&281474976710655 == 111546565026080 {
+	if len(rest1) >= 6 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffff == 0x657375626120 {
 		rest1 = rest1[6:]
 	} else {
 		p.Violation.Valid = false
@@ -829,7 +829,7 @@ crmodViolationLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `" abuse"` and pass it
-	if len(rest1) >= 6 && *(*uint64)(unsafe.Pointer(&rest1[0]))&281474976710655 == 111546565026080 {
+	if len(rest1) >= 6 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffff == 0x657375626120 {
 		rest1 = rest1[6:]
 	} else {
 		p.AbuseOther.Valid = false
@@ -837,7 +837,7 @@ crmodViolationLabel:
 	}
 
 	// Checks if rest[1:] starts with `"other["` and pass it
-	if len(rest1)-1 >= 6 && *(*uint64)(unsafe.Pointer(&rest1[1]))&281474976710655 == 100546885743727 {
+	if len(rest1)-1 >= 6 && *(*uint64)(unsafe.Pointer(&rest1[1]))&0xffffffffffff == 0x5b726568746f {
 		rest1 = rest1[7:]
 	} else {
 		p.AbuseOther.Valid = false

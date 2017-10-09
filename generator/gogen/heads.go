@@ -64,9 +64,9 @@ func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj
 						),
 					),
 				),
-				srcobj.Literal(mask),
+				srcobj.HexU64(mask),
 			),
-			srcobj.Literal(prefix),
+			srcobj.HexU64(prefix),
 		),
 	)
 }

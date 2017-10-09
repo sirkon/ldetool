@@ -1664,7 +1664,7 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffff == 0x3d64616568 {
 		rest1 = rest1[5:]
 	} else {
 		p.Head.Valid = false
@@ -1685,7 +1685,7 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 decoderoptionalsHeadLabel:
 
 	// Checks if the rest starts with `"end"` and pass it
-	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&16777215 == 6581861 {
+	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffff == 0x646e65 {
 		p.rest = p.rest[3:]
 	} else {
 		return false, nil
@@ -1736,7 +1736,7 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffff == 0x3d64616568 {
 		rest1 = rest1[5:]
 	} else {
 		p.Head.Valid = false
@@ -1757,7 +1757,7 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 decoderoptionalsstressHeadLabel:
 
 	// Checks if the rest starts with `"end"` and pass it
-	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&16777215 == 6581861 {
+	if len(p.rest) >= 3 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffff == 0x646e65 {
 		p.rest = p.rest[3:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), "end")
@@ -1790,13 +1790,13 @@ func (p *DecoderBranching) Extract(line []byte) (bool, error) {
 	var rest1 []byte
 
 	// Checks if the rest starts with `"start "` and pass it
-	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 35684507284595 {
+	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffff == 0x207472617473 {
 		p.rest = p.rest[6:]
 	}
 	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffff == 0x3d64616568 {
 		rest1 = rest1[5:]
 	}
 
@@ -1839,13 +1839,13 @@ func (p *DecoderBranchingStress) Extract(line []byte) (bool, error) {
 	var rest1 []byte
 
 	// Checks if the rest starts with `"start "` and pass it
-	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&281474976710655 == 35684507284595 {
+	if len(p.rest) >= 6 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffffff == 0x207472617473 {
 		p.rest = p.rest[6:]
 	}
 	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffff == 0x3d64616568 {
 		rest1 = rest1[5:]
 	}
 
@@ -1893,7 +1893,7 @@ func (p *DoubleOpts) Extract(line []byte) (bool, error) {
 	rest1 = p.rest
 
 	// Checks if the rest starts with `"head="` and pass it
-	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263677109608 {
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffff == 0x3d64616568 {
 		rest1 = rest1[5:]
 	} else {
 		p.Head.Valid = false
@@ -1915,7 +1915,7 @@ doubleoptsHeadLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `"rest="` and pass it
-	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&1099511627775 == 263946724722 {
+	if len(rest1) >= 5 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffff == 0x3d74736572 {
 		rest1 = rest1[5:]
 	} else {
 		p.Rest.Valid = false
@@ -1990,7 +1990,7 @@ func (p *Prefixes) Extract(line []byte) (bool, error) {
 	p.Data = int32(tmpInt)
 
 	// Checks if the rest starts with `"12345"` and pass it
-	if len(p.rest) >= 5 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&1099511627775 == 228509037105 {
+	if len(p.rest) >= 5 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffffff == 0x3534333231 {
 		p.rest = p.rest[5:]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), "12345")
@@ -2045,7 +2045,7 @@ func (p *FixedLook) Extract(line []byte) (bool, error) {
 	p.Data = int32(tmpInt)
 
 	// Take until 4th character if it starts "34" substring as Rest(int32)
-	if len(p.rest)-3 >= 2 && *(*uint64)(unsafe.Pointer(&p.rest[3]))&65535 == 13363 {
+	if len(p.rest)-3 >= 2 && *(*uint64)(unsafe.Pointer(&p.rest[3]))&0xffff == 0x3433 {
 		pos = 3
 	} else {
 		pos = -1
@@ -2092,7 +2092,7 @@ func (p *AnonymousAreas) Extract(line []byte) (bool, error) {
 	}
 
 	// Checks if the rest starts with `"ata="` and pass it
-	if len(rest1) >= 4 && *(*uint64)(unsafe.Pointer(&rest1[0]))&4294967295 == 1029796961 {
+	if len(rest1) >= 4 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffff == 0x3d617461 {
 		rest1 = rest1[4:]
 	} else {
 		goto anonymousareasAnonymousAreaLabel
@@ -2102,7 +2102,7 @@ anonymousareasAnonymousAreaLabel:
 	rest1 = p.rest
 
 	// Checks if the rest starts with `"1234"` and pass it
-	if len(rest1) >= 4 && *(*uint64)(unsafe.Pointer(&rest1[0]))&4294967295 == 875770417 {
+	if len(rest1) >= 4 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffff == 0x34333231 {
 		rest1 = rest1[4:]
 	} else {
 		goto anonymousareasAnonymousAreaLabel2
