@@ -7,6 +7,8 @@ import (
 
 	"regexp"
 
+	"strconv"
+
 	"github.com/stretchr/testify/require"
 )
 
@@ -59,6 +61,13 @@ var names = [][]byte{
 	[]byte("Việt Nam Zalo"),
 	[]byte("Cccc"),
 }
+var avatarsLastcheck = []int64{
+	1474577584,
+	1474577584,
+	1474541573,
+	1496151655,
+}
+var avatarsLastcheckLit = [][]byte{}
 
 func init() {
 	totalLength := 0
@@ -72,6 +81,10 @@ func init() {
 		next := offset + len(line)
 		lines = append(lines, buf[offset:next])
 		offset = next
+	}
+	for _, num := range avatarsLastcheck {
+		data := strconv.FormatInt(num, 10)
+		avatarsLastcheckLit = append(avatarsLastcheckLit, []byte(data))
 	}
 }
 
@@ -88,6 +101,9 @@ func BenchmarkLDEComplex(b *testing.B) {
 			}
 			if !bytes.Equal(names[j], ldeParser.Name) {
 				require.Equal(b, string(names[j]), string(ldeParser.Name))
+			}
+			if avatarsLastcheck[j] != ldeParser.GetAvatarLastCheckValue() {
+				require.Equal(b, avatarsLastcheck[j], ldeParser.AvatarLastCheck.Value)
 			}
 		}
 	}
@@ -131,6 +147,10 @@ func BenchmarkRegexComplex(b *testing.B) {
 			name := data[12]
 			if !bytes.Equal(names[j], name) {
 				require.Equal(b, string(names[j]), string(name))
+			}
+			avLastCheck := data[25]
+			if !bytes.Equal(avatarsLastcheckLit[j], avLastCheck) {
+				require.Equal(b, string(avatarsLastcheckLit[j]), string(avLastCheck))
 			}
 		}
 	}
