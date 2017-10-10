@@ -1,0 +1,75 @@
+package main
+
+
+import (
+    "unsafe"
+    "strconv"
+)
+
+// EasyFloat based parsing
+type EasyFloat struct {
+	Time []byte
+	UID  []byte
+	UA   []byte
+	Geo  struct {
+		Valid bool
+		Lat   float64
+		Lon   float64
+	}
+	Activity uint8
+}
+
+%% machine easyfloats;
+%% write data;
+
+// Extract extracts field from
+func (r *EasyFloat) Extract(data []byte) (ok bool, err error) {
+    cs, p, pe := 0, 0, len(data)
+    var pos = 0
+    r.Geo.Valid = false
+    var tmpFloat float64
+    var tmpUint uint64
+    var tmp []byte
+
+    %%{
+        action shot       { pos = p + 1                }
+        action take_time  { r.Time = data[pos:p+1]     }
+        action take_uid   { r.UID = data[pos:p+1]      }
+        action take_ua    { r.UA = data[pos:p+1]       }
+        action take_lat   {
+            tmp = data[pos:p+1]
+            if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
+                return false, err
+            }
+            r.Geo.Lat = tmpFloat
+        }
+        action take_lon   {
+            tmp = data[pos:p+1]
+            if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
+                return false, err
+            }
+            r.Geo.Lon = tmpFloat
+        }
+        action take_act   {
+            tmp = data[pos:p+1]
+            if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
+                return false, err
+            }
+            r.Activity = uint8(tmpUint)
+        }
+        action set_geo    { r.Geo.Valid = true         }
+
+        ns = (any -- " ")*;
+        main :=
+             ns " "@shot ((any -- "]")*)@take_time "] PRESENCE uid="@shot
+             ns@take_uid " ua='"@shot ((any -- "'")*)@take_ua "' "@shot
+             (
+                "Geo={Lat: "@set_geo@shot ((any -- ",")*)@take_lat ", Lon: "@shot ((any -- "}")*)@take_lon "} "@shot
+             )?
+             "Activity="@shot (any*)@take_act
+             ;
+        write init;
+        write exec;
+    }%%
+    return true, nil
+}

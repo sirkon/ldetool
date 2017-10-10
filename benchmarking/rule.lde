@@ -34,3 +34,14 @@ CRMod = !
 	^" abuse" ^"porno["[1] Pron(int16) ~']'
 	?Violation (^" abuse" ^"violation["[1] Value(int16) ~']')
 	?AbuseOther (^" abuse" ^"other["[1] Value(int16) ~']');
+
+
+Presence =
+    _' ' Time(string) ']'
+    ^" PRESENCE uid=" ! UID(string) ' '
+    ^"ua='" UA(string) '\''
+    ?Geo (
+        ^" Geo={Lat: " Lat(float64) ','
+        ^" Lon: " Lon(float64) '}'
+    )
+    ^" Activity=" Activity(uint8);

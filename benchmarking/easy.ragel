@@ -1,0 +1,48 @@
+package main
+
+// Easy based parsing
+type Easy struct {
+	Time []byte
+	UID  []byte
+	UA   []byte
+	Geo  struct {
+		Valid bool
+		Lat   []byte
+		Lon   []byte
+	}
+	Activity []byte
+}
+
+%% machine easy;
+%% write data;
+
+// Extract extracts field from
+func (r *Easy) Extract(data []byte) (ok bool, error error) {
+    cs, p, pe := 0, 0, len(data)
+    var pos = 0
+    r.Geo.Valid = false
+
+    %%{
+        action shot       { pos = p + 1                }
+        action take_time  { r.Time = data[pos:p+1]     }
+        action take_uid   { r.UID = data[pos:p+1]      }
+        action take_ua    { r.UA = data[pos:p+1]       }
+        action take_lat   { r.Geo.Lat = data[pos:p+1]  }
+        action take_lon   { r.Geo.Lon = data[pos:p+1]  }
+        action take_act   { r.Activity = data[pos:p+1] }
+        action set_geo    { r.Geo.Valid = true         }
+
+        ns = (any -- " ")*;
+        main :=
+             ns " "@shot ((any -- "]")*)@take_time "] PRESENCE uid="@shot
+             ns@take_uid " ua='"@shot ((any -- "'")*)@take_ua "' "@shot
+             (
+                "Geo={Lat: "@set_geo@shot ((any -- ",")*)@take_lat ", Lon: "@shot ((any -- "}")*)@take_lon "} "@shot
+             )?
+             "Activity="@shot (any*)@take_act
+             ;
+        write init;
+        write exec;
+    }%%
+    return true, nil
+}

@@ -22,11 +22,14 @@ var creatorLsbrck = []byte("creator[")
 var fLAGSLsbrckSetColon = []byte("FLAGS[set:")
 var from = []byte("from")
 var reqidSpace = []byte("reqid '")
+var spaceActivityEq = []byte(" Activity=")
 var spaceAnkUscoreVerLsbrck = []byte(" ank_ver[")
 var spaceCreatedLsbrck = []byte(" created[")
 var spaceFIELDSLsbrckChangedColon = []byte(" FIELDS[changed:")
+var spaceGeoEqLbraceLatColonSpace = []byte(" Geo={Lat: ")
 var spaceListUscoreVerLsbrck = []byte(" list_ver[")
 var spaceLocationLsbrck = []byte(" location[")
+var spacePRESENCESpaceUidEq = []byte(" PRESENCE uid=")
 var spaceRegionsLsbrck = []byte(" regions[")
 var violationLsbrck = []byte("violation[")
 
@@ -978,6 +981,159 @@ func (p *CRMod) GetViolationValue() (res int16) {
 func (p *CRMod) GetAbuseOtherValue() (res int16) {
 	if p.AbuseOther.Valid {
 		res = p.AbuseOther.Value
+	}
+	return
+}
+
+// Presence ...
+type Presence struct {
+	rest []byte
+	Time []byte
+	UID  []byte
+	UA   []byte
+	Geo  struct {
+		Valid bool
+		Lat   float64
+		Lon   float64
+	}
+	Activity uint8
+}
+
+// Extract ...
+func (p *Presence) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var err error
+	var pos int
+	var rest1 []byte
+	var tmp []byte
+	var tmpFloat float64
+	var tmpUint uint64
+
+	// Looking for ' ' and then pass it
+	pos = bytes.IndexByte(p.rest, ' ')
+	if pos >= 0 {
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+
+	// Take until ']' as Time(string)
+	pos = bytes.IndexByte(p.rest, ']')
+	if pos >= 0 {
+		p.Time = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+
+	// Checks if the rest starts with `" PRESENCE uid="` and pass it
+	if bytes.HasPrefix(p.rest, spacePRESENCESpaceUidEq) {
+		p.rest = p.rest[len(spacePRESENCESpaceUidEq):]
+	} else {
+		return false, nil
+	}
+
+	// Take until ' ' as UID(string)
+	pos = bytes.IndexByte(p.rest, ' ')
+	if pos >= 0 {
+		p.UID = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field UID", ' ', string(p.rest))
+	}
+
+	// Checks if the rest starts with `"ua='"` and pass it
+	if len(p.rest) >= 4 && *(*uint64)(unsafe.Pointer(&p.rest[0]))&0xffffffff == 0x273d6175 {
+		p.rest = p.rest[4:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), "ua='")
+	}
+
+	// Take until '\'' as UA(string)
+	pos = bytes.IndexByte(p.rest, '\'')
+	if pos >= 0 {
+		p.UA = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, fmt.Errorf("Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field UA", '\'', string(p.rest))
+	}
+	rest1 = p.rest
+
+	// Checks if the rest starts with `" Geo={Lat: "` and pass it
+	if bytes.HasPrefix(rest1, spaceGeoEqLbraceLatColonSpace) {
+		rest1 = rest1[len(spaceGeoEqLbraceLatColonSpace):]
+	} else {
+		p.Geo.Valid = false
+		goto presenceGeoLabel
+	}
+
+	// Take until ',' as Lat(float64)
+	pos = bytes.IndexByte(rest1, ',')
+	if pos >= 0 {
+		tmp = rest1[:pos]
+		rest1 = rest1[pos+1:]
+	} else {
+		p.Geo.Valid = false
+		goto presenceGeoLabel
+	}
+	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Geo.Lat = float64(tmpFloat)
+
+	// Checks if the rest starts with `" Lon: "` and pass it
+	if len(rest1) >= 6 && *(*uint64)(unsafe.Pointer(&rest1[0]))&0xffffffffffff == 0x203a6e6f4c20 {
+		rest1 = rest1[6:]
+	} else {
+		p.Geo.Valid = false
+		goto presenceGeoLabel
+	}
+
+	// Take until '}' as Lon(float64)
+	pos = bytes.IndexByte(rest1, '}')
+	if pos >= 0 {
+		tmp = rest1[:pos]
+		rest1 = rest1[pos+1:]
+	} else {
+		p.Geo.Valid = false
+		goto presenceGeoLabel
+	}
+	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Geo.Lon = float64(tmpFloat)
+	p.Geo.Valid = true
+	p.rest = rest1
+presenceGeoLabel:
+
+	// Checks if the rest starts with `" Activity="` and pass it
+	if bytes.HasPrefix(p.rest, spaceActivityEq) {
+		p.rest = p.rest[len(spaceActivityEq):]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.rest), " Activity=")
+	}
+
+	// Take the rest as Activity(uint8)
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&p.rest)), 10, 8); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.rest), err)
+	}
+	p.Activity = uint8(tmpUint)
+	p.rest = p.rest[len(p.rest):]
+	return true, nil
+}
+
+// GetGeoLat ...
+func (p *Presence) GetGeoLat() (res float64) {
+	if p.Geo.Valid {
+		res = p.Geo.Lat
+	}
+	return
+}
+
+// GetGeoLon ...
+func (p *Presence) GetGeoLon() (res float64) {
+	if p.Geo.Valid {
+		res = p.Geo.Lon
 	}
 	return
 }

@@ -263,3 +263,96 @@ ok      github.com/sirkon/ldetool/benchmarking  4.537s
 ```
 You see, specialized solution about 1000 times faster, much easier to write and debug and does a lot of boilerplating
 beneath — we have numeric fields converted on successful extraction, we have errors where we failed on action processing, etc. We have nothing of it with regexes.
+
+##### Automated comparsion against Ragel on a close to real world sample
+1. Lines will look like
+    ```
+    [12345 2017-10-10T21:11:12] PRESENCE uid=123423546455654 ua='App.Com Samsung i7300 Android/8.0.0/RU' Geo={Lat: 12.0, Lon: 13.0} Acitivity=0
+    [12345 2017-10-10T21:11:12] PRESENCE uid=123423546455654 ua='App.Com iPhone 8+ iOS/11.0.2/DE' Geo={Lat: 14.0, Lon: 15.0} Acitivity=0
+    [12345 2017-10-10T21:11:12] PRESENCE uid=123423546455654 ua='App.Com Windows x86-64/7/BY' Acitivity=1
+    ```
+    where `uid` is user identifier, `ua` is user agent, `Geo` is optional geo information and `Activity` is a kind of activity the user was making (background, typing, etc)
+2. LDE rule
+    ```perl
+    Presence =
+    _' ' Time(string) ']'
+    ^" PRESENCE uid=" ! UID(string) ' '
+    ^"ua='" UA(string) '\''
+    ?Geo (
+        ^" Geo={Lat: " Lat(float64) ','
+        ^" Lon: " Lon(float64) '}'
+    )
+    ^" Activity=" Activity(uint8);
+    ```
+3. Ragel template
+    ```perl
+    package main
+    
+    // Easy based parsing
+    type Easy struct {
+    	Time []byte
+    	UID  []byte
+    	UA   []byte
+    	Geo  struct {
+    		Valid bool
+    		Lat   []byte
+    		Lon   []byte
+    	}
+    	Activity []byte
+    }
+    
+    %% machine easy;
+    %% write data;
+    
+    // Extract extracts field from
+    func (r *Easy) Extract(data []byte) (ok bool, error error) {
+        cs, p, pe := 0, 0, len(data)
+        var pos = 0
+        r.Geo.Valid = false
+    
+        %%{
+            action shot       { pos = p + 1                }
+            action take_time  { r.Time = data[pos:p+1]     }
+            action take_uid   { r.UID = data[pos:p+1]      }
+            action take_ua    { r.UA = data[pos:p+1]       }
+            action take_lat   { r.Geo.Lat = data[pos:p+1]  }
+            action take_lon   { r.Geo.Lon = data[pos:p+1]  }
+            action take_act   { r.Activity = data[pos:p+1] }
+            action set_geo    { r.Geo.Valid = true         }
+    
+            ns = (any -- " ")*;
+            main :=
+                 ns " "@shot ((any -- "]")*)@take_time "] PRESENCE uid="@shot
+                 ns@take_uid " ua='"@shot ((any -- "'")*)@take_ua "' "@shot
+                 (
+                    "Geo={Lat: "@set_geo@shot ((any -- ",")*)@take_lat ", Lon: "@shot ((any -- "}")*)@take_lon "} "@shot
+                 )?
+                 "Activity="@shot (any*)@take_act
+                 ;
+            write init;
+            write exec;
+        }%%
+        return true, nil
+    }
+    ```
+4. There is also Ragel template with type conversion for latitudes, longitudes and activities. Ragel doesn't help in such
+kind of boilerplate and thus the template grown larger. You can see it [here](benchmarking/easy_floats.ragel).
+
+Ragel generated code only does processing without error handling, i.e. it is not production ready solution despite
+being harder to write. LDE on the other hand produces production ready code without much effort.
+
+Now, let's benchmark generated code:
+```
+$ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
+
+BenchmarkRagelEasyRealWorld-4         	       5	 292496195 ns/op
+BenchmarkRagelEasyFloatsRealWorld-4   	       2	 621332406 ns/op
+BenchmarkLDEEasyRealWorld-4           	       5	 225133508 ns/op
+PASS
+ok  	github.com/sirkon/ldetool/benchmarking	9.218s
+```
+
+So, you see, LDE generated code is clearly ahead of even Ragel without type conversion and nearly 3 times faster than
+Ragel generated code with type conversion. Remember, that Ragel generated code is far from production ready and you
+will need additional steps to make it one. You see, Ragel is far more complex to use and cannot really keep up with
+the speed of LDE generated code. 
