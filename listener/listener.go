@@ -102,7 +102,9 @@ func (l *Listener) EnterAtomicRule(ctx *parser.AtomicRuleContext) {
 }
 
 // ExitAtomicRule is called when production atomicRule is exited.
-func (l *Listener) ExitAtomicRule(ctx *parser.AtomicRuleContext) {}
+func (l *Listener) ExitAtomicRule(ctx *parser.AtomicRuleContext) {
+	l.expectEnd = false
+}
 
 // EnterBaseAction is called when production baseAction is entered.
 func (l *Listener) EnterBaseAction(ctx *parser.BaseActionContext) {
