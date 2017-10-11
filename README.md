@@ -357,10 +357,10 @@ with Ragel will be a bit faster. Now, let's benchmark:
 ```
 $ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
 
-BenchmarkLDEEasyRealWorld-4           	      10	 176128162 ns/op
-BenchmarkLDEEasyFloatsRealWorld-4     	       5	 228064495 ns/op
-BenchmarkRagelEasyRealWorld-4         	       5	 298067871 ns/op
-BenchmarkRagelEasyFloatsRealWorld-4   	       2	 621669092 ns/op
+BenchmarkLDEEasyRealWorld-4           	      10	 168081059 ns/op
+BenchmarkLDEEasyFloatsRealWorld-4     	       5	 216827185 ns/op
+BenchmarkRagelEasyRealWorld-4         	       5	 301412608 ns/op
+BenchmarkRagelEasyFloatsRealWorld-4   	       2	 619422100 ns/op
 PASS
 ok  	github.com/sirkon/ldetool/benchmarking	9.218s
 ```
