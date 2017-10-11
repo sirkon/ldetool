@@ -186,7 +186,9 @@ func init() {
 func TestRagelExtraction(t *testing.T) {
 	p := &Easy{}
 	f := &EasyFloat{}
-	e := &Presence{}
+	e := &PresenceFloats{}
+	r := &Presence{}
+
 	start := START
 	for _, line := range easylines {
 		ok, err := p.Extract(line)
@@ -207,11 +209,27 @@ func TestRagelExtraction(t *testing.T) {
 		}
 		require.True(t, ok)
 
+		ok, err = r.Extract(line)
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+
 		require.Equal(t, start.Format("2006-01-02T15:04:05"), string(p.Time))
 		if _, ok := users[string(p.UID)]; !ok {
 			t.Fatalf("Unknown user `\033[01m%s\033[0m` extracted on parsing>>\033[1m%s\033[0m", string(p.UID), string(line))
 		}
 		start = start.Add(time.Second)
+
+		require.Equal(t, string(p.Time), string(r.Time))
+		require.Equal(t, string(p.UID), string(r.UID))
+		require.Equal(t, string(p.UA), string(r.UA))
+		require.Equal(t, p.Geo.Valid, r.Geo.Valid)
+		if p.Geo.Valid {
+			require.Equal(t, string(p.Geo.Lat), string(r.Geo.Lat))
+			require.Equal(t, string(p.Geo.Lon), string(r.Geo.Lon))
+		}
+		require.Equal(t, string(p.Activity), string(r.Activity))
 
 		require.Equal(t, string(p.Time), string(e.Time))
 		require.Equal(t, string(p.UID), string(e.UID))
@@ -235,6 +253,30 @@ func TestRagelExtraction(t *testing.T) {
 	}
 }
 
+func BenchmarkLDEEasyRealWorld(b *testing.B) {
+	p := &Presence{}
+	for i := 0; i < b.N; i++ {
+		for _, line := range easylines {
+			p.Extract(line)
+			if _, ok := users[string(p.UID)]; !ok {
+				b.Fatalf("Unknown user `\033[1m%s\033[0m` extracted on parsing>>\033[1m%s\033[0m", string(p.UID), string(line))
+			}
+		}
+	}
+}
+
+func BenchmarkLDEEasyFloatsRealWorld(b *testing.B) {
+	p := &PresenceFloats{}
+	for i := 0; i < b.N; i++ {
+		for _, line := range easylines {
+			p.Extract(line)
+			if _, ok := users[string(p.UID)]; !ok {
+				b.Fatalf("Unknown user `\033[1m%s\033[0m` extracted on parsing>>\033[1m%s\033[0m", string(p.UID), string(line))
+			}
+		}
+	}
+}
+
 func BenchmarkRagelEasyRealWorld(b *testing.B) {
 	p := &Easy{}
 	for i := 0; i < b.N; i++ {
@@ -249,18 +291,6 @@ func BenchmarkRagelEasyRealWorld(b *testing.B) {
 
 func BenchmarkRagelEasyFloatsRealWorld(b *testing.B) {
 	p := &EasyFloat{}
-	for i := 0; i < b.N; i++ {
-		for _, line := range easylines {
-			p.Extract(line)
-			if _, ok := users[string(p.UID)]; !ok {
-				b.Fatalf("Unknown user `\033[1m%s\033[0m` extracted on parsing>>\033[1m%s\033[0m", string(p.UID), string(line))
-			}
-		}
-	}
-}
-
-func BenchmarkLDEEasyRealWorld(b *testing.B) {
-	p := &Presence{}
 	for i := 0; i < b.N; i++ {
 		for _, line := range easylines {
 			p.Extract(line)

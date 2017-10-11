@@ -36,7 +36,7 @@ CRMod = !
 	?AbuseOther (^" abuse" ^"other["[1] Value(int16) ~']');
 
 
-Presence =
+PresenceFloats =
     _' ' Time(string) ']'
     ^" PRESENCE uid=" ! UID(string) ' '
     ^"ua='" UA(string) '\''
@@ -45,3 +45,14 @@ Presence =
         ^" Lon: " Lon(float64) '}'
     )
     ^" Activity=" Activity(uint8);
+
+
+Presence =
+    _' ' Time(string) ']'
+    ^" PRESENCE uid=" ! UID(string) ' '
+    ^"ua='" UA(string) '\''
+    ?Geo (
+        ^" Geo={Lat: " Lat(string) ','
+        ^" Lon: " Lon(string) '}'
+    )
+    ^" Activity=" Activity(string);

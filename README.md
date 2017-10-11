@@ -272,9 +272,21 @@ beneath — we have numeric fields converted on successful extraction, we have e
     [12345 2017-10-10T21:11:12] PRESENCE uid=123423546455654 ua='App.Com Windows x86-64/7/BY' Acitivity=1
     ```
     where `uid` is user identifier, `ua` is user agent, `Geo` is optional geo information and `Activity` is a kind of activity the user was making (background, typing, etc)
-2. LDE rule
+2. LDE rule without type conversion
     ```perl
     Presence =
+        _' ' Time(string) ']'
+        ^" PRESENCE uid=" ! UID(string) ' '
+        ^"ua='" UA(string) '\''
+        ?Geo (
+            ^" Geo={Lat: " Lat(string) ','
+            ^" Lon: " Lon(string) '}'
+        )
+        ^" Activity=" Activity(string);
+    ```
+2. LDE rule with type conversion
+    ```perl
+    PresenceFloats =
     _' ' Time(string) ']'
     ^" PRESENCE uid=" ! UID(string) ' '
     ^"ua='" UA(string) '\''
@@ -284,7 +296,7 @@ beneath — we have numeric fields converted on successful extraction, we have e
     )
     ^" Activity=" Activity(uint8);
     ```
-3. Ragel template
+3. Ragel template without type conversion
     ```perl
     package main
     
@@ -335,24 +347,26 @@ beneath — we have numeric fields converted on successful extraction, we have e
         return true, nil
     }
     ```
-4. There is also Ragel template with type conversion for latitudes, longitudes and activities. Ragel doesn't help in such
-kind of boilerplate and thus the template grown larger. You can see it [here](benchmarking/easy_floats.ragel).
+4. Ragel template with type conversion is here [here](benchmarking/easy_floats.ragel).
 
-Ragel generated code only does processing without error handling, i.e. it is not production ready solution despite
-being harder to write. LDE on the other hand produces production ready code without much effort.
+Note, both these Ragel templates only does processing without error handling, so generated code is not production ready.
+The problem here we will need to handle type conversion and error processing manually each time writing Ragel rules.
+The LDE tool makes this automatically. This alone is a #1 in a list of *pros* for using LDE, even if the code generated
+Ragel will be a bit faster. We will see though which is actually faster now: 
 
-Now, let's benchmark generated code:
 ```
 $ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
 
-BenchmarkRagelEasyRealWorld-4         	       5	 292496195 ns/op
-BenchmarkRagelEasyFloatsRealWorld-4   	       2	 621332406 ns/op
-BenchmarkLDEEasyRealWorld-4           	       5	 225133508 ns/op
+BenchmarkLDEEasyRealWorld-4           	      10	 176128162 ns/op
+BenchmarkLDEEasyFloatsRealWorld-4     	       5	 228064495 ns/op
+BenchmarkRagelEasyRealWorld-4         	       5	 298067871 ns/op
+BenchmarkRagelEasyFloatsRealWorld-4   	       2	 621669092 ns/op
 PASS
 ok  	github.com/sirkon/ldetool/benchmarking	9.218s
 ```
 
-So, you see, LDE generated code is clearly ahead of even Ragel without type conversion and nearly 3 times faster than
-Ragel generated code with type conversion. Remember, that Ragel generated code is far from production ready and you
-will need additional steps to make it one. You see, Ragel is far more complex to use and cannot really keep up with
-the speed of LDE generated code. 
+You see, not only LDE generated code does a lot more than straight Ragel, it is actually faster, something like several
+times faster. Notice a two times performance drop with type conversions on Ragel sample, when the LDE generated code
+suffers only %30 speed decrease with type conversions: it looks like Ragel works best when all actions are done within 
+generated finite state machine, probably something with cache locality. It slows down immediately after there was an 
+"external" function call.
