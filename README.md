@@ -352,7 +352,7 @@ beneath — we have numeric fields converted on successful extraction, we have e
 Note, both these Ragel templates only does processing without error handling, so generated code is not production ready.
 The problem here we will need to handle type conversion and error processing manually each time writing Ragel rules.
 The LDE tool makes this automatically. This alone is a #1 in a list of *pros* for using LDE, even if the code generated
-Ragel will be a bit faster. We will see though which is actually faster now: 
+with Ragel will be a bit faster. Now, let's benchmark: 
 
 ```
 $ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
@@ -367,6 +367,6 @@ ok  	github.com/sirkon/ldetool/benchmarking	9.218s
 
 You see, not only LDE generated code does a lot more than straight Ragel, it is actually faster, something like several
 times faster. Notice a two times performance drop with type conversions on Ragel sample, when the LDE generated code
-suffers only %30 speed decrease with type conversions: it looks like Ragel works best when all actions are done within 
+suffers only %30 speed decrease in the same circumstances: it looks like Ragel works best when all actions are done within 
 generated finite state machine, probably something with cache locality. It slows down immediately after there was an 
 "external" function call.
