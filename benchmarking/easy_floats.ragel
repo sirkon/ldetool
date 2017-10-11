@@ -36,20 +36,14 @@ func (r *EasyFloat) Extract(data []byte) (ok bool, err error) {
         action take_time  { r.Time = data[pos:p+1]     }
         action take_uid   { r.UID = data[pos:p+1]      }
         action take_ua    { r.UA = data[pos:p+1]       }
-        action take_lat   {
+	action tmp_float  { 
             tmp = data[pos:p+1]
             if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
                 return false, err
             }
-            r.Geo.Lat = tmpFloat
-        }
-        action take_lon   {
-            tmp = data[pos:p+1]
-            if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
-                return false, err
-            }
-            r.Geo.Lon = tmpFloat
-        }
+	}
+        action take_lat   { r.Geo.Lat = tmpFloat       }
+        action take_lon   { r.Geo.Lon = tmpFloat       }
         action take_act   {
             tmp = data[pos:p+1]
             if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
@@ -64,7 +58,7 @@ func (r *EasyFloat) Extract(data []byte) (ok bool, err error) {
              ns " "@shot ((any -- "]")*)@take_time "] PRESENCE uid="@shot
              ns@take_uid " ua='"@shot ((any -- "'")*)@take_ua "' "@shot
              (
-                "Geo={Lat: "@set_geo@shot ((any -- ",")*)@take_lat ", Lon: "@shot ((any -- "}")*)@take_lon "} "@shot
+                "Geo={Lat: "@set_geo@shot ((any -- ",")*)@tmp_float@take_lat ", Lon: "@shot ((any -- "}")*)@tmp_float@take_lon "} "@shot
              )?
              "Activity="@shot (any*)@take_act
              ;
