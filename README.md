@@ -352,7 +352,9 @@ beneath — we have numeric fields converted on successful extraction, we have e
 > both these Ragel templates only does processing without error handling, so generated code is not production ready.
 > The problem here we will need to handle type conversion and error processing manually each time writing Ragel rules.
 > The LDE tool makes this automatically. This alone is a #1 in a list of *pros* for using LDE, even if the code generated
-> with Ragel will be a bit faster. Now, let's benchmark: 
+> with Ragel would be a bit faster. 
+
+Now, let's benchmark: 
 
 ```
 $ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
