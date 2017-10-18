@@ -1,5 +1,10 @@
+sudo: false
 language: go
-
-
 go:
-  - 1.9
+  - 1.9.x
+
+install:
+  - go get -v -d -t github.com/sirkon/ldetool
+
+script:
+  - make test
