@@ -188,3 +188,12 @@ TargetConstraintsCheck =
     _' '[1:]
     !
     _' '[1:];
+
+URL =
+    ?UserPass(
+        User(string) ':'[1:] Password(string) '@'[1:]
+    )
+    ?User(
+        User(string) '@'[1:]
+    )
+    Host(string) ':'[1:] Port(uint16) ?'/' DBName(string);

@@ -18,7 +18,7 @@ func (g *Generator) OpenOptionalScope(name string, t antlr.Token) {
 		Expr:     srcobj.Raw(g.prevRestVar()),
 	})
 	if len(name) > 0 {
-		g.addField(g.namespaces, name, t)
+		g.addField(g.namespaces, "", t)
 	}
 }
 
