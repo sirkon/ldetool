@@ -54,6 +54,11 @@ type Generator struct {
 	ruleName string // Name of currently processing rule
 }
 
+// PlatformType holds an information what type of platform to generate code for:
+//    1. Little endiant
+//    2. Big endian
+//    3. Crossplatform
+// There's a difference for fast short (up to 8 bytes) prefix checks in strings.
 func (g *Generator) PlatformType(t generator.PlatformType) {
 	g.platformType = t
 }
