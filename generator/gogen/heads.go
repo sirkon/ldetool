@@ -11,7 +11,9 @@ import (
 )
 
 func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {
-	g.regImport("", "unsafe")
+	if !g.useString {
+		g.regImport("", "unsafe")
+	}
 	var mask uint64
 	var byteMask = make([]byte, 8)
 	for i := 0; i < len(unquoted); i++ {
@@ -103,11 +105,11 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 	var shift srcobj.Source = srcobj.Literal(len(unquoted) + offset)
 	var code srcobj.Source
 
-	if len(unquoted) <= 8 && g.platformType != generator.Universal {
+	if len(unquoted) <= 8 && g.platformType != generator.Universal && !g.useString {
 		code = g.shortPrefixCheck(unquoted, anchor, offset)
 	} else {
-		g.regVar(g.curRestVar(), "[]byte")
-		g.regImport("", "bytes")
+		g.regRightVar(g.curRestVar())
+		g.regRightPkg()
 		constName := g.constNameFromContent(anchor)
 
 		shift = srcobj.NewCall("len", srcobj.Raw(constName))
@@ -115,7 +117,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 			shift = srcobj.OperatorAdd(shift, srcobj.Literal(offset))
 		}
 
-		code = srcobj.NewCall("bytes.HasPrefix", rest, srcobj.Raw(constName))
+		code = srcobj.NewCall(srcobj.RightPkg(g.useString)+".HasPrefix", rest, srcobj.Raw(constName))
 		if offset > 0 {
 			code = srcobj.OperatorAnd(
 				srcobj.OperatorGE(
@@ -146,7 +148,7 @@ func (g *Generator) HeadString(anchor string, ignore bool) {
 }
 
 func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
-	g.regVar(g.curRestVar(), "[]byte")
+	g.regRightVar(g.curRestVar())
 
 	var rest srcobj.Source = srcobj.Raw(g.curRestVar())
 

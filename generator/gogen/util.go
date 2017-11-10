@@ -7,6 +7,7 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/ldetool/generator/gogen/mnemo"
+	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 )
 
 // constNameFromContent generates name of the constant based on content
@@ -104,7 +105,7 @@ func (g *Generator) goType(inputType string) string {
 		"uint64":  "uint64",
 		"float32": "float32",
 		"float64": "float64",
-		"string":  "[]byte",
+		"string":  srcobj.RightType(g.useString),
 	}[inputType]
 	if !ok {
 		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))

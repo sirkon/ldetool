@@ -14,13 +14,15 @@ type File struct {
 	pkgName   string
 	imports   map[string]string
 	strConsts map[string]string
+	useString bool
 
 	body *Body
 }
 
 // NewFile constructor
-func NewFile() *File {
+func NewFile(useString bool) *File {
 	return &File{
+		useString: useString,
 		imports:   map[string]string{},
 		strConsts: map[string]string{},
 		body:      &Body{},
@@ -62,10 +64,10 @@ func (f *File) AddNamedImport(access, path string) error {
 }
 
 // AddExtractor adds new extractor struct type definition and returns struct body
-func (f *File) AddExtractor(typeName string) *Struct {
+func (f *File) AddExtractor(typeName string) *Strct {
 	st := structType{
 		name: typeName,
-		s:    &Struct{},
+		s:    Struct(f.useString),
 	}
 	f.body.Append(st)
 	return st.s
@@ -73,7 +75,7 @@ func (f *File) AddExtractor(typeName string) *Struct {
 
 // AddExtract adds extraction method for an extractor
 func (f *File) AddExtract(typeName string) *Method {
-	res := NewExtractor(typeName)
+	res := NewExtractor(f.useString, typeName)
 	f.body.Append(Raw("\n"))
 	f.body.Append(res)
 	return res
@@ -123,9 +125,15 @@ func (f *File) Dump(w io.Writer) error {
 		vars = append(vars, n)
 	}
 	sort.Sort(sort.StringSlice(vars))
+	var conversion string
+	if f.useString {
+		conversion = "%s"
+	} else {
+		conversion = "[]byte(%s)"
+	}
 	for _, varName := range vars {
 		value := f.strConsts[varName]
-		if _, err := fmt.Fprintf(buf, "var %s = []byte(%s)\n", varName, value); err != nil {
+		if _, err := fmt.Fprintf(buf, "var %s = "+conversion+"\n", varName, value); err != nil {
 			return err
 		}
 	}

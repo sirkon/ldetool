@@ -38,16 +38,25 @@ func (g *Generator) prepFloat() {
 func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string, params ...srcobj.Source) {
 	g.prepNumeric()
 
-	p := []srcobj.Source{
-		srcobj.Deref(
-			srcobj.NewCall(
-				"(*string)",
+	var p []srcobj.Source
+	if g.useString {
+		//g.regVar("tmpChar", "byte")
+		//g.body.Append(srcobj.Assign("tmpChar", src))
+		//g.body.Append(srcobj.Raw("\n"))
+		//src = srcobj.Raw("tmpChar")
+		p = []srcobj.Source{src}
+	} else {
+		p = []srcobj.Source{
+			srcobj.Deref(
 				srcobj.NewCall(
-					"unsafe.Pointer",
-					srcobj.Ref(src),
+					"(*string)",
+					srcobj.NewCall(
+						"unsafe.Pointer",
+						srcobj.Ref(src),
+					),
 				),
 			),
-		),
+		}
 	}
 	p = append(p, params...)
 	g.body.Append(

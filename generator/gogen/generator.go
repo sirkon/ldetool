@@ -21,6 +21,7 @@ type Name struct {
 // Generator implementation of generator.Generator
 // for Go target
 type Generator struct {
+	useString      bool
 	rules          map[string]antlr.Token // Register rule names to check duplication
 	consts         map[string]string      // string constants for reuse
 	fields         map[string]Name        // Field names obviously should have different names
@@ -44,11 +45,11 @@ type Generator struct {
 	gravity []string
 
 	// Source object representation primitives
-	file       *srcobj.File     // File image
-	body       *srcobj.Body     // Current method image
-	obj        []*srcobj.Struct // Image of the structure
-	optgetters *srcobj.Body     // Option getters for current structure
-	vargen     *srcobj.Vars     // Function variables image
+	file       *srcobj.File    // File image
+	body       *srcobj.Body    // Current method image
+	obj        []*srcobj.Strct // Image of the structure
+	optgetters *srcobj.Body    // Option getters for current structure
+	vargen     *srcobj.Vars    // Function variables image
 	decoderMap map[string]func(src srcobj.Source, dest string)
 
 	ruleName string // Name of currently processing rule
@@ -74,18 +75,19 @@ func (g *Generator) ErrorToken(token antlr.Token, format string, params ...inter
 }
 
 // NewGenerator constructor
-func NewGenerator(goish *gotify.Gotify) *Generator {
+func NewGenerator(useString bool, goish *gotify.Gotify) *Generator {
 	res := &Generator{
-		rules:   map[string]antlr.Token{},
-		consts:  map[string]string{},
-		imports: map[string]string{},
+		useString: useString,
+		rules:     map[string]antlr.Token{},
+		consts:    map[string]string{},
+		imports:   map[string]string{},
 
 		critical: false,
 		vars:     map[string]string{},
 		goish:    goish,
 		gravity:  nil,
 
-		file:     srcobj.NewFile(),
+		file:     srcobj.NewFile(useString),
 		ruleName: "",
 
 		platformType: generator.Universal,
@@ -139,7 +141,7 @@ func (g *Generator) label() string {
 	return g.labelName
 }
 
-func (g *Generator) curObj() *srcobj.Struct {
+func (g *Generator) curObj() *srcobj.Strct {
 	return g.obj[len(g.obj)-1]
 }
 
@@ -166,7 +168,7 @@ func (g *Generator) UseRule(name string, t antlr.Token) {
 	g.vars = map[string]string{}
 	g.namespaces = nil
 	g.ruleName = name
-	g.obj = []*srcobj.Struct{g.file.AddExtractor(name)}
+	g.obj = []*srcobj.Strct{g.file.AddExtractor(name)}
 	g.curObj().AddString("rest")
 	g.body = g.file.AddExtract(name).Body()
 	g.body.Append(srcobj.LineAssign{

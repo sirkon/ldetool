@@ -88,7 +88,7 @@ func generateAction(c *cli.Context) (err error) {
 	fname = fmt.Sprintf("%s_lde.go", strings.Replace(fname, ".", "_", -1))
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)
-	gen := gogen.NewGenerator(gfy)
+	gen := gogen.NewGenerator(c.Bool("go-string"), gfy)
 	if c.Bool("little-endian") {
 		gen.PlatformType(generator.LittleEndian)
 	} else if c.Bool("big-endian") {

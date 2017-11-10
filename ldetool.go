@@ -50,6 +50,10 @@ func main() {
 					Name:  "little-endian",
 					Usage: "Target architecture is little endian",
 				},
+				cli.BoolFlag{
+					Name:  "go-string",
+					Usage: "Treat strings as go strings",
+				},
 			},
 			UsageText: "ldetool generate [command options] <lde file path>",
 			Action:    generateAction,

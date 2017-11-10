@@ -33,19 +33,26 @@ func (l LookupByteShort) Dump(w io.Writer) error {
 	return b.Dump(w)
 }
 
-// LookupStringShort look for the distant string
-type LookupStringShort struct {
-	Var    string
-	Src    Source
-	Needle Source
+// lookupStringShort look for the distant string
+type lookupStringShort struct {
+	useString bool
+	Var       string
+	Src       Source
+	Needle    Source
+}
+
+// LookupStringShort creates private lookupStringShort for external consumption
+func LookupStringShort(useString bool, v string, src, needle Source) lookupStringShort {
+	return lookupStringShort{
+		useString: useString,
+		Var:       v,
+		Src:       src,
+		Needle:    needle,
+	}
 }
 
 // Dump ...
-func (l LookupStringShort) Dump(w io.Writer) error {
-	r := LookupStringLong{
-		Var:    l.Var,
-		Src:    l.Src,
-		Needle: l.Needle,
-	}
+func (l lookupStringShort) Dump(w io.Writer) error {
+	r := LookupStringLong(l.useString, l.Var, l.Src, l.Needle)
 	return r.Dump(w)
 }

@@ -7,7 +7,7 @@ import (
 
 // OpenOptionalScope ...
 func (g *Generator) OpenOptionalScope(name string, t antlr.Token) {
-	g.regVar(g.curRestVar(), "[]byte")
+	g.regRightVar(g.curRestVar())
 	g.namespaces = append(g.namespaces, name)
 	g.regLabel()
 	if !g.anonymous() {

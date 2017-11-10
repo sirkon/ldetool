@@ -21,29 +21,53 @@ func (p PrefixByte) Dump(w io.Writer) error {
 	return src.Dump(w)
 }
 
-// PrefixString for prefix string check code generation
-type PrefixString struct {
-	Src    Source
-	Needle Source
+func RightPkg(useString bool) string {
+	if useString {
+		return "strings"
+	}
+	return "bytes"
+}
+
+func RightType(useString bool) string {
+	if useString {
+		return "string"
+	}
+	return "[]byte"
+}
+
+// prefixString for prefix string check code generation
+type prefixString struct {
+	useString bool
+	Src       Source
+	Needle    Source
+}
+
+// PrefixString creates private prefixString for external consumption
+func PrefixString(useString bool, src, needle Source) prefixString {
+	return prefixString{
+		useString: useString,
+		Src:       src,
+		Needle:    needle,
+	}
 }
 
 // Dump ...
-func (p PrefixString) Dump(w io.Writer) error {
+func (p prefixString) Dump(w io.Writer) error {
 	src := LineAssign{
 		Receiver: "ok",
-		Expr:     Call{Name: "bytes.HasPrefix", Params: []Source{p.Src, p.Needle}},
+		Expr:     Call{Name: RightPkg(p.useString) + ".HasPrefix", Params: []Source{p.Src, p.Needle}},
 	}
 	return src.Dump(w)
 }
 
-// PrefixStringShort when it is known prefix is short
-type PrefixStringShort struct {
+// prefixStringShort when it is known prefix is short
+type prefixStringShort struct {
 	Src    Source
 	Needle Source
 }
 
 // Dump ...
-func (p PrefixStringShort) Dump(w io.Writer) error {
+func (p prefixStringShort) Dump(w io.Writer) error {
 	body := &Body{}
 	body.Append(LineAssign{Receiver: "ok", Expr: Raw("true")})
 	body.Append(If{

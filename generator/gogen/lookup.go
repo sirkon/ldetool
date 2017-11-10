@@ -6,11 +6,31 @@ import (
 	"github.com/sirkon/ldetool/generator/gogen/srcobj"
 )
 
+func (g *Generator) regRightPkg() {
+	var pkgName string
+	if g.useString {
+		pkgName = "strings"
+	} else {
+		pkgName = "bytes"
+	}
+	g.regImport("", pkgName)
+}
+
+func (g *Generator) regRightVar(name string) {
+	var varType string
+	if g.useString {
+		varType = "string"
+	} else {
+		varType = "[]byte"
+	}
+	g.regVar(name, varType)
+}
+
 // LookupString ...
 func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore bool) {
 	g.regVar("pos", "int")
-	g.regVar(g.curRestVar(), "[]byte")
-	g.regImport("", "bytes")
+	g.regRightVar(g.curRestVar())
+	g.regRightPkg()
 
 	constName := g.constNameFromContent(anchor)
 
@@ -56,18 +76,10 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 
 	body.Append(srcobj.Comment(fmt.Sprintf("Looking for %s and then pass it", anchor)))
 	if close {
-		lookup = srcobj.LookupStringShort{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(constName),
-		}
+		lookup = srcobj.LookupStringShort(g.useString, "pos", rest, srcobj.Raw(constName))
 	} else {
-		g.regImport("", "bytes")
-		var detector srcobj.Source = srcobj.LookupStringLong{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(constName),
-		}
+		g.regRightPkg()
+		var detector srcobj.Source = srcobj.LookupStringLong(g.useString, "pos", rest, srcobj.Raw(constName))
 		lookup = srcobj.NewBody(srcobj.Trim(detector), srcobj.Raw("\n"))
 	}
 	body.Append(lookup)
@@ -119,7 +131,7 @@ func (g *Generator) LookupFixedString(anchor string, offset int, ignore bool) {
 // LookupCharEx ...
 func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool) {
 	g.regVar("pos", "int")
-	g.regVar(g.curRestVar(), "[]byte")
+	g.regRightVar(g.curRestVar())
 
 	var rest srcobj.Source
 	switch {
@@ -166,12 +178,8 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 			Needle: srcobj.Raw(char),
 		})
 	} else {
-		g.regImport("", "bytes")
-		body.Append(srcobj.LookupByteLong{
-			Var:    "pos",
-			Src:    rest,
-			Needle: srcobj.Raw(char),
-		})
+		g.regRightPkg()
+		body.Append(srcobj.LookupByteLong(g.useString, "pos", rest, srcobj.Raw(char)))
 	}
 	var failure srcobj.Source
 	if !ignore {

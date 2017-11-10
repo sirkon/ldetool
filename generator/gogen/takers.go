@@ -30,7 +30,7 @@ func (g *Generator) getterGen(name, fieldType string) {
 	method := srcobj.NewAccessor(
 		g.ruleName,
 		g.goish.Public("get_"+strings.Join(append(g.namespaces, name), "_")),
-		srcobj.Go2ResultType(fieldType),
+		srcobj.Go2ResultType(g.useString, fieldType),
 	)
 	g.optgetters.Append(method)
 	body := method.Body()
@@ -83,7 +83,7 @@ func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
 // TakeBeforeStringEx ...
 func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand bool) {
 	g.regVar("pos", "int")
-	g.regVar(g.curRestVar(), "[]byte")
+	g.regRightVar(g.curRestVar())
 
 	item := g.fields[g.fullName(name)]
 	g.getterGen(name, fieldType)
@@ -121,10 +121,10 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			panic(fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err))
 		}
 		var cond srcobj.Source
-		if len(unquoted) <= 8 && g.platformType != generator.Universal {
+		if len(unquoted) <= 8 && g.platformType != generator.Universal && !g.useString {
 			cond = g.shortPrefixCheck(unquoted, anchor, lower)
 		} else {
-			g.regImport("", "bytes")
+			g.regRightPkg()
 			cond = srcobj.OperatorAnd(
 				srcobj.OperatorGE(
 					srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
@@ -134,7 +134,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 					),
 				),
 				srcobj.NewCall(
-					"bytes.HasPrefix",
+					srcobj.RightPkg(g.useString)+".HasPrefix",
 					srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower)),
 					srcobj.Raw(constName)),
 			)
@@ -148,18 +148,10 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%sas %s(%s)", anchor, ccc, name, fieldType)))
 		var lookup srcobj.Source
 		if close {
-			lookup = srcobj.LookupStringShort{
-				Var:    "pos",
-				Src:    rest,
-				Needle: srcobj.Raw(constName),
-			}
+			lookup = srcobj.LookupStringShort(g.useString, "pos", rest, srcobj.Raw(constName))
 		} else {
-			g.regImport("", "bytes")
-			var detector srcobj.Source = srcobj.LookupStringLong{
-				Var:    "pos",
-				Src:    rest,
-				Needle: srcobj.Raw(constName),
-			}
+			g.regRightPkg()
+			var detector srcobj.Source = srcobj.LookupStringLong(g.useString, "pos", rest, srcobj.Raw(constName))
 			lookup = srcobj.NewBody(srcobj.Trim(detector), srcobj.Raw("\n"))
 		}
 
@@ -278,7 +270,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	})
 
 	if fieldType != "string" {
-		g.regVar("tmp", "[]byte")
+		g.regRightVar("tmp")
 		decoder := g.decoderMap[fieldType]
 		decoder(srcobj.Raw("tmp"), "p."+item.name)
 	}
@@ -287,7 +279,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 // TakeBeforeChar ...
 func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand bool) {
 	g.regVar("pos", "int")
-	g.regVar(g.curRestVar(), "[]byte")
+	g.regRightVar(g.curRestVar())
 
 	item := g.fields[g.fullName(name)]
 	g.getterGen(name, fieldType)
@@ -348,12 +340,8 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 				Needle: srcobj.Raw(char),
 			}
 		} else {
-			g.regImport("", "bytes")
-			var detector srcobj.Source = srcobj.LookupByteLong{
-				Var:    "pos",
-				Src:    rest,
-				Needle: srcobj.Raw(char),
-			}
+			g.regRightPkg()
+			var detector srcobj.Source = srcobj.LookupByteLong(g.useString, "pos", rest, srcobj.Raw(char))
 			lookup = srcobj.NewBody(srcobj.Trim(detector), srcobj.Raw("\n"))
 		}
 
@@ -472,7 +460,7 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 	})
 
 	if fieldType != "string" {
-		g.regVar("tmp", "[]byte")
+		g.regRightVar("tmp")
 		decoder := g.decoderMap[fieldType]
 		decoder(srcobj.Raw("tmp"), "p."+item.name)
 	}

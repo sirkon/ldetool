@@ -26,10 +26,16 @@ var go2resultType = map[string]hardToAccessResultType{
 	"string":  hardToAccessResultType("[]byte"),
 }
 
-func Go2ResultType(goType string) hardToAccessResultType {
-	res, ok := go2resultType[goType]
-	if !ok {
-		panic(fmt.Errorf("unsupported type `\033[1m%s\033[0m`", goType))
+func Go2ResultType(useString bool, goType string) hardToAccessResultType {
+	var res hardToAccessResultType
+	var ok bool
+	if useString && goType == "string" {
+		res = hardToAccessResultType("string")
+	} else {
+		res, ok = go2resultType[goType]
+		if !ok {
+			panic(fmt.Errorf("unsupported type `\033[1m%s\033[0m`", goType))
+		}
 	}
 	return res
 }
@@ -49,21 +55,23 @@ type ResultType interface {
 
 // Method describes LDE generated method of extractor
 type Method struct {
-	objType string
-	name    string
-	params  string // Not to be edited
-	resType ResultType
-	body    *Body
+	objType   string
+	name      string
+	params    string // Not to be edited
+	resType   ResultType
+	body      *Body
+	useString bool
 }
 
 // NewExtractor creates extractor definition
-func NewExtractor(objType string) *Method {
+func NewExtractor(useString bool, objType string) *Method {
 	res := &Method{
-		objType: objType,
-		name:    "Extract",
-		params:  "line []byte",
-		resType: ExtractorResult{},
-		body:    &Body{},
+		objType:   objType,
+		name:      "Extract",
+		params:    "line " + RightType(useString),
+		resType:   ExtractorResult{},
+		body:      &Body{},
+		useString: useString,
 	}
 	return res
 }

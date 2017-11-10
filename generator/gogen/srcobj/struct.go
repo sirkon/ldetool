@@ -26,13 +26,21 @@ type FieldDef struct {
 	Type FieldType
 }
 
-// Struct represents LDE generated struct
-type Struct struct {
-	fields []FieldDef
+// Strct represents LDE generated struct
+type Strct struct {
+	useString bool
+	fields    []FieldDef
+}
+
+// Struct creates Strct for external consumption
+func Struct(useString bool) *Strct {
+	return &Strct{
+		useString: useString,
+	}
 }
 
 // TypeString implementation to satisfy FieldType
-func (s *Struct) TypeString() string {
+func (s *Strct) TypeString() string {
 	res := &bytes.Buffer{}
 	res.WriteString("struct {\n")
 	for _, field := range s.fields {
@@ -46,7 +54,7 @@ func (s *Struct) TypeString() string {
 }
 
 // addPrimitive ...
-func (s *Struct) addPrimitive(fieldName, fieldType string) {
+func (s *Strct) addPrimitive(fieldName, fieldType string) {
 	field := FieldDef{
 		Name: fieldName,
 		Type: hardToAccessNameYouShouldNotUse(fieldType),
@@ -55,62 +63,63 @@ func (s *Struct) addPrimitive(fieldName, fieldType string) {
 }
 
 // AddInt8 adds int8 field
-func (s *Struct) AddInt8(name string) {
+func (s *Strct) AddInt8(name string) {
 	s.addPrimitive(name, "int8")
 }
 
 // AddInt16 adds int16 field
-func (s *Struct) AddInt16(name string) {
+func (s *Strct) AddInt16(name string) {
 	s.addPrimitive(name, "int16")
 }
 
 // AddInt32 adds int32 field
-func (s *Struct) AddInt32(name string) {
+func (s *Strct) AddInt32(name string) {
 	s.addPrimitive(name, "int32")
 }
 
 // AddInt64 adds int64 field
-func (s *Struct) AddInt64(name string) {
+func (s *Strct) AddInt64(name string) {
 	s.addPrimitive(name, "int64")
 }
 
 // AddUint8 adds uint8 field
-func (s *Struct) AddUint8(name string) {
+func (s *Strct) AddUint8(name string) {
 	s.addPrimitive(name, "uint8")
 }
 
 // AddUint16 adds uint16 field
-func (s *Struct) AddUint16(name string) {
+func (s *Strct) AddUint16(name string) {
 	s.addPrimitive(name, "uint16")
 }
 
 // AddUint32 adds uint32 field
-func (s *Struct) AddUint32(name string) {
+func (s *Strct) AddUint32(name string) {
 	s.addPrimitive(name, "uint32")
 }
 
 // AddUint64 adds uint64 field
-func (s *Struct) AddUint64(name string) {
+func (s *Strct) AddUint64(name string) {
 	s.addPrimitive(name, "uint64")
 }
 
 // AddFloat32 adds float32 field
-func (s *Struct) AddFloat32(name string) {
+func (s *Strct) AddFloat32(name string) {
 	s.addPrimitive(name, "float32")
 }
 
 // AddFloat64 adds float64 field
-func (s *Struct) AddFloat64(name string) {
+func (s *Strct) AddFloat64(name string) {
 	s.addPrimitive(name, "float64")
 }
 
-func (s *Struct) AddString(name string) {
-	s.addPrimitive(name, "[]byte")
+// AddString adds string field
+func (s *Strct) AddString(name string) {
+	s.addPrimitive(name, RightType(s.useString))
 }
 
 // AddSubstruct add substruct and returns it
-func (s *Struct) AddSubstruct(name string) *Struct {
-	res := &Struct{}
+func (s *Strct) AddSubstruct(name string) *Strct {
+	res := Struct(s.useString)
 	res.addPrimitive("Valid", "bool")
 	s.fields = append(s.fields, FieldDef{
 		Name: name,
@@ -122,7 +131,7 @@ func (s *Struct) AddSubstruct(name string) *Struct {
 // structType ...
 type structType struct {
 	name string
-	s    *Struct
+	s    *Strct
 }
 
 // Dump source implementation
