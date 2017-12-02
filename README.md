@@ -350,6 +350,10 @@ beneath — we have numeric fields converted on successful extraction, we have e
     }
     ```
 4. Ragel template with type conversion is [here](benchmarking/easy_floats.ragel).
+5. And regex with data extraction without conversion
+```regexp
+^\S*\s([^\]]+)] PRESENCE uid=(\S*) ua='([^']*)' (:?Geo=\{Lat: ([^,]+), Lon: ([^,]+)\} )?Activity=(.*)$
+```
 
 > both these Ragel templates only does processing without error handling, so generated code is not production ready.
 > The problem here we will need to handle type conversion and error processing manually each time writing Ragel rules.
@@ -361,10 +365,11 @@ Now, let's benchmark:
 ```
 $ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
 
-BenchmarkLDEEasyRealWorld-4           	      10	 168081059 ns/op
-BenchmarkLDEEasyFloatsRealWorld-4     	       5	 216827185 ns/op
-BenchmarkRagelEasyRealWorld-4         	       5	 301412608 ns/op
-BenchmarkRagelEasyFloatsRealWorld-4   	       2	 619422100 ns/op
+BenchmarkLDEEasyRealWorld-4                     10     172518252 ns/op
+BenchmarkLDEEasyFloatsRealWorld-4                5     217304418 ns/op
+BenchmarkRagelEasyRealWorld-4                    5     295341158 ns/op
+BenchmarkRagelEasyFloatsRealWorld-4              2     626229546 ns/op
+BenchmarkRegexEasyRealWorld-4                    1    3308693182 ns/op
 PASS
 ok  	github.com/sirkon/ldetool/benchmarking	9.218s
 ```
@@ -373,4 +378,5 @@ You see, not only LDE generated code does a lot more than straight Ragel, it is 
 times faster. Notice a two times performance drop with type conversions on Ragel sample, when the LDE generated code
 suffers only %30 speed decrease in the same circumstances: it looks like Ragel works best when all actions are done within 
 generated finite state machine, probably something with cache locality. It slows down immediately after there was an 
-"external" function call.
+"external" function call. Notice, the regexp is not THAT bad as it was in the previous example: only 19 times slower than
+the code generated with LDE
