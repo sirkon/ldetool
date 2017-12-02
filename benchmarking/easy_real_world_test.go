@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"regexp"
 	"testing"
 	"time"
 
+	"github.com/sanity-io/litter"
 	"github.com/stretchr/testify/require"
 )
 
@@ -358,6 +360,32 @@ func BenchmarkRagelEasyFloatsRealWorld(b *testing.B) {
 			if _, ok := users[string(p.UID)]; !ok {
 				b.Fatalf("Unknown user `\033[1m%s\033[0m` extracted on parsing>>\033[1m%s\033[0m", string(p.UID), string(line))
 			}
+		}
+	}
+}
+
+var realEasyPattern *regexp.Regexp
+
+func init() {
+	realEasyPattern = regexp.MustCompile(`^\S*\s([^\]]+)] PRESENCE uid=(\S*) ua='([^\']+)' (:?Geo=\{Lat: ([^,]+), Lon: ([^,]+)\} )?Activity=(.*)$`)
+}
+
+func reportError(b *testing.B, src []byte, data [][]byte) {
+	ddd := []string{}
+	for _, item := range data {
+		ddd = append(ddd, string(item))
+	}
+	b.Fatalf("Cannot parse %s, got %s", string(src), litter.Sdump(ddd))
+}
+
+func BenchmarkRegexEasyRealWorld(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for _, line := range easylines {
+			data := realEasyPattern.FindSubmatch(line)
+			if len(data) == 8 || len(data) == 5 {
+				continue
+			}
+			reportError(b, line, data)
 		}
 	}
 }
