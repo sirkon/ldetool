@@ -94,10 +94,12 @@ func NewGenerator(useString bool, goish *gotify.Gotify) *Generator {
 	}
 
 	res.decoderMap = map[string]func(src srcobj.Source, dest string){
+		"int":     res.decodeInt,
 		"int8":    res.decodeInt8,
 		"int16":   res.decodeInt16,
 		"int32":   res.decodeInt32,
 		"int64":   res.decodeInt64,
+		"uint":    res.decodeUint,
 		"uint8":   res.decodeUint8,
 		"uint16":  res.decodeUint16,
 		"uint32":  res.decodeUint32,
@@ -185,10 +187,12 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) {
 	g.addField(g.namespaces, name, t)
 	s := g.curObj()
 	fieldGen, ok := map[string]func(name string){
+		"int":     s.AddInt,
 		"int8":    s.AddInt8,
 		"int16":   s.AddInt16,
 		"int32":   s.AddInt32,
 		"int64":   s.AddInt64,
+		"uint":    s.AddUint,
 		"uint8":   s.AddUint8,
 		"uint16":  s.AddUint16,
 		"uint32":  s.AddUint32,

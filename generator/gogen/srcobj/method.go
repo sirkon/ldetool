@@ -13,11 +13,13 @@ func (h hardToAccessResultType) ResultType() string {
 }
 
 var go2resultType = map[string]hardToAccessResultType{
+	"int":     hardToAccessResultType("int"),
 	"int8":    hardToAccessResultType("int8"),
 	"int16":   hardToAccessResultType("int16"),
 	"int32":   hardToAccessResultType("int32"),
 	"int64":   hardToAccessResultType("int64"),
 	"uint8":   hardToAccessResultType("uint8"),
+	"uint":    hardToAccessResultType("uint"),
 	"uint16":  hardToAccessResultType("uint16"),
 	"uint32":  hardToAccessResultType("uint32"),
 	"uint64":  hardToAccessResultType("uint64"),

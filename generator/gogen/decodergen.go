@@ -14,8 +14,6 @@ p.{{Dest}} = int8(tmpInt)
 
 func (g *Generator) prepNumeric() {
 	g.regImport("", "strconv")
-	g.regImport("", "strconv")
-	g.regImport("", "unsafe")
 	g.regImport("", "fmt")
 	g.regVar("err", "error")
 }
@@ -46,6 +44,7 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 		//src = srcobj.Raw("tmpChar")
 		p = []srcobj.Source{src}
 	} else {
+		g.regImport("", "unsafe")
 		p = []srcobj.Source{
 			srcobj.Deref(
 				srcobj.NewCall(
@@ -83,6 +82,11 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 	})
 }
 
+func (g *Generator) decodeInt(src srcobj.Source, dest string) {
+	g.prepInt()
+	g.decode(src, "tmpInt", "int", dest, "strconv.ParseInt", srcobj.Literal(10), srcobj.Literal(64))
+}
+
 func (g *Generator) decodeInt8(src srcobj.Source, dest string) {
 	g.prepInt()
 	g.decode(src, "tmpInt", "int8", dest, "strconv.ParseInt", srcobj.Literal(10), srcobj.Literal(8))
@@ -101,6 +105,11 @@ func (g *Generator) decodeInt32(src srcobj.Source, dest string) {
 func (g *Generator) decodeInt64(src srcobj.Source, dest string) {
 	g.prepInt()
 	g.decode(src, "tmpInt", "int64", dest, "strconv.ParseInt", srcobj.Literal(10), srcobj.Literal(64))
+}
+
+func (g *Generator) decodeUint(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint", dest, "strconv.ParseUint", srcobj.Literal(10), srcobj.Literal(64))
 }
 
 func (g *Generator) decodeUint8(src srcobj.Source, dest string) {

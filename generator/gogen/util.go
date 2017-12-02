@@ -95,10 +95,12 @@ func (g *Generator) gravityTend(pos int) string {
 
 func (g *Generator) goType(inputType string) string {
 	goTypeName, ok := map[string]string{
+		"int":     "int",
 		"int8":    "int8",
 		"int16":   "int16",
 		"int32":   "int32",
 		"int64":   "int64",
+		"uint":    "uint",
 		"uint8":   "uint8",
 		"uint16":  "uint16",
 		"uint32":  "uint32",
@@ -115,10 +117,12 @@ func (g *Generator) goType(inputType string) string {
 
 func (g *Generator) tmpSuspectancy(inputType string) bool {
 	suspected, ok := map[string]bool{
+		"int":     true,
 		"int8":    true,
 		"int16":   true,
 		"int32":   true,
 		"int64":   true,
+		"uint":    true,
 		"uint8":   true,
 		"uint16":  true,
 		"uint32":  true,

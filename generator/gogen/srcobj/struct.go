@@ -62,6 +62,11 @@ func (s *Strct) addPrimitive(fieldName, fieldType string) {
 	s.fields = append(s.fields, field)
 }
 
+// AddInt8 adds int field
+func (s *Strct) AddInt(name string) {
+	s.addPrimitive(name, "int")
+}
+
 // AddInt8 adds int8 field
 func (s *Strct) AddInt8(name string) {
 	s.addPrimitive(name, "int8")
@@ -80,6 +85,11 @@ func (s *Strct) AddInt32(name string) {
 // AddInt64 adds int64 field
 func (s *Strct) AddInt64(name string) {
 	s.addPrimitive(name, "int64")
+}
+
+// AddUint adds uint field
+func (s *Strct) AddUint(name string) {
+	s.addPrimitive(name, "uint")
 }
 
 // AddUint8 adds uint8 field
