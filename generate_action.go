@@ -58,7 +58,7 @@ func generateAction(c *cli.Context) (err error) {
 	}()
 
 	fileName := c.Args()[0]
-	input := antlr.NewFileStream(fileName)
+	input, err := antlr.NewFileStream(fileName)
 	if err != nil {
 		return
 	}

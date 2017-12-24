@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/antlr/antlr4"
   packages = ["runtime/Go/antlr"]
-  revision = "d4d7e3d3bc3b65bb00579fe826834a9263fa45e6"
-  version = "4.7"
+  revision = "bdc05c87be2ad981744223df0fd745e8345baba9"
+  version = "4.7.1"
 
 [[projects]]
   name = "github.com/davecgh/go-spew"
@@ -17,13 +17,19 @@
   branch = "v2"
   name = "github.com/go-yaml/yaml"
   packages = ["."]
-  revision = "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
+  revision = "287cf08546ab5e7e37d55a84f7ed3fd1db036de5"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/sanity-io/litter"
+  packages = ["."]
+  revision = "ae543b7ba8fd6af63e4976198f146e1348ae53c1"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/sirkon/gosrcfmt"
@@ -58,6 +64,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "36464d651d21f01a1fa98637b14b5ad221b494d3c94f09b18e3d1fd107a715b4"
+  inputs-digest = "4c56dd68de643c116d87773db830b4ca9ce4b9164be7675a1f324b9f4481af7d"
   solver-name = "gps-cdcl"
   solver-version = 1

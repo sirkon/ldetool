@@ -45,8 +45,6 @@
   name = "github.com/urfave/cli"
   version = "1.19.1"
 
-[[projects]]
+[[constaint]]
   name = "github.com/antlr/antlr4"
-  packages = ["runtime/Go/antlr"]
-  revision = "d4d7e3d3bc3b65bb00579fe826834a9263fa45e6"
-  version = "4.7"
+  version = "4.7.1"
