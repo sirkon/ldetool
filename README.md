@@ -1,7 +1,7 @@
 # ldetool means line data extraction tool
 [![Build Status](https://travis-ci.org/sirkon/ldetool.svg?branch=master)](https://travis-ci.org/sirkon/ldetool)
 
-`ldetool` is a command line utility to generate Go code for log files parsing. 
+`ldetool` is a command line utility to generate Go code for log files parsing.
 
 ```bash
 go get -u github.com/sirkon/ldetool
@@ -26,21 +26,21 @@ it or take everything before it and put into variable, it also has his share of 
 Still, the major advantage is:
 1. It can be fast
 
-We had severe shortage of resources at my last job, we couldn't just buy some more power, so we had no choice. We had to write it manually.
-It turned out most of things to retrieve data are repetitive and we are writing nearly the same things again and again.
+We had severe shortage of resources at my last job, we couldn't just buy some more power, so we had no choice and were writing all this manually.
+It turned out most of things to retrieve data are repetitive and we are writing nearly the same things again and again, see below.
 
 ##### Typical operations:
-1. Check if the rest starts with the certain string or character and pass it
-2. Just pass first N characters
-3. Look for the char or substring (in what follows we shall call this character or string the __target__) in the rest and pass it
-4. Take all data from the rest up to the target and save it somewhere having some type with conversion if possible (string to numeric)
-5. Take the rest and save it somewhere
-6. Take until the target or the the whole rest if not found and save it somewhere
+1. Pass all data to the certain string or character including it – bounds are rarely needed per se and something is wrong otherwise
+2. Take all data up to the certain bounding string or character and then pass both data and bound.
+3. Just take the rest.
+4. Type conversion might be needed on data retrieval.
+5. Check if the rest starts with the certain string or character and pass it
+6. Just pass first N characters
 7. Optional areas: there should be a possibility to ignore some subset of the extraction rule if it wasn't successful for the rest and roll the rest back to
     the start of failed attempt, like this:
     ```perl
-    Rule = 
-        ?Start( 
+    Rule =
+        ?Start(
             ^" start=" Time(string) ' '
         )
         ^" rest=\"" Rest(string) '"';
@@ -55,13 +55,10 @@ It turned out most of things to retrieve data are repetitive and we are writing 
     (Start="2017-09-28T16:58:23", Rest="The rest is here"),
     (Start="", Rest="Just the rest")
     ```
-8. Target can bo not just a string or character: there might be some kind of limitations, such as apriori knowledge of
-    where the target actually is, some range or even exact position. Also, `bytes.IndexByte` works great for character
-    lookup, it can use vector CPU instruction for speed bump, but it is not [inlined](https://github.com/golang/go/issues/21759#issuecomment-327124437)
-    and call overhead can be quite significant for closer targets, where the naive loop search can be faster.
+8. Error text generation on mismatch. Obviously, this cannot be done too successful as error messages are rather kind of art than something than can be generated. Anyway, they turned to be surprisingly helpful on diagnostic, as they always return the rest of line that coulnd't be extracted.
 
 So, we wrote a code generator for this purpose. The code turned to be even faster than one we used to write, since we actually
-were trying to reduce amount of code introducing helper abstractions what have some cost while the generator just put raw code.
+were trying to reduce amount of code introducing helper abstractions what have some cost while the generator just puts raw code.
 
 ### How it works.
 1. Write extraction script.
@@ -77,7 +74,7 @@ Take a look at these two lines
 [2017-09-02T22:48:14] FETCH first[0] format[JSON] userAgent[Android App v1.0] rnd[10000000] country[LC]
 ```
 
-We likely need a time, value of parameter `first`, `format`, `hidden`, `userAgent` and `country`. We obviously don't need `rnd` 
+We likely need a time, value of parameter `first`, `format`, `hidden`, `userAgent` and `country`. We obviously don't need `rnd`
 
 ##### Extraction script syntax
 See [more details](https://github.com/sirkon/ldetool/blob/master/TOOL_RULES.md) on extraction rules
@@ -100,7 +97,7 @@ Line =                                   # Name of the extraction object' type
 ```
 
 ##### Code generation
-The easiest way is to put `//go:generate ldetool generate --package main Line.lde` somewhere in the Go file and then generate a code with 
+The easiest way is to put `//go:generate ldetool generate --package main Line.lde` somewhere in the Go file and then generate a code with
 ```bash
 go generate <project path>
 ```
@@ -141,9 +138,9 @@ Now, we have
             return
         }
         return p.Hidden.Value
-    }    
+    }
     ```
-    
+
 ##### Generated code usage
 It is easy: put
 ```go
@@ -197,7 +194,7 @@ Using Ragel for log parsing hardly makes any sense though, because it doesn't se
     BenchmarkRegex-4   	     500	   3944421 ns/op
     PASS
     ok  	github.com/sirkon/ldetool/benchmarking	5.686s
-    
+
     ```
 3. 256 symbols
     ```
@@ -206,7 +203,7 @@ Using Ragel for log parsing hardly makes any sense though, because it doesn't se
     BenchmarkRagel-4   	    5000	    241497 ns/op
     BenchmarkRegex-4   	     200	   7212705 ns/op
     PASS
-    ok  	github.com/sirkon/ldetool/benchmarking	5.513s    
+    ok  	github.com/sirkon/ldetool/benchmarking	5.513s
     ```
 4. 1024 symbols
     ```
@@ -218,7 +215,7 @@ Using Ragel for log parsing hardly makes any sense though, because it doesn't se
     ok  	github.com/sirkon/ldetool/benchmarking	6.106s
     ```
 
-##### Automated comparison against Go regex on real world sample 
+##### Automated comparison against Go regex on real world sample
 1. LDE rule first
     ```perl
     CRMod = !
@@ -249,9 +246,9 @@ Using Ragel for log parsing hardly makes any sense though, because it doesn't se
         ^" abuse" ^"porno["[1] Pron(int16) ~']'
         ?Violation  (^" abuse" ^"violation["[1] Value(int16) ~']')
         ?AbuseOther (^" abuse" ^"other["[1] Value(int16) ~']');
-    ``` 
+    ```
     You see, we have all data translated into types needed and usable error messages.
-2. Regex, about 490 characters hard to debug language without any boilerplate. Good luck optimizing this mess. 
+2. Regex, about 490 characters hard to debug language without any boilerplate. Good luck optimizing this mess.
     ```
     \[\S* (.*?)\][^[]*\[(\d+)\..*?reqid '(.*?)' from.*?\((.*?)\).*?FLAGS\[set:(.*?), unset:(.*?)\] FIELDS\[changed:(.*?)\](:? ank_ver\[(.*?)\])?(:? list_ver\[(.*?)\])? name\[(.*?)\](:? about\[(.*?)\])?(:? stamp\[(.*?)\])?(:? regions\[(.*?)\])?(:? flags\[(.*?)\])? created\[(\d+)=.*?\](:?.*?creator\[(.*?)\])?(:?.*?avatars_lastcheck\[(\d+)\])?(:?.*?cavatar_lastmod\[(\d+)\])? origin\[(.*?)\] abuse.*drugs\[(\d+)\] abuse.*spam\[(\d+)\] abuse.*porno\[(\d+)\](:? abuse.violation\[(\d+)\])?(:? abuse.other\[(\d+)\])?
     ```
@@ -301,7 +298,7 @@ beneath — we have numeric fields converted on successful extraction, we have e
 3. Ragel template without type conversion
     ```perl
     package main
-    
+
     // Easy based parsing
     type Easy struct {
     	Time []byte
@@ -314,16 +311,16 @@ beneath — we have numeric fields converted on successful extraction, we have e
     	}
     	Activity []byte
     }
-    
+
     %% machine easy;
     %% write data;
-    
+
     // Extract extracts field from
     func (r *Easy) Extract(data []byte) (ok bool, error error) {
         cs, p, pe := 0, 0, len(data)
         var pos = 0
         r.Geo.Valid = false
-    
+
         %%{
             action shot       { pos = p + 1                }
             action take_time  { r.Time = data[pos:p+1]     }
@@ -333,7 +330,7 @@ beneath — we have numeric fields converted on successful extraction, we have e
             action take_lon   { r.Geo.Lon = data[pos:p+1]  }
             action take_act   { r.Activity = data[pos:p+1] }
             action set_geo    { r.Geo.Valid = true         }
-    
+
             ns = (any -- " ")*;
             main :=
                  ns " "@shot ((any -- "]")*)@take_time "] PRESENCE uid="@shot
@@ -358,9 +355,9 @@ beneath — we have numeric fields converted on successful extraction, we have e
 > both these Ragel templates only does processing without error handling, so generated code is not production ready.
 > The problem here we will need to handle type conversion and error processing manually each time writing Ragel rules.
 > The LDE tool makes this automatically. This alone is a #1 in a list of *pros* for using LDE, even if the code generated
-> with Ragel would be a bit faster. 
+> with Ragel would be a bit faster.
 
-Now, let's benchmark: 
+Now, let's benchmark:
 
 ```
 $ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
@@ -376,7 +373,7 @@ ok  	github.com/sirkon/ldetool/benchmarking	9.218s
 
 You see, not only LDE generated code does a lot more than straight Ragel, it is actually faster, something like several
 times faster. Notice a two times performance drop with type conversions on Ragel sample, when the LDE generated code
-suffers only %30 speed decrease in the same circumstances: it looks like Ragel works best when all actions are done within 
-generated finite state machine, probably something with cache locality. It slows down immediately after there was an 
+suffers only %30 speed decrease in the same circumstances: it looks like Ragel works best when all actions are done within
+generated finite state machine, probably something with cache locality. It slows down immediately after there was an
 "external" function call. Notice, the regexp is not THAT bad as it was in the previous example: only 19 times slower than
 the code generated with LDE
