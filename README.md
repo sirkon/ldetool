@@ -33,7 +33,7 @@ It turned out most of things to retrieve data are repetitive and we are writing 
 1. Pass all data to the certain string or character including it – bounds are rarely needed per se and something is wrong otherwise
 2. Take all data up to the certain bounding string or character and then pass both data and bound.
 3. Just take the rest.
-4. Type conversion might be needed on data retrieval.
+4. Type conversion (text to number) might be needed on data retrieval.
 5. Check if the rest starts with the certain string or character and pass it
 6. Just pass first N characters
 7. Optional areas: there should be a possibility to ignore some subset of the extraction rule if it wasn't successful for the rest and roll the rest back to
@@ -59,6 +59,7 @@ It turned out most of things to retrieve data are repetitive and we are writing 
 
 So, we wrote a code generator for this purpose. The code turned to be even faster than one we used to write, since we actually
 were trying to reduce amount of code introducing helper abstractions what have some cost while the generator just puts raw code.
+9. etc
 
 ### How it works.
 1. Write extraction script.
