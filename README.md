@@ -56,10 +56,11 @@ It turned out most of things to retrieve data are repetitive and we are writing 
     (Start="", Rest="Just the rest")
     ```
 8. Error text generation on mismatch. Obviously, this cannot be done too successful as error messages are rather kind of art than something than can be generated. Anyway, they turned to be surprisingly helpful on diagnostic, as they always return the rest of line that coulnd't be extracted.
+9. etc
 
 So, we wrote a code generator for this purpose. The code turned to be even faster than one we used to write, since we actually
 were trying to reduce amount of code introducing helper abstractions what have some cost while the generator just puts raw code.
-9. etc
+
 
 ### How it works.
 1. Write extraction script.
