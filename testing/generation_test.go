@@ -249,7 +249,7 @@ func TestDecoderOptionals(t *testing.T) {
 
 	ok, err = ds.Extract([]byte(`12 head=13`))
 	require.False(t, ok)
-	require.NotNil(t, err)
+	require.NoError(t, err)
 }
 
 func TestDecoderBranching(t *testing.T) {
