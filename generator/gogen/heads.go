@@ -162,7 +162,7 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
 		failure = g.failure(
 			"`\033[1m%s\033[0m)` is expected to start with \033[1m%s\033[0m",
 			srcobj.Stringify(rest),
-			srcobj.Raw(char),
+			srcobj.DrawChar(char),
 		)
 	}
 
