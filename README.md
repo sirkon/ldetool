@@ -1,7 +1,7 @@
 # ldetool means line data extraction tool
 [![Build Status](https://travis-ci.org/sirkon/ldetool.svg?branch=master)](https://travis-ci.org/sirkon/ldetool)
 
-`ldetool` is a command line utility to generate Go code for log files parsing.
+`ldetool` is a command line utility to generate Go code for fast log files parsing.
 
 ```bash
 go get -u github.com/sirkon/ldetool
@@ -30,12 +30,31 @@ We had severe shortage of resources at my last job, we couldn't just buy some mo
 It turned out most of things to retrieve data are repetitive and we are writing nearly the same things again and again, see below.
 
 ##### Typical operations:
-1. Pass all data to the certain string or character including it – bounds are rarely needed per se and something is wrong otherwise
+1. Pass all data to the certain string or character including it – bounds are rarely needed per se and something is wrong otherwise. Applying
+    ```perl
+    _ "anchor"
+    ```
+    on `"1234anchor1234"` will be left `1234` in the rest 
 2. Take all data up to the certain bounding string or character and then pass both data and bound.
-3. Just take the rest.
-4. Type conversion (text to number) might be needed on data retrieval.
+    ```perl
+    Field(int) ' '
+    ```
+    on `"1234 4321"` will put 1234 into field `Field` and `"4321"` will be left in the rest
+3. Just take the rest. Easy as
+    ```perl
+    Rest(string)
+    ```
+4. Type conversion (text to number) might be needed on data retrieval. See #2 as an example.
 5. Check if the rest starts with the certain string or character and pass it
+    ```perl
+    ^"prefix"
+    ```
+    Applying it on `"prefix1234"` will pass `prefix` and `1234` will be left in the rest. 
 6. Just pass first N characters
+    ```perl
+    _[123:]
+    ```
+    cuts first 123 characters from the rest
 7. Optional areas: there should be a possibility to ignore some subset of the extraction rule if it wasn't successful for the rest and roll the rest back to
     the start of failed attempt, like this:
     ```perl
