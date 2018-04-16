@@ -9,7 +9,7 @@ go get -u github.com/sirkon/ldetool
 
 1. [Rationale](RATIONALE.md)
 2. [Typical operations and formal set of rules](TOOL_RULES.md)
-3. [Performance comparison agains regexp and Ragel](PERFORMANCE_MANUAL.md)
+3. [Performance comparison againsе regexp and Ragel](PERFORMANCE.md)
 
 
 
