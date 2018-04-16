@@ -1,4 +1,4 @@
-#PERFORMANCE
+# PERFORMANCE
 
 ##### Manual comparison against CLI tools
 There a comparison against `gawk`, `sed` and Go's `regex` implementation in processing 1.3Gb of data: [here](PERFORMANCE_MANUAL.md)
@@ -182,7 +182,7 @@ Regexes can't do anything of that.
     }
     ```
 4. Ragel template with type conversion
-    ```
+    ```perl
     package main
     
     
