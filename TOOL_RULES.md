@@ -1,7 +1,59 @@
-# Tool rules that can be used for parsing
+# Typical operations and full set of rules
+
+## Typical operations
+1. Pass all data to the certain string or character including it – bounds are rarely needed per se and something is wrong otherwise. Applying
+    ```perl
+    _ "anchor"
+    ```
+    on `"1234anchor1234"` will be left `1234` in the rest 
+2. Take all data up to the certain bounding string or character and then pass both data and bound.
+    ```perl
+    Field(int) ' '
+    ```
+    on `"1234 4321"` will put 1234 into field `Field` and `"4321"` will be left in the rest
+3. Just take the rest. Easy as
+    ```perl
+    Rest(string)
+    ```
+4. Type conversion (text to number) might be needed on data retrieval. See #2 as an example.
+5. Check if the rest starts with the certain string or character and pass it
+    ```perl
+    ^"prefix"
+    ```
+    Applying it on `"prefix1234"` will pass `prefix` and `1234` will be left in the rest. 
+6. Just pass first N characters
+    ```perl
+    _[123:]
+    ```
+    cuts first 123 characters from the rest
+7. Optional areas: there should be a possibility to ignore some subset of the extraction rule if it wasn't successful for the rest and roll the rest back to
+    the start of failed attempt, like this:
+    ```perl
+    Rule =
+        ?Start(
+            ^" start=" Time(string) ' '
+        )
+        ^" rest=\"" Rest(string) '"';
+    ```
+    Both lines
+    ```
+    start=2017-09-28T16:58:23 rest="The rest is here"
+    rest="Just the rest"
+    ```
+    must should pass the extraction with the result
+    ```
+    (Start="2017-09-28T16:58:23", Rest="The rest is here"),
+    (Start="", Rest="Just the rest")
+    ```
+8. Error text generation on mismatch. Obviously, this cannot be done too successful as error messages are rather kind of art than something than can be generated. Anyway, they turned to be surprisingly helpful on diagnostic, as they always return the rest of line that coulnd't be extracted.
+9. Take right to the certain bounding character or a string or all the rest if it is not found
+    ```perl
+    Rule = Rest(string) ?'@'
+    ```
+10. etc
 
 ## Rule and capture names
-Rule and capture names must be public and goish
+Rule and capture names must be public and starts from capital letter (i.e. `Name`, not `name`)
 
 ## Passing rules
 |Syntax|Description|Example of rule application<br>``rule(rest) → new rest``|

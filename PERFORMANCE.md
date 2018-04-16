@@ -1,239 +1,285 @@
-# General
-Provided method of data extraction is basically an `awk` on steroids:
-* The most common operation is looking for char/string in a string - this is what string splitting utilities like awk/gawk do when looking for the next field separator.
-* There's nothing like in depth lookup like in regex matching. We just find first character/string in the rest of line. It is enough in a huge majority of cases (and it is rather something wrong with the input if this is not enough).
+#PERFORMANCE
 
-So, the conclusion is it would be basically enough to check performance on regular column-formatted files as it reflects common usage. The file can be generated with [utility](https://github.com/sirkon/ldetool/blob/master/columngen.7z). Don't forget to get a package needed:
-```bash
-go get github.com/sirkon/message
+##### Manual comparison against CLI tools
+There a comparison against `gawk`, `sed` and Go's `regex` implementation in processing 1.3Gb of data: [here](PERFORMANCE_MANUAL.md)
+##### Automated Go comparsion against Ragel and stdlib regex
 ```
-And here is the [benchmark code](https://github.com/sirkon/ldetool/blob/master/benchmarker.7z). Following packages are needed:
-```bash
-go get github.com/sirkon/message
-go get github.com/youtube/vitess/go/cgzip
+go test -v github.com/sirkon/ldetool/benchmarking
 ```
-Compile both and make preparations:
-```bash
-go install columngen
-go install main
-time columngen 100000000 > data
-wc -l data
-```
-Now, `data` file is cached and we can test performance. We will extract 1st and 4th columns and output them separated again with | in the stdout.
+There's parameter on a [line](https://github.com/sirkon/ldetool/blob/6be94610ca6da1fbf0cfe8e2c18e27792622a320/benchmarking/performance_test.go#L29)
+where you can tweak first field's maximal length. Generally, the longer field (and thus the further character lookup bounding it),
+the more advantage has LDE generated code because it uses highly optimized `bytes.IndexByte` function for lookups.
+Using Ragel for log parsing hardly makes any sense though, because it doesn't seem any easier to write Ragel actions and rules instead of looking up for bounding characters and strings manually since the amount of boilerplate is equal or even more with Ragel, while advanced features of finite state machines are rarely needed at all and it is rather a reason to tweak log output if they are instead of utilizing Ragel.
 
-#### LDE with short lookup optimization (faster for short lookups of 1-6 characters)
-```
-$ time ./main < data | wc -l
+1. 16 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   30000	     54751 ns/op
+    BenchmarkRagel-4   	   10000	    113695 ns/op
+    BenchmarkRegex-4   	     500	   3141558 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	5.244s
+    ```
+2. 64 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   20000	     62158 ns/op
+    BenchmarkRagel-4   	   10000	    141991 ns/op
+    BenchmarkRegex-4   	     500	   3944421 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	5.686s
 
-real	0m6.565s
-user	0m7.020s
-sys	0m0.832s
-```
-#### LDE with regular lookup (faster for longer lookups)
-```
-$ time ./main < data | wc -l
-100000000
+    ```
+3. 256 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   20000	     69599 ns/op
+    BenchmarkRagel-4   	    5000	    241497 ns/op
+    BenchmarkRegex-4   	     200	   7212705 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	5.513s
+    ```
+4. 1024 symbols
+    ```
+    $ go test -v -bench . github.com/sirkon/ldetool/benchmarking
+    BenchmarkLDE-4     	   20000	     90019 ns/op
+    BenchmarkRagel-4   	    2000	    626500 ns/op
+    BenchmarkRegex-4   	     100	  20325788 ns/op
+    PASS
+    ok  	github.com/sirkon/ldetool/benchmarking	6.106s
+    ```
 
-real	0m7.454s
-user	0m7.916s
-sys	0m0.740s
+##### Automated comparison against Go regex on real world sample
+1. LDE rule first
+    ```perl
+    CRMod = !
+        ^'[' _' ' Time(string) ']'
+        _'[' ChatID(uint64) '.'
+        _"reqid '" ReqID(string) '\''
+        _"from" _'(' UIN(string) ')'
+        _"FLAGS[set:" FlagsSet(string) ','
+        ^" unset:" FlagsUnset(string) ']'
+        ^" FIELDS[changed:" FieldsChanged(string) ']'
+        ?AnkVer (^" ank_ver[" Value(string) ']')
+        ?ListVer (^" list_ver[" Value(string) ']')
+        ^" name[" Name(string) ']'
+        ?About (^" about[" Value(string) ~']')
+        ?Rules (^" rules[" Value(string) ~']')
+        ?Nick (^" nick[" Value(string) ']')
+        ?Location(^" location[" Value(string) ']')
+        ?Stamp(^" stamp[" Value(string) ']')
+        ?Regions(^" regions[" Value(string) ~']')
+        ?Flags(^" flags[" Value(string) ']')
+        ^" created[" Created(int64) '='
+        ?Creator(_"creator[" Value(string) ']')
+        ?AvatarLastCheck(_"avatars_lastcheck[" Value(int64) ']')
+        ?AvatarsLastMod(_"cavatar_lastmod[" Value(int64) ']')
+        ^" origin[" Origin(string) ~']'
+        ^" abuse" ^"drugs["[1] Drugs(int16) ~']'
+        ^" abuse" ^"spam["[1] Spam(int16) ~']'
+        ^" abuse" ^"porno["[1] Pron(int16) ~']'
+        ?Violation  (^" abuse" ^"violation["[1] Value(int16) ~']')
+        ?AbuseOther (^" abuse" ^"other["[1] Value(int16) ~']');
+    ```
+    You see, we have all data translated into types needed and usable error messages.
+2. Regex, about 490 characters hard to debug language without any boilerplate. Good luck optimizing this mess.
+    ```
+    \[\S* (.*?)\][^[]*\[(\d+)\..*?reqid '(.*?)' from.*?\((.*?)\).*?FLAGS\[set:(.*?), unset:(.*?)\] FIELDS\[changed:(.*?)\](:? ank_ver\[(.*?)\])?(:? list_ver\[(.*?)\])? name\[(.*?)\](:? about\[(.*?)\])?(:? stamp\[(.*?)\])?(:? regions\[(.*?)\])?(:? flags\[(.*?)\])? created\[(\d+)=.*?\](:?.*?creator\[(.*?)\])?(:?.*?avatars_lastcheck\[(\d+)\])?(:?.*?cavatar_lastmod\[(\d+)\])? origin\[(.*?)\] abuse.*drugs\[(\d+)\] abuse.*spam\[(\d+)\] abuse.*porno\[(\d+)\](:? abuse.violation\[(\d+)\])?(:? abuse.other\[(\d+)\])?
+    ```
 ```
-#### Gawk
+$ go test -v -bench '.*Complex.*' github.com/sirkon/ldetool/benchmarking
+
+BenchmarkLDEComplex-4            1000000              2116 ns/op
+BenchmarkRegexComplex-4             1000           2169577 ns/op
+PASS
+ok      github.com/sirkon/ldetool/benchmarking  4.537s
 ```
-$ time  gawk -F '|' '{ print $1 "|" $4 }' data | wc -l
-100000000
+You see, specialized solution about 1000 times faster, much easier to write and debug and does a lot of boilerplating
+beneath — we have numeric fields converted on successful extraction, we have errors where we failed on action processing, etc.
+Regexes can't do anything of that. 
 
-real	1m2.773s
-user	1m3.208s
-sys	0m1.520s
-```
-#### Mawk, should be quite fast
-```
-$ time  mawk -F '|' '{ print $1 "|" $4 }' data | wc -l
-100000000
-
-real	0m20.785s
-user	0m20.992s
-sys	0m1.008s
-```
-It is indeed, only three times slower. Still, it doesn't signal errors, it only can work upon columned files and, finally,
-it just doesn't have an infrastructure.
-#### sed
-```
-$ time sed -E 's/^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$/\1|\2/g' data | wc -l
-100000000
-
-real	7m44.861s
-user	7m47.444s
-sys	0m5.600s
-```
-OMG, that was SLOW
-#### Go with regular expression with group capture 
-Program
-```go
-package main
-
-import (
-	"bufio"
-	"bytes"
-	"io"
-	"os"
-	"regexp"
-
-	"github.com/sirkon/message"
-	"github.com/youtube/vitess/go/cgzip"
-)
-
-func main() {
-	var zreader io.Reader
-	if len(os.Args) != 2 {
-		zreader = os.Stdin
-	} else {
-		rawreader, err := os.Open(os.Args[1])
-		if err != nil {
-			message.Critical(err)
-		}
-		defer rawreader.Close()
-		zreader, err = cgzip.NewReaderBuffer(rawreader, 512*1024)
-		if err != nil {
-			message.Critical(err)
-		}
-	}
-	reader := bufio.NewReaderSize(zreader, 128*1024)
-	scanner := bufio.NewScanner(reader)
-
-	dest := bufio.NewWriter(os.Stdout)
-	defer dest.Flush()
-	buf := &bytes.Buffer{}
-	r := regexp.MustCompile(`^(.*?)\|.*?\|.*?\|.*?\|(.*?)\|.*$`)
-	for scanner.Scan() {
-		data := r.FindSubmatch(scanner.Bytes())
-		if len(data) == 3 {
-			buf.Reset()
-			buf.Write(data[1])
-			buf.WriteByte('|')
-			buf.Write(data[2])
-			buf.WriteByte('\n')
-			dest.Write(buf.Bytes())
-		}
-	}
-	if scanner.Err() != nil {
-		message.Critical(scanner.Err())
-	}
-}
-```
-Launching
-```bash
-$ time ./goregex < data | wc -l
-
-100000000
-
-real	2m4.064s
-user	2m6.928s
-sys	0m5.616s
-```
-Harder to use than LDE generated code, slower, harder to reason when something goes wrong. It was a bit easier to write LDE 
-rule than a regexp and significantly easier to access extracted data
-```perl
-parser =
-    Name(string) '|'     # Take a text until | into Name as a string ([]byte, actually), then pass |
-    _ '|'                # We are at the start of column 2, find | and pass it
-    _ '|'                # find | and pass it to go at column 4
-    _ '|'                # find | and pass again
-    Count(string) '|';   # take the content of 5th column right to the | and exit
-``` 
-vs
-```
-^(.*?)\|.*?\|.*?\|.*?\|(^.*?)\|.*$
-```
-#### Ragel with
-
-```ragel
-package main
-
-import (
-        "bufio"
-        "io"
-        "os"
-                "github.com/sirkon/message"
-                        "github.com/youtube/vitess/go/cgzip"
-
+##### Automated comparsion against Ragel on a close to real world sample
+1. Lines will look like
+    ```
+    [12345 2017-10-10T21:11:12] PRESENCE uid=123423546455654 ua='App.Com Samsung i7300 Android/8.0.0/RU' Geo={Lat: 12.0, Lon: 13.0} Acitivity=0
+    [12345 2017-10-10T21:11:12] PRESENCE uid=123423546455654 ua='App.Com iPhone 8+ iOS/11.0.2/DE' Geo={Lat: 14.0, Lon: 15.0} Acitivity=0
+    [12345 2017-10-10T21:11:12] PRESENCE uid=123423546455654 ua='App.Com Windows x86-64/7/BY' Acitivity=1
+    ```
+    where `uid` is user identifier, `ua` is user agent, `Geo` is optional geo information and `Activity` is a kind of activity the user was making (background, typing, etc)
+2. LDE rule without type conversion
+    ```perl
+    Presence =
+        _' ' Time(string) ']'
+        ^" PRESENCE uid=" ! UID(string) ' '
+        ^"ua='" UA(string) '\''
+        ?Geo (
+            ^" Geo={Lat: " Lat(string) ','
+            ^" Lon: " Lon(string) '}'
         )
+        ^" Activity=" Activity(string);
+    ```
+2. LDE rule with type conversion
+    ```perl
+    PresenceFloats =
+    _' ' Time(string) ']'
+    ^" PRESENCE uid=" ! UID(string) ' '
+    ^"ua='" UA(string) '\''
+    ?Geo (
+        ^" Geo={Lat: " Lat(float64) ','
+        ^" Lon: " Lon(float64) '}'
+    )
+    ^" Activity=" Activity(uint8);
+    ```
+3. Ragel template without type conversion
+    ```perl
+    package main
 
-// Ragel based parsing
-type Ragel struct {
-    Name  []byte
-    Count []byte
-}
+    // Easy based parsing
+    type Easy struct {
+    	Time []byte
+    	UID  []byte
+    	UA   []byte
+    	Geo  struct {
+    		Valid bool
+    		Lat   []byte
+    		Lon   []byte
+    	}
+    	Activity []byte
+    }
 
-%% machine fields;
-%% write data;
+    %% machine easy;
+    %% write data;
 
-// Extract extracts field from
-func (r *Ragel) Extract(data []byte) (ok bool, error error) {
-    cs, p, pe := 0, 0, len(data)
-    var pos = 0
-    %%{
-        action shot       { pos = p + 1             }
-        action take_name  { r.Name = data[pos:p+1]  }
-        action take_count { r.Count = data[pos:p+1] }
+    // Extract extracts field from
+    func (r *Easy) Extract(data []byte) (ok bool, error error) {
+        cs, p, pe := 0, 0, len(data)
+        var pos = 0
+        r.Geo.Valid = false
 
-        field = (any -- ( "|" ))* ;
-        main :=
-             field@take_name "|" field "|" field "|" field "|"@shot field@take_count ;
-        write init;
-        write exec;
-    }%%
-    return true, nil
-}
+        %%{
+            action shot       { pos = p + 1                }
+            action take_time  { r.Time = data[pos:p+1]     }
+            action take_uid   { r.UID = data[pos:p+1]      }
+            action take_ua    { r.UA = data[pos:p+1]       }
+            action take_lat   { r.Geo.Lat = data[pos:p+1]  }
+            action take_lon   { r.Geo.Lon = data[pos:p+1]  }
+            action take_act   { r.Activity = data[pos:p+1] }
+            action set_geo    { r.Geo.Valid = true         }
 
-func main() {
-        var zreader io.Reader
-        if len(os.Args) != 2 {
-                zreader = os.Stdin
-        } else {
-                rawreader, err := os.Open(os.Args[1])
-                if err != nil {
-                        message.Critical(err)
+            ns = (any -- " ")*;
+            main :=
+                 ns " "@shot ((any -- "]")*)@take_time "] PRESENCE uid="@shot
+                 ns@take_uid " ua='"@shot ((any -- "'")*)@take_ua "' "@shot
+                 (
+                    "Geo={Lat: "@set_geo@shot ((any -- ",")*)@take_lat ", Lon: "@shot ((any -- "}")*)@take_lon "} "@shot
+                 )?
+                 "Activity="@shot (any*)@take_act
+                 ;
+            write init;
+            write exec;
+        }%%
+        return true, nil
+    }
+    ```
+4. Ragel template with type conversion
+    ```
+    package main
+    
+    
+    import (
+        "unsafe"
+        "strconv"
+    )
+    
+    // EasyFloat based parsing
+    type EasyFloat struct {
+    	Time []byte
+    	UID  []byte
+    	UA   []byte
+    	Geo  struct {
+    		Valid bool
+    		Lat   float64
+    		Lon   float64
+    	}
+    	Activity uint8
+    }
+    
+    %% machine easyfloats;
+    %% write data;
+    
+    // Extract extracts field from
+    func (r *EasyFloat) Extract(data []byte) (ok bool, err error) {
+        cs, p, pe := 0, 0, len(data)
+        var pos = 0
+        r.Geo.Valid = false
+        var tmpFloat float64
+        var tmpUint uint64
+        var tmp []byte
+    
+        %%{
+            action shot       { pos = p + 1                }
+            action take_time  { r.Time = data[pos:p+1]     }
+            action take_uid   { r.UID = data[pos:p+1]      }
+            action take_ua    { r.UA = data[pos:p+1]       }
+    	action tmp_float  { 
+                tmp = data[pos:p+1]
+                if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
+                    return false, err
                 }
-                defer rawreader.Close()
-                zreader, err = cgzip.NewReaderBuffer(rawreader, 512*1024)
-                if err != nil {
-                        message.Critical(err)
+    	}
+            action take_lat   { r.Geo.Lat = tmpFloat       }
+            action take_lon   { r.Geo.Lon = tmpFloat       }
+            action take_act   {
+                tmp = data[pos:p+1]
+                if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
+                    return false, err
                 }
-        }
-        reader := bufio.NewReaderSize(zreader, 128*1024)
-        scanner := bufio.NewScanner(reader)
+                r.Activity = uint8(tmpUint)
+            }
+            action set_geo    { r.Geo.Valid = true         }
+    
+            ns = (any -- " ")*;
+            main :=
+                 ns " "@shot ((any -- "]")*)@take_time "] PRESENCE uid="@shot
+                 ns@take_uid " ua='"@shot ((any -- "'")*)@take_ua "' "@shot
+                 (
+                    "Geo={Lat: "@set_geo@shot ((any -- ",")*)@tmp_float@take_lat ", Lon: "@shot ((any -- "}")*)@tmp_float@take_lon "} "@shot
+                 )?
+                 "Activity="@shot (any*)@take_act
+                 ;
+            write init;
+            write exec;
+        }%%
+        return true, nil
+    }
+    ```
+5. And regex with data extraction without conversion
+```regexp
+^\S*\s([^\]]+)] PRESENCE uid=(\S*) ua='([^']*)' (:?Geo=\{Lat: ([^,]+), Lon: ([^,]+)\} )?Activity=(.*)$
+```
 
-    r := &Ragel{}
-                dest := bufio.NewWriter(os.Stdout)
-        defer dest.Flush()
-        var ok bool
-        var err error
-        for scanner.Scan() {
-            if ok, err = r.Extract(scanner.Bytes()); !ok {
-                    if err == nil {
-                            panic("Unknown error")
-                        }
-                        panic(err)
-                }
-                                        dest.Write(r.Name)
-                        dest.WriteByte('|')
-                        dest.Write(r.Count)
-                        dest.WriteByte('\n')
-        }
-                if scanner.Err() != nil {
-                message.Critical(scanner.Err())
-        }
-}
-```
-compiled with `ragel -Z -G2 ragel.template` (turned to be the fastest)
-```
-$ time ./ragel < data | wc -l
-100000000
+> both these Ragel templates only does processing without error handling, so generated code is not production ready.
+> The problem here we will need to handle type conversion and error processing manually each time writing Ragel rules.
+> The LDE tool makes this automatically. This alone is a #1 in a list of *pros* for using LDE, even if the code generated
+> with Ragel would be a bit faster.
 
-real	0m7.216s
-user	0m7.700s
-sys	0m0.816s
+Now, let's benchmark:
+
 ```
-Quite fast, you see. Still, the dataset is nearly ideal for Ragel, but it wasn't enough to beat LDE with short lookup optimization and it is just barely faster than generic LDE which would destroy it on longer fields.
+$ go test -v -bench '.*RealWorld.*' github.com/sirkon/ldetool/benchmarking
+
+BenchmarkLDEEasyRealWorld-4                     10     172518252 ns/op
+BenchmarkLDEEasyFloatsRealWorld-4                5     217304418 ns/op
+BenchmarkRagelEasyRealWorld-4                    5     295341158 ns/op
+BenchmarkRagelEasyFloatsRealWorld-4              2     626229546 ns/op
+BenchmarkRegexEasyRealWorld-4                    1    3308693182 ns/op
+PASS
+ok  	github.com/sirkon/ldetool/benchmarking	9.218s
+```
+
+You see, not only LDE generated code does a lot more than straight Ragel, it is actually faster, something like several
+times faster. Notice a two times performance drop with type conversions on Ragel sample, when the LDE generated code
+suffers only %30 speed decrease in the same circumstances: it looks like Ragel works best when all actions are done within
+generated finite state machine, probably something with cache locality. It slows down immediately after there was an
+"external" function call. Notice, the regexp is not THAT bad as it was in the previous example: only 19 times slower than
+the code generated with LDE

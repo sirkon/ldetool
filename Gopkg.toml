@@ -45,6 +45,6 @@
   name = "github.com/urfave/cli"
   version = "1.19.1"
 
-[[constaint]]
+[[constraint]]
   name = "github.com/antlr/antlr4"
   version = "4.7.1"

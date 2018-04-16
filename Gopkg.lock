@@ -46,12 +46,15 @@
 [[projects]]
   name = "github.com/sirkon/message"
   packages = ["."]
-  revision = "4c43b51aab28b44b3b33deff9233a09a1aa143ba"
-  version = "v1.0"
+  revision = "0b3be4f0e32fa92bde17cb5a3c8e0195ef8a059d"
+  version = "v1.5.1"
 
 [[projects]]
   name = "github.com/stretchr/testify"
-  packages = ["assert","require"]
+  packages = [
+    "assert",
+    "require"
+  ]
   revision = "69483b4bd14f5845b5a1e55bca19e954e827f1d0"
   version = "v1.1.4"
 
@@ -64,6 +67,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4c56dd68de643c116d87773db830b4ca9ce4b9164be7675a1f324b9f4481af7d"
+  inputs-digest = "0fec5cb06ede26789aa957b2782d1fa1590b8104f1e7da1954eea812344f263f"
   solver-name = "gps-cdcl"
   solver-version = 1
