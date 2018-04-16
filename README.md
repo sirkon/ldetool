@@ -21,10 +21,10 @@ go get -u github.com/sirkon/ldetool
 
 > It turned out we like using it even for non-performant tasks, where we are dealing with strings, not slices of bytes 
 > and it would be handy to use it for strings as well without manual type casting. There's an option to generate code
-> that use string, just use option `--go-string`
+> that use string, just put an option `--go-string`
 
 ##### CLI utility options
-1. `--go-strings` generates code that uses `string` everywhere instead of `[]byte`
+1. `--go-string` generates code that uses `string` everywhere instead of `[]byte`
 2. `--yaml-dict` or `--json-dict` sets translation rules for names.
 3. `--package <pkg name>` name of the package to use in generated code
 4. `--big-endian` or `--little-endian` sets the target architecture to be either big or little endian. This
