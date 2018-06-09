@@ -9,12 +9,12 @@ go get -u github.com/sirkon/ldetool
 
 1. [Rationale](RATIONALE.md)
 2. [Typical operations and formal set of rules](TOOL_RULES.md)
-3. [Performance comparison againsе regexp and Ragel](PERFORMANCE.md)
+3. [Performance comparison against regexp and Ragel](PERFORMANCE.md)
 
 
 
 ### How it works.
-1. Write extraction script, we usually name it `<something>.lde`
+1. First write extraction script, we usually name it `<something>.lde`
 2. Generate go code with `ldetool generate <something.lde> --package main`. Of course
    you can use your own package name, not only `main`
 3. Use it via the generated extraction method `Parse(line []byte)`.
@@ -24,8 +24,12 @@ go get -u github.com/sirkon/ldetool
 > that use string, just put an option `--go-string`
 
 ##### CLI utility options
-1. `--go-string` generates code that uses `string` everywhere instead of `[]byte`
-2. `--yaml-dict` or `--json-dict` sets translation rules for names.
+1. `--go-string` generates code that uses `string` everywhere instead of `[]byte`. You better not to use it for log processing as it may lead to excessive memory allocations.
+2. `--yaml-dict` or `--json-dict` sets translation rules for names. For instance, if we have YAML file with
+    ```yaml
+    http: HTTP
+    ```
+    and feed this file to the `ldetool` then every name (of field or rule itself) like `GetHttpHandle` or `get_http_hanlde` will be traslated into `GetHTTPHandle`
 3. `--package <pkg name>` name of the package to use in generated code
 4. `--big-endian` or `--little-endian` sets the target architecture to be either big or little endian. This
     enables prefix check optimization 
@@ -92,7 +96,7 @@ Now, we have
        …
     }
     ```
-    Take a look at return data. First bool signals if the data was successfully matched and error signals if there were
+    Take a look at return data. First bool signals if the data was successfully matched and error that is not nil signals if there were
     any error. String to numeric failures are always treated as errors, you can put `!` into extraction script and all
     mismatches after the sign will be treated as errors
 3. Helper to access optional `Hidden` area returning default Go value if the the area was not matched
