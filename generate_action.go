@@ -14,11 +14,11 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
-	"github.com/sirkon/ldetool/builder"
-	"github.com/sirkon/ldetool/generator"
-	"github.com/sirkon/ldetool/generator/gogen"
-	"github.com/sirkon/ldetool/listener"
-	"github.com/sirkon/ldetool/parser"
+	"github.com/sirkon/ldetool/internal/builder"
+	"github.com/sirkon/ldetool/internal/generator"
+	"github.com/sirkon/ldetool/internal/generator/gogen"
+	"github.com/sirkon/ldetool/internal/listener"
+	"github.com/sirkon/ldetool/internal/parser"
 	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )

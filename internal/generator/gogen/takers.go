@@ -6,8 +6,8 @@ import (
 
 	"encoding/json"
 
-	"github.com/sirkon/ldetool/generator"
-	"github.com/sirkon/ldetool/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator"
+	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
 )
 
 /* take_before_string

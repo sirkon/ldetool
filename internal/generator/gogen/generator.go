@@ -8,8 +8,8 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
-	"github.com/sirkon/ldetool/generator"
-	"github.com/sirkon/ldetool/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator"
+	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
 )
 
 // Name provides a link between token and string

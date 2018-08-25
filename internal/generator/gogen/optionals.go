@@ -2,7 +2,7 @@ package gogen
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/sirkon/ldetool/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
 )
 
 // OpenOptionalScope ...

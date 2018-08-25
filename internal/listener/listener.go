@@ -10,8 +10,8 @@ import (
 	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/sirkon/ldetool/ast"
-	"github.com/sirkon/ldetool/parser"
+	"github.com/sirkon/ldetool/internal/ast"
+	"github.com/sirkon/ldetool/internal/parser"
 )
 
 type appender interface {

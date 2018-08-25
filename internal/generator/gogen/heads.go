@@ -6,8 +6,8 @@ import (
 
 	"encoding/binary"
 
-	"github.com/sirkon/ldetool/generator"
-	"github.com/sirkon/ldetool/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator"
+	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
 )
 
 func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {

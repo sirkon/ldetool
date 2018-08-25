@@ -6,9 +6,9 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
-	"github.com/sirkon/ldetool/ast"
+	"github.com/sirkon/ldetool/internal/ast"
 
-	"github.com/sirkon/ldetool/generator"
+	"github.com/sirkon/ldetool/internal/generator"
 	"github.com/sirkon/message"
 )
 

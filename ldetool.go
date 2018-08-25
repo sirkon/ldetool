@@ -8,7 +8,7 @@ import (
 	"github.com/urfave/cli"
 
 	// These are for testing reasons
-	_ "github.com/sirkon/ldetool/parser"
+	_ "github.com/sirkon/ldetool/internal/parser"
 
 	"github.com/sirkon/message"
 )

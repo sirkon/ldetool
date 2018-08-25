@@ -3,7 +3,7 @@ package gogen
 import (
 	"fmt"
 
-	"github.com/sirkon/ldetool/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
 )
 
 func (g *Generator) regRightPkg() {
