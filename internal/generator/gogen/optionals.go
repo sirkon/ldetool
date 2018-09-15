@@ -2,12 +2,14 @@ package gogen
 
 import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
 // OpenOptionalScope ...
-func (g *Generator) OpenOptionalScope(name string, t antlr.Token) {
-	g.regRightVar(g.curRestVar())
+func (g *Generator) OpenOptionalScope(name string, t antlr.Token) error {
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
 	g.namespaces = append(g.namespaces, name)
 	g.regLabel()
 	if !g.anonymous() {
@@ -20,10 +22,11 @@ func (g *Generator) OpenOptionalScope(name string, t antlr.Token) {
 	if len(name) > 0 {
 		g.addField(g.namespaces, "", t)
 	}
+	return nil
 }
 
 // CloseOptionalScope ...
-func (g *Generator) CloseOptionalScope() {
+func (g *Generator) CloseOptionalScope() error {
 	if !g.anonymous() {
 		g.body.Append(
 			srcobj.LineAssign{
@@ -47,4 +50,5 @@ func (g *Generator) CloseOptionalScope() {
 		g.obj = g.obj[:len(g.obj)-1]
 	}
 	g.namespaces = g.namespaces[:len(g.namespaces)-1]
+	return nil
 }

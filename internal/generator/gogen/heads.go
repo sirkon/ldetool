@@ -7,7 +7,7 @@ import (
 	"encoding/binary"
 
 	"github.com/sirkon/ldetool/internal/generator"
-	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
 func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {
@@ -73,10 +73,10 @@ func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj
 	)
 }
 
-func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
+func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) error {
 	var unquoted string
 	if err := json.Unmarshal([]byte(anchor), &unquoted); err != nil {
-		panic(fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err))
+		return fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err)
 	}
 
 	body := g.body
@@ -140,15 +140,18 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) {
 		},
 		Else: failure,
 	})
+	return nil
 }
 
 // HeadString checks if the rest starts with the given string and passes it
-func (g *Generator) HeadString(anchor string, ignore bool) {
-	g.checkStringPrefix(anchor, 0, ignore)
+func (g *Generator) HeadString(anchor string, ignore bool) error {
+	return g.checkStringPrefix(anchor, 0, ignore)
 }
 
-func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
-	g.regRightVar(g.curRestVar())
+func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) error {
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
 
 	var rest srcobj.Source = srcobj.Raw(g.curRestVar())
 
@@ -209,9 +212,10 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) {
 		Else: failure,
 	})
 	g.body.Append(body)
+	return nil
 }
 
 // HeadChar checks if rest starts with the given char
-func (g *Generator) HeadChar(char string, ignore bool) {
-	g.checkCharPrefix(char, 0, false)
+func (g *Generator) HeadChar(char string, ignore bool) error {
+	return g.checkCharPrefix(char, 0, false)
 }

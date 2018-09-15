@@ -9,7 +9,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/internal/generator"
-	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
 // Name provides a link between token and string
@@ -60,18 +60,19 @@ type Generator struct {
 //    2. Big endian
 //    3. Crossplatform
 // There's a difference for fast short (up to 8 bytes) prefix checks in strings.
-func (g *Generator) PlatformType(t generator.PlatformType) {
+func (g *Generator) PlatformType(t generator.PlatformType) error {
 	g.platformType = t
+	return nil
 }
 
 // ErrorToken message
-func (g *Generator) ErrorToken(token antlr.Token, format string, params ...interface{}) {
-	panic(fmt.Sprintf(
+func (g *Generator) ErrorToken(token antlr.Token, format string, params ...interface{}) error {
+	return fmt.Errorf(
 		"%d:%d: %s",
 		token.GetLine(),
 		token.GetColumn(),
 		fmt.Sprintf(format, params...),
-	))
+	)
 }
 
 // NewGenerator constructor
@@ -156,12 +157,12 @@ func (g *Generator) anonymous() bool {
 }
 
 // UseRule ...
-func (g *Generator) UseRule(name string, t antlr.Token) {
+func (g *Generator) UseRule(name string, t antlr.Token) error {
 	if len(g.ruleName) != 0 {
-		panic(fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.ruleName))
+		return fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.ruleName)
 	}
 	if prev, ok := g.rules[name]; ok {
-		panic(fmt.Errorf("%d: redeclaration of rule `%s` which has already been defined at line %d", t.GetLine(), name, prev))
+		return fmt.Errorf("%d: redeclaration of rule `%s` which has already been defined at line %d", t.GetLine(), name, prev)
 	}
 	g.rules[name] = t
 	g.fields = map[string]Name{}
@@ -180,10 +181,11 @@ func (g *Generator) UseRule(name string, t antlr.Token) {
 	g.optgetters = srcobj.NewBody()
 	g.vargen = srcobj.NewVars()
 	g.body.Append(g.vargen)
+	return nil
 }
 
 // AddField ...
-func (g *Generator) AddField(name string, fieldType string, t antlr.Token) {
+func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error {
 	g.addField(g.namespaces, name, t)
 	s := g.curObj()
 	fieldGen, ok := map[string]func(name string){
@@ -211,12 +213,11 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) {
 		for i, fieldName := range fieldNames {
 			fieldNames[i] = fmt.Sprintf("\033[1m%s\033[0m", fieldName)
 		}
-		g.ErrorToken(t, "unsupported type `\033[1m%s\033[0m`, must be one of %s",
+		return g.ErrorToken(t, "unsupported type `\033[1m%s\033[0m`, must be one of %s",
 			fieldType, strings.Join(fieldNames, ", "))
-		panic(fmt.Errorf("unsupported type %s", fieldType))
 	}
 	fieldGen(name)
-	return
+	return nil
 }
 
 func (g *Generator) failure(format string, params ...srcobj.Source) (res srcobj.Source) {
@@ -252,7 +253,7 @@ func (g *Generator) indent() *srcobj.Body {
 }
 
 // PassN passes first N characters if they are there, otherwise signal a error
-func (g *Generator) PassN(n int) {
+func (g *Generator) PassN(n int) error {
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorGE(
@@ -273,51 +274,59 @@ func (g *Generator) PassN(n int) {
 			),
 		},
 	)
+	return nil
 }
 
 // Stress mismatches should be treated as critical errors
-func (g *Generator) Stress() {
+func (g *Generator) Stress() error {
 	g.critical = true
+	return nil
 }
 
 // Relax ...
-func (g *Generator) Relax() {
+func (g *Generator) Relax() error {
 	g.critical = false
+	return nil
 }
 
 // Generate writes into io.Writer
-func (g *Generator) Generate(pkgName string, dest io.Writer) {
+func (g *Generator) Generate(pkgName string, dest io.Writer) error {
 	g.file.PkgName(pkgName)
 	if err := g.file.Dump(dest); err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }
 
 // Push pushes data
-func (g *Generator) Push() {
+func (g *Generator) Push() error {
 	if len(g.ruleName) == 0 {
-		panic(fmt.Errorf("no rule has been set up to push it now"))
+		return fmt.Errorf("no rule has been set up to push it now")
 	}
 
 	g.indent()
 	g.body.Append(srcobj.ReturnOK)
 	g.file.Append(g.optgetters)
 
-	g.Relax()
+	if err := g.Relax(); err != nil {
+		return err
+	}
 	g.critical = false
 	g.vars = map[string]string{}
 	g.fields = map[string]Name{}
 	g.scopeAbandoned = map[string]bool{}
 	g.ruleName = ""
+	return nil
 }
 
 // RegGravity registers center of gravity
-func (g *Generator) RegGravity(name string) {
+func (g *Generator) RegGravity(name string) error {
 	g.gravity = append(g.gravity, name)
+	return nil
 }
 
 // AtEnd checks if the rest is empty
-func (g *Generator) AtEnd() {
+func (g *Generator) AtEnd() error {
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorNEq(
@@ -330,4 +339,5 @@ func (g *Generator) AtEnd() {
 			),
 		},
 	)
+	return nil
 }

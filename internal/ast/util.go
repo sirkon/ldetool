@@ -15,3 +15,16 @@ func TokenError(t antlr.Token) func(format string, args ...interface{}) error {
 	}
 
 }
+
+func posLit(i int) string {
+	switch i {
+	case 1:
+		return "1st"
+	case 2:
+		return "2nd"
+	case 3:
+		return "3rd"
+	default:
+		return fmt.Sprintf("%dth", i)
+	}
+}

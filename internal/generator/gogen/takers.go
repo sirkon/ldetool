@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 
 	"github.com/sirkon/ldetool/internal/generator"
-	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
 /* take_before_string
@@ -19,18 +19,22 @@ if pos = bytes.Index(p.rest, {{ .ConstName }}); pos >= 0 {
 */
 
 // getterGen generates optional getter
-func (g *Generator) getterGen(name, fieldType string) {
+func (g *Generator) getterGen(name, fieldType string) error {
 	if len(g.ruleName) == 0 {
-		panic(fmt.Errorf("Rule set up required"))
+		return fmt.Errorf("Rule set up required")
 	}
 	if len(g.namespaces) == 0 {
-		return
+		return nil
 	}
 
+	arg, err := srcobj.Go2ResultType(g.useString, fieldType)
+	if err != nil {
+		return err
+	}
 	method := srcobj.NewAccessor(
 		g.ruleName,
 		g.goish.Public("get_"+strings.Join(append(g.namespaces, name), "_")),
-		srcobj.Go2ResultType(g.useString, fieldType),
+		arg,
 	)
 	g.optgetters.Append(method)
 	body := method.Body()
@@ -49,6 +53,7 @@ func (g *Generator) getterGen(name, fieldType string) {
 		Expr:     srcobj.Raw("p." + strings.Join(append(g.namespaces, name), ".")),
 	})
 	origBody.Append(srcobj.Raw("return"))
+	return nil
 }
 
 func numerator(num int) string {
@@ -81,12 +86,18 @@ func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
 }
 
 // TakeBeforeStringEx ...
-func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand bool) {
-	g.regVar("pos", "int")
-	g.regRightVar(g.curRestVar())
+func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand bool) error {
+	if err := g.regVar("pos", "int"); err != nil {
+		return err
+	}
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
 
 	item := g.fields[g.fullName(name)]
-	g.getterGen(name, fieldType)
+	if err := g.getterGen(name, fieldType); err != nil {
+		return err
+	}
 
 	constName := g.constNameFromContent(anchor)
 
@@ -118,7 +129,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 
 		var unquoted string
 		if err := json.Unmarshal([]byte(anchor), &unquoted); err != nil {
-			panic(fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err))
+			return fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err)
 		}
 		var cond srcobj.Source
 		if len(unquoted) <= 8 && g.platformType != generator.Universal && !g.useString {
@@ -274,15 +285,22 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 		decoder := g.decoderMap[fieldType]
 		decoder(srcobj.Raw("tmp"), "p."+item.name)
 	}
+	return nil
 }
 
 // TakeBeforeChar ...
-func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand bool) {
-	g.regVar("pos", "int")
-	g.regRightVar(g.curRestVar())
+func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand bool) error {
+	if err := g.regVar("pos", "int"); err != nil {
+		return err
+	}
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
 
 	item := g.fields[g.fullName(name)]
-	g.getterGen(name, fieldType)
+	if err := g.getterGen(name, fieldType); err != nil {
+		return err
+	}
 
 	var rest srcobj.Source
 	switch {
@@ -464,12 +482,15 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 		decoder := g.decoderMap[fieldType]
 		decoder(srcobj.Raw("tmp"), "p."+item.name)
 	}
+	return nil
 }
 
 // TakeRest ...
-func (g *Generator) TakeRest(name, fieldType string) {
+func (g *Generator) TakeRest(name, fieldType string) error {
 	item := g.fields[g.fullName(name)]
-	g.getterGen(name, fieldType)
+	if err := g.getterGen(name, fieldType); err != nil {
+		return err
+	}
 
 	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Take the rest as %s(%s)", name, fieldType)))
@@ -510,4 +531,5 @@ func (g *Generator) TakeRest(name, fieldType string) {
 			),
 		)
 	}
+	return nil
 }

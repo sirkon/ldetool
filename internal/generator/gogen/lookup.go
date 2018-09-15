@@ -2,35 +2,40 @@ package gogen
 
 import (
 	"fmt"
-
-	"github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
+	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
-func (g *Generator) regRightPkg() {
+func (g *Generator) regRightPkg() error {
 	var pkgName string
 	if g.useString {
 		pkgName = "strings"
 	} else {
 		pkgName = "bytes"
 	}
-	g.regImport("", pkgName)
+	return g.regImport("", pkgName)
 }
 
-func (g *Generator) regRightVar(name string) {
+func (g *Generator) regRightVar(name string) error {
 	var varType string
 	if g.useString {
 		varType = "string"
 	} else {
 		varType = "[]byte"
 	}
-	g.regVar(name, varType)
+	return g.regVar(name, varType)
 }
 
 // LookupString ...
-func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore bool) {
-	g.regVar("pos", "int")
-	g.regRightVar(g.curRestVar())
-	g.regRightPkg()
+func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore bool) error {
+	if err := g.regVar("pos", "int"); err != nil {
+		return err
+	}
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
+	if err := g.regRightPkg(); err != nil {
+		return err
+	}
 
 	constName := g.constNameFromContent(anchor)
 
@@ -121,17 +126,22 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 		},
 		Else: failure,
 	})
+	return nil
 }
 
 // LookupFixedString ...
-func (g *Generator) LookupFixedString(anchor string, offset int, ignore bool) {
-	g.checkStringPrefix(anchor, offset, ignore)
+func (g *Generator) LookupFixedString(anchor string, offset int, ignore bool) error {
+	return g.checkStringPrefix(anchor, offset, ignore)
 }
 
 // LookupCharEx ...
-func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool) {
-	g.regVar("pos", "int")
-	g.regRightVar(g.curRestVar())
+func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool) error {
+	if err := g.regVar("pos", "int"); err != nil {
+		return err
+	}
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
 
 	var rest srcobj.Source
 	switch {
@@ -218,9 +228,10 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 		},
 		Else: failure,
 	})
+	return nil
 }
 
 // LookupFixedChar ...
-func (g *Generator) LookupFixedChar(anchor string, offset int, ignore bool) {
-	g.checkCharPrefix(anchor, offset, ignore)
+func (g *Generator) LookupFixedChar(anchor string, offset int, ignore bool) error {
+	return g.checkCharPrefix(anchor, offset, ignore)
 }

@@ -15,12 +15,12 @@ import (
 )
 
 type appender interface {
-	Append(i *ast.ActionItem)
+	Append(i ast.Action)
 }
 
 var reservedWords = map[string]struct{}{
-	"Valid":   struct{}{},
-	"Extract": struct{}{},
+	"Valid":   {},
+	"Extract": {},
 }
 
 func checkReserved(token antlr.Token) {
@@ -38,8 +38,7 @@ func checkReserved(token antlr.Token) {
 
 // Listener is a complete listener for a parse tree produced by LDEParser.
 type Listener struct {
-	rules   []*ast.RuleItem
-	ai      *ast.ActionItem
+	rules   []*ast.Rule
 	actions []appender
 	target  *ast.Target
 
@@ -56,7 +55,7 @@ func New() *Listener {
 	return &Listener{}
 }
 
-func (l *Listener) Rules() []*ast.RuleItem {
+func (l *Listener) Rules() []*ast.Rule {
 	return l.rules
 }
 
@@ -109,11 +108,8 @@ func (l *Listener) ExitAtomicRule(ctx *parser.AtomicRuleContext) {
 // EnterBaseAction is called when production baseAction is entered.
 func (l *Listener) EnterBaseAction(ctx *parser.BaseActionContext) {
 	if ctx.Stress() != nil {
-		res := &ast.ActionItem{
-			ErrorOnMismatch: true,
-		}
+		res := ast.ErrorOnMismatch{}
 		l.seq().Append(res)
-		l.ai = nil
 	}
 }
 
@@ -121,11 +117,7 @@ func (l *Listener) EnterBaseAction(ctx *parser.BaseActionContext) {
 func (l *Listener) ExitBaseAction(ctx *parser.BaseActionContext) {}
 
 // EnterAtomicAction is called when production atomicAction is entered.
-func (l *Listener) EnterAtomicAction(ctx *parser.AtomicActionContext) {
-	i := &ast.ActionItem{}
-	l.seq().Append(i)
-	l.ai = i
-}
+func (l *Listener) EnterAtomicAction(ctx *parser.AtomicActionContext) {}
 
 // ExitAtomicAction is called when production atomicAction is exited.
 func (l *Listener) ExitAtomicAction(ctx *parser.AtomicActionContext) {}
@@ -163,7 +155,12 @@ func (l *Listener) ExitMayBePassTargetPrefix(ctx *parser.MayBePassTargetPrefixCo
 
 // EnterPassChars is called when production passChars is entered.
 func (l *Listener) EnterPassChars(ctx *parser.PassCharsContext) {
-	l.ai.PassFirst, _ = ast.PassFirst(ctx.IntLit().GetSymbol())
+	var err error
+	a, err := ast.PassFirst(ctx.IntLit().GetSymbol())
+	if err != nil {
+		panic(fmt.Sprintf("%d:%d: positive integer expected, got %s", ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()+1, ctx.IntLit().GetSymbol()))
+	}
+	l.seq().Append(a)
 }
 
 // ExitPassChars is called when production passChars is exited.
@@ -171,8 +168,9 @@ func (l *Listener) ExitPassChars(ctx *parser.PassCharsContext) {}
 
 // EnterPassUntil is called when production passUntil is entered.
 func (l *Listener) EnterPassUntil(ctx *parser.PassUntilContext) {
-	l.ai.Pass, _ = ast.PassUntilTarget()
-	l.target = l.ai.Pass.Limit
+	a := ast.PassUntilTarget()
+	l.seq().Append(a)
+	l.target = a.Limit
 	l.lookup = true
 }
 
@@ -190,8 +188,9 @@ func (l *Listener) ExitPassUntil(ctx *parser.PassUntilContext) {
 
 // EnterMayPassUntil is called when production mayPassUntil is entered.
 func (l *Listener) EnterMayPassUntil(ctx *parser.MayPassUntilContext) {
-	l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
-	l.target = l.ai.PassOrIgnore.Limit
+	a := ast.PassUntilTargetOrIgnore()
+	l.seq().Append(a)
+	l.target = a.Limit
 	l.lookup = true
 }
 
@@ -210,8 +209,9 @@ func (l *Listener) ExitMayPassUntil(ctx *parser.MayPassUntilContext) {
 // EnterTakeUntil is called when production takeUntil is entered.
 func (l *Listener) EnterTakeUntil(ctx *parser.TakeUntilContext) {
 	checkReserved(ctx.Identifier().GetSymbol())
-	l.ai.Take, _ = ast.TakeUntilTarget(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
-	l.target = l.ai.Take.Limit
+	a := ast.TakeUntilTarget(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
+	l.seq().Append(a)
+	l.target = a.Limit
 }
 
 // ExitTakeUntil is called when production takeUntil is exited.
@@ -220,10 +220,11 @@ func (l *Listener) ExitTakeUntil(ctx *parser.TakeUntilContext) {}
 // EnterTakeUntilOrRest is called when production takeUntilOrRest is entered.
 func (l *Listener) EnterTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {
 	checkReserved(ctx.Identifier().GetSymbol())
-	l.ai.TakeUntilOrRest, _ = ast.TakeUntilTargetOrRest(
+	a := ast.TakeUntilTargetOrRest(
 		ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart(),
 	)
-	l.target = l.ai.TakeUntilOrRest.Limit
+	l.seq().Append(a)
+	l.target = a.Limit
 }
 
 // ExitTakeUntilOrRest is called when production takeUntilOrRest is exited.
@@ -232,7 +233,8 @@ func (l *Listener) ExitTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {}
 // EnterTakeUntilRest is called when production takeUntilRest is entered.
 func (l *Listener) EnterTakeUntilRest(ctx *parser.TakeUntilRestContext) {
 	checkReserved(ctx.Identifier().GetSymbol())
-	l.ai.TakeRest, _ = ast.TakeTheRest(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
+	a := ast.TakeTheRest(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
+	l.seq().Append(a)
 }
 
 // ExitTakeUntilRest is called when production takeUntilRest is exited.
@@ -243,9 +245,10 @@ func (l *Listener) ExitTakeUntilRest(ctx *parser.TakeUntilRestContext) {
 // EnterOptionalNamedArea is called when production optionalNamedArea is entered.
 func (l *Listener) EnterOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
 	checkReserved(ctx.Identifier().GetSymbol())
-	l.ai.Option, _ = ast.Option(ctx.Identifier().GetSymbol())
 
-	l.actions = append(l.actions, l.ai.Option)
+	a := ast.Option(ctx.Identifier().GetSymbol())
+	l.seq().Append(a)
+	l.actions = append(l.actions, a)
 }
 
 // ExitOptionalNamedArea is called when production optionalNamedArea is exited.
@@ -255,8 +258,9 @@ func (l *Listener) ExitOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
 
 // EnterOptionalArea is called when production optionalArea is entered.
 func (l *Listener) EnterOptionalArea(ctx *parser.OptionalAreaContext) {
-	l.ai.Anonymous, _ = ast.Anonymous(ctx.GetStart())
-	l.actions = append(l.actions, l.ai.Anonymous)
+	a := ast.Anonymous(ctx.GetStart())
+	l.seq().Append(a)
+	l.actions = append(l.actions, a)
 }
 
 // ExitOptionalArea is called when production optionalArea is exited.
@@ -266,7 +270,8 @@ func (l *Listener) ExitOptionalArea(ctx *parser.OptionalAreaContext) {
 
 // EnterAtEnd is called when production atEnd is entered.
 func (l *Listener) EnterAtEnd(ctx *parser.AtEndContext) {
-	l.ai.End, _ = ast.AtTheEnd()
+	a := ast.AtEnd{}
+	l.seq().Append(a)
 }
 
 // ExitAtEnd is called when production atEnd is exited.
@@ -284,32 +289,41 @@ func (l *Listener) ExitTarget(ctx *parser.TargetContext) {}
 
 // EnterTargetLit is called when production targetLit is entered.
 func (l *Listener) EnterTargetLit(ctx *parser.TargetLitContext) {
+	var a ast.Action
 	if l.stateIsPrefix {
 		if l.prefixJump == 0 {
 			if ctx.StringLit() != nil {
 				if l.optional {
-					l.ai.MayBeStartWithString, _ = ast.MayBeStartsWithString(ctx.StringLit().GetSymbol())
+					a = ast.MayBeStartsWithString(ctx.StringLit().GetSymbol())
 				} else {
-					l.ai.StartWithString, _ = ast.StartsWithString(ctx.StringLit().GetSymbol())
+					a = ast.StartsWithString(ctx.StringLit().GetSymbol())
 				}
 			} else if ctx.CharLit() != nil {
 				if l.optional {
-					l.ai.MayBeStartWithChar, _ = ast.MayBeStartsWithChar(ctx.CharLit().GetSymbol())
+					a = ast.MayBeStartsWithChar(ctx.CharLit().GetSymbol())
 				} else {
-					l.ai.StartWithChar, _ = ast.StartsWithChar(ctx.CharLit().GetSymbol())
+					a = ast.StartsWithChar(ctx.CharLit().GetSymbol())
 				}
+			}
+			if a != nil {
+				l.seq().Append(a)
 			}
 			return
 		} else {
 			if l.optional {
-				l.ai.PassOrIgnore, _ = ast.PassUntilTargetOrIgnore()
-				l.target = l.ai.PassOrIgnore.Limit
+				ll := ast.PassUntilTargetOrIgnore()
+				a = ll
+				l.target = ll.Limit
 			} else {
-				l.ai.Pass, _ = ast.PassUntilTarget()
-				l.target = l.ai.Pass.Limit
+				ll := ast.PassUntilTarget()
+				a = ll
+				l.target = ll.Limit
 			}
 			l.target.SetBound(l.prefixJump, l.prefixJump)
 		}
+	}
+	if a != nil {
+		l.seq().Append(a)
 	}
 	if ctx.StringLit() != nil {
 		l.target.SetString(ctx.StringLit().GetText())

@@ -1,6 +1,6 @@
 package gogen
 
-import "github.com/sirkon/ldetool/internal/generator/gogen/srcobj"
+import "github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 
 /* decode_int8 sample - other templates are the same
 tmp ={{ .Source }};

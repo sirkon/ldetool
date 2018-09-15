@@ -14,11 +14,11 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
-	"github.com/sirkon/ldetool/internal/builder"
 	"github.com/sirkon/ldetool/internal/generator"
 	"github.com/sirkon/ldetool/internal/generator/gogen"
 	"github.com/sirkon/ldetool/internal/listener"
 	"github.com/sirkon/ldetool/internal/parser"
+	"github.com/sirkon/ldetool/internal/srcbuilder"
 	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
@@ -36,7 +36,7 @@ func generateAction(c *cli.Context) (err error) {
 			case string:
 				err = errors.New(v)
 			default:
-				panic(err)
+				panic(r)
 			}
 		}
 		if err != nil {
@@ -94,7 +94,7 @@ func generateAction(c *cli.Context) (err error) {
 	} else if c.Bool("big-endian") {
 		gen.PlatformType(generator.BigEndian)
 	}
-	b := builder.NewBuilder(c.String("package"), gen, tmpDest, gfy)
+	b := srcbuilder.New(c.String("package"), gen, tmpDest, gfy)
 	b.DontRecover()
 	for _, rule := range rules {
 		if gfy.Public(rule.Name) != rule.Name {

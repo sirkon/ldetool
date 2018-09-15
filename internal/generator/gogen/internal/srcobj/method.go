@@ -28,7 +28,7 @@ var go2resultType = map[string]hardToAccessResultType{
 	"string":  hardToAccessResultType("[]byte"),
 }
 
-func Go2ResultType(useString bool, goType string) hardToAccessResultType {
+func Go2ResultType(useString bool, goType string) (hardToAccessResultType, error) {
 	var res hardToAccessResultType
 	var ok bool
 	if useString && goType == "string" {
@@ -36,10 +36,10 @@ func Go2ResultType(useString bool, goType string) hardToAccessResultType {
 	} else {
 		res, ok = go2resultType[goType]
 		if !ok {
-			panic(fmt.Errorf("unsupported type `\033[1m%s\033[0m`", goType))
+			return res, fmt.Errorf("unsupported type `\033[1m%s\033[0m`", goType)
 		}
 	}
-	return res
+	return res, nil
 }
 
 // ExtractorResult
