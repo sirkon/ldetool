@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"strings"
 
 	"bytes"
@@ -22,6 +23,15 @@ import (
 	"github.com/sirkon/message"
 	"github.com/urfave/cli"
 )
+
+func getOutputFileName(ruleFile string) string {
+	dirPath, fname := filepath.Split(ruleFile)
+	if strings.HasSuffix(fname, ".lde") {
+		fname = fname[:len(fname)-4]
+	}
+	fname = fmt.Sprintf("%s_lde.go", strings.Replace(fname, ".", "_", -1))
+	return path.Join(dirPath, fname)
+}
 
 func generateAction(c *cli.Context) (err error) {
 
@@ -57,8 +67,8 @@ func generateAction(c *cli.Context) (err error) {
 		}
 	}()
 
-	fileName := c.Args()[0]
-	input, err := antlr.NewFileStream(fileName)
+	ruleFileName := c.Args().First()
+	input, err := antlr.NewFileStream(ruleFileName)
 	if err != nil {
 		return
 	}
@@ -81,11 +91,6 @@ func generateAction(c *cli.Context) (err error) {
 	rules := l.Rules()
 	formatDict := getDict(c)
 
-	if strings.HasSuffix(fileName, ".lde") {
-		fileName = fileName[:len(fileName)-4]
-	}
-	dirPath, fname := filepath.Split(fileName)
-	fname = fmt.Sprintf("%s_lde.go", strings.Replace(fname, ".", "_", -1))
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)
 	gen := gogen.NewGenerator(c.Bool("go-string"), gfy)
@@ -114,7 +119,8 @@ func generateAction(c *cli.Context) (err error) {
 		return
 	}
 
-	dest, err := os.Create(filepath.Join(dirPath, fname))
+	destFileName := getOutputFileName(ruleFileName)
+	dest, err := os.Create(destFileName)
 	if err != nil {
 		message.Fatal(err)
 	}
@@ -123,7 +129,7 @@ func generateAction(c *cli.Context) (err error) {
 			message.Error(nerr)
 		}
 		if err != nil {
-			if nerr := os.Remove(fname); nerr != nil {
+			if nerr := os.Remove(destFileName); nerr != nil {
 				message.Warning(nerr)
 			}
 		}
