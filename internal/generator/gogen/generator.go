@@ -174,10 +174,10 @@ func (g *Generator) UseRule(name string, t antlr.Token) error {
 	g.namespaces = nil
 	g.ruleName = name
 	g.obj = []*srcobj.Strct{g.file.AddExtractor(name)}
-	g.curObj().AddString("rest")
+	g.curObj().AddString("Rest")
 	g.body = g.file.AddExtract(name).Body()
 	g.body.Append(srcobj.LineAssign{
-		Receiver: "p.rest",
+		Receiver: "p.Rest",
 		Expr:     srcobj.Raw("line"),
 	})
 	g.optgetters = srcobj.NewBody()

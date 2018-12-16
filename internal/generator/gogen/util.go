@@ -42,7 +42,7 @@ func (g *Generator) constNameFromContent(value string) string {
 
 // regVar registers variable of the given type
 func (g *Generator) regVar(name, varType string) error {
-	if name == "p.rest" {
+	if name == "p.Rest" {
 		return nil
 	}
 	if ok, err := regexp.MatchString(`^[a-zA-Z_][a-zA-Z0-9_]*$`, name); !ok {
@@ -176,14 +176,14 @@ func (g *Generator) abandoned() bool {
 
 func (g *Generator) curRestVar() string {
 	if len(g.namespaces) == 0 {
-		return "p.rest"
+		return "p.Rest"
 	}
 	return g.goish.Private(fmt.Sprintf("rest%d", len(g.namespaces)))
 }
 
 func (g *Generator) prevRestVar() string {
 	if len(g.namespaces) <= 1 {
-		return "p.rest"
+		return "p.Rest"
 	}
 	return g.goish.Private(strings.Join(g.namespaces[:len(g.namespaces)-1], "_") + "_rest")
 }

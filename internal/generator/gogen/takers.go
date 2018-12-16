@@ -11,8 +11,8 @@ import (
 )
 
 /* take_before_string
-if pos = bytes.Index(p.rest, {{ .ConstName }}); pos >= 0 {
-    {{ call .Decoder "p.rest[:pos]" .Dest }}
+if pos = bytes.Index(p.Rest, {{ .ConstName }}); pos >= 0 {
+    {{ call .Decoder "p.Rest[:pos]" .Dest }}
 } else {
     return false, {{ if .Serious }}fmt.Errorf("Can't find a string limiting a value of {{ .Dest }}{{ else }}nil{{end}}
 }
