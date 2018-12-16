@@ -1,4 +1,4 @@
-module github.com/sirkon/ldetool
+module github.com/sirkon/ldetool/v3
 
 require (
 	github.com/BurntSushi/toml v0.3.0 // indirect
