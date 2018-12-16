@@ -13,6 +13,8 @@ import (
 	"github.com/sirkon/ldetool/internal/generator"
 )
 
+var _ ast.ActionDispatcher = &SrcBuilder{}
+
 // SrcBuilder creates target sources using Generator object
 type SrcBuilder struct {
 	pkgName      string

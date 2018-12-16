@@ -30,8 +30,8 @@ type Generator interface {
 
 	// Takes
 	// Take before anchor (string or character)
-	TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand bool) error
-	TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand bool) error
+	TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand, include bool) error
+	TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand, include bool) error
 
 	// Take the rest
 	TakeRest(name, fieldType string) error

@@ -18,7 +18,9 @@ type ActionDispatcher interface {
 	DispatchStartChar(a *StartChar) error
 	DispatchStartString(a *StartString) error
 	DispatchTake(a *Take) error
+	DispatchTakeIncluding(a *TakeIncluding) error
 	DispatchTakeRest(a *TakeRest) error
 	DispatchTakeUntilOrRest(a *TakeUntilOrRest) error
+	DispatchTakeUntilIncludingOrRest(a *TakeUntilIncludingOrRest) error
 	DispatchRule(a *Rule) error
 }

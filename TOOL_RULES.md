@@ -129,9 +129,27 @@ So, the rules
 |``ID(τ)?"t"[M:N]``||
 |``ID(τ)?"t"[M:]``||
 |``?ID(...)``|Optional named group. When its own set of rules failed it marks its ``ID.Valid`` field to false|``?ID(V(int8)' ')("1 b")``|``ID.Valid=true``<br>``ID.V=1``<br>``rest="b"``|
+|``ID[τ] 'c'``|This works exactly the same as regular ``ID(τ) 'c'`` with one excpetion: the `c` character will be consumed as well|``ID(string)'c'("1cb")``|``ID=1c``<br>``rest=b``|
+|``ID[τ]?'c'``||
+|``ID[τ]'c'[:N]``||
+|``ID[τ]?'c'[:N]``||
+|``ID[τ]'c'[M:N]``||
+|``ID[τ]'c'[M:]``||
+|``ID[τ]?'c'[M:N]``||
+|``ID[τ]?'c'[M:]``||
+|``ID[τ]"tau"``|This works exactly the same as regular ``ID(τ) "tau"`` with one exception: the "tau" string will be consumed as well|``ID(string)"t"("1ta")``|``ID=1t``<br>``rest=a``|
+|``ID[τ]?"t"``||
+|``ID[τ]"t"[:N]``||
+|``ID[τ]?"t"[:N]``||
+|``ID[τ]"t"[M:N]``||
+|``ID[τ]"t"[M:]``||
+|``ID[τ]?"t"[M:N]``||
+|``ID[τ]?"t"[M:]``||
 
 It is possible to use short lookup sign as well:
 ``ID(τ)~'c'``
+
+
 
 ## Miscellaenous rules
 

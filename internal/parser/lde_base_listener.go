@@ -1,4 +1,4 @@
-// Generated from LDE.g4 by ANTLR 4.7.
+// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
 
 package parser // LDE
 
@@ -81,11 +81,23 @@ func (s *BaseLDEListener) EnterTakeUntil(ctx *TakeUntilContext) {}
 // ExitTakeUntil is called when production takeUntil is exited.
 func (s *BaseLDEListener) ExitTakeUntil(ctx *TakeUntilContext) {}
 
+// EnterTakeUntilIncluding is called when production takeUntilIncluding is entered.
+func (s *BaseLDEListener) EnterTakeUntilIncluding(ctx *TakeUntilIncludingContext) {}
+
+// ExitTakeUntilIncluding is called when production takeUntilIncluding is exited.
+func (s *BaseLDEListener) ExitTakeUntilIncluding(ctx *TakeUntilIncludingContext) {}
+
 // EnterTakeUntilOrRest is called when production takeUntilOrRest is entered.
 func (s *BaseLDEListener) EnterTakeUntilOrRest(ctx *TakeUntilOrRestContext) {}
 
 // ExitTakeUntilOrRest is called when production takeUntilOrRest is exited.
 func (s *BaseLDEListener) ExitTakeUntilOrRest(ctx *TakeUntilOrRestContext) {}
+
+// EnterTakeUntilIncludingOrRest is called when production takeUntilIncludingOrRest is entered.
+func (s *BaseLDEListener) EnterTakeUntilIncludingOrRest(ctx *TakeUntilIncludingOrRestContext) {}
+
+// ExitTakeUntilIncludingOrRest is called when production takeUntilIncludingOrRest is exited.
+func (s *BaseLDEListener) ExitTakeUntilIncludingOrRest(ctx *TakeUntilIncludingOrRestContext) {}
 
 // EnterTakeUntilRest is called when production takeUntilRest is entered.
 func (s *BaseLDEListener) EnterTakeUntilRest(ctx *TakeUntilRestContext) {}
