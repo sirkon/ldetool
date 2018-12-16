@@ -23,6 +23,7 @@ type appender interface {
 var reservedWords = map[string]struct{}{
 	"Valid":   {},
 	"Extract": {},
+	"Rest":    {},
 }
 
 func checkReserved(token antlr.Token) {

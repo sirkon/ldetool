@@ -24,7 +24,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 	require.Equal(t, float32(9), d.Float32)
 	require.Equal(t, float64(11e7), d.Float64)
 	require.Equal(t, "abcdef", string(d.String))
-	require.Equal(t, "rest", string(d.rest))
+	require.Equal(t, "rest", string(d.Rest))
 	ok, err = d.Extract([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdefrest`))
 	require.False(t, ok)
 
@@ -45,7 +45,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 	require.Equal(t, float32(9), dl.Float32)
 	require.Equal(t, float64(11e7), dl.Float64)
 	require.Equal(t, "abcdef", string(dl.String))
-	require.Equal(t, "rest               ", string(dl.rest))
+	require.Equal(t, "rest               ", string(dl.Rest))
 
 	db := &DecodersBounded{}
 	ok, err = db.Extract([]byte(`11122321312313         `))
@@ -54,7 +54,7 @@ func TestBasicBeforeCharDecoder(t *testing.T) {
 	}
 	require.True(t, ok)
 	require.Equal(t, int64(11122321312313), db.Int64)
-	require.Equal(t, "        ", string(db.rest))
+	require.Equal(t, "        ", string(db.Rest))
 }
 
 func TestBasicBeforeStringDecoder(t *testing.T) {
@@ -75,7 +75,7 @@ func TestBasicBeforeStringDecoder(t *testing.T) {
 	require.Equal(t, float32(9), d.Float32)
 	require.Equal(t, float64(11e7), d.Float64)
 	require.Equal(t, "abcdef", string(d.String))
-	require.Equal(t, "rest", string(d.rest))
+	require.Equal(t, "rest", string(d.Rest))
 
 	dl := &DecodersLimitedString{}
 	ok, err = dl.Extract([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
@@ -94,7 +94,7 @@ func TestBasicBeforeStringDecoder(t *testing.T) {
 	require.Equal(t, float32(9), dl.Float32)
 	require.Equal(t, float64(11e7), dl.Float64)
 	require.Equal(t, "abcdef", string(dl.String))
-	require.Equal(t, "rest", string(dl.rest))
+	require.Equal(t, "rest", string(dl.Rest))
 
 	db := &DecodersBoundedString{}
 	ok, err = db.Extract([]byte(`11122321312313         `))
@@ -103,7 +103,7 @@ func TestBasicBeforeStringDecoder(t *testing.T) {
 	}
 	require.True(t, ok)
 	require.Equal(t, float64(11122321312313), db.Float64)
-	require.Equal(t, "        ", string(db.rest))
+	require.Equal(t, "        ", string(db.Rest))
 }
 
 func TestBasicBeforeCharStressDecoder(t *testing.T) {
@@ -124,7 +124,7 @@ func TestBasicBeforeCharStressDecoder(t *testing.T) {
 	require.Equal(t, float32(9), d.Float32)
 	require.Equal(t, float64(11e7), d.Float64)
 	require.Equal(t, "abcdef", string(d.String))
-	require.Equal(t, "rest", string(d.rest))
+	require.Equal(t, "rest", string(d.Rest))
 	ok, err = d.Extract([]byte(`1 2 3 4 5 6 7 8 9 11e7abcdef rest`))
 	require.NotNil(t, err)
 
@@ -145,7 +145,7 @@ func TestBasicBeforeCharStressDecoder(t *testing.T) {
 	require.Equal(t, float32(9), dl.Float32)
 	require.Equal(t, float64(11e7), dl.Float64)
 	require.Equal(t, "abcdef", string(dl.String))
-	require.Equal(t, "rest", string(dl.rest))
+	require.Equal(t, "rest", string(dl.Rest))
 
 	db := &DecodersBoundedStress{}
 	ok, err = db.Extract([]byte(`11122321312313         `))
@@ -154,7 +154,7 @@ func TestBasicBeforeCharStressDecoder(t *testing.T) {
 	}
 	require.True(t, ok)
 	require.Equal(t, int64(11122321312313), db.Int64)
-	require.Equal(t, "        ", string(db.rest))
+	require.Equal(t, "        ", string(db.Rest))
 }
 
 func TestBasicBeforeStringStressDecoder(t *testing.T) {
@@ -175,7 +175,7 @@ func TestBasicBeforeStringStressDecoder(t *testing.T) {
 	require.Equal(t, float32(9), d.Float32)
 	require.Equal(t, float64(11e7), d.Float64)
 	require.Equal(t, "abcdef", string(d.String))
-	require.Equal(t, "rest", string(d.rest))
+	require.Equal(t, "rest", string(d.Rest))
 
 	dl := &DecodersLimitedStringStress{}
 	ok, err = dl.Extract([]byte(`1 2 3 4 5 6 7 8 9 11e7 abcdef rest`))
@@ -194,7 +194,7 @@ func TestBasicBeforeStringStressDecoder(t *testing.T) {
 	require.Equal(t, float32(9), dl.Float32)
 	require.Equal(t, float64(11e7), dl.Float64)
 	require.Equal(t, "abcdef", string(dl.String))
-	require.Equal(t, "rest", string(dl.rest))
+	require.Equal(t, "rest", string(dl.Rest))
 
 	db := &DecodersBoundedStringStress{}
 	ok, err = db.Extract([]byte(`11122321312313         `))
@@ -203,7 +203,7 @@ func TestBasicBeforeStringStressDecoder(t *testing.T) {
 	}
 	require.True(t, ok)
 	require.Equal(t, float64(11122321312313), db.Float64)
-	require.Equal(t, "        ", string(db.rest))
+	require.Equal(t, "        ", string(db.Rest))
 }
 
 func TestDecoderOptionals(t *testing.T) {
@@ -336,7 +336,7 @@ func TestPrefixes(t *testing.T) {
 		}
 	}
 	require.Equal(t, p.Data, int32(123))
-	require.Equal(t, p.Rest, int32(54321))
+	require.Equal(t, p.Rest1, int32(54321))
 }
 
 func TestFixedLook(t *testing.T) {
@@ -349,7 +349,7 @@ func TestFixedLook(t *testing.T) {
 		}
 	}
 	require.Equal(t, p.Data, int32(90))
-	require.Equal(t, p.Rest, int32(12))
+	require.Equal(t, p.Rest1, int32(12))
 }
 
 func TestAnonymousAreas(t *testing.T) {
@@ -438,7 +438,7 @@ func TestJump(t *testing.T) {
 	require.Equal(t, "34", string(p.Second))
 	require.Equal(t, "15", string(p.Third))
 	require.Equal(t, "1@", string(p.Fourth))
-	require.Equal(t, "", string(p.rest))
+	require.Equal(t, "", string(p.Rest))
 }
 
 func TestLookupJump(t *testing.T) {
@@ -450,7 +450,7 @@ func TestLookupJump(t *testing.T) {
 		}
 		require.NotNil(t, err)
 	}
-	require.Equal(t, "123", string(p.rest))
+	require.Equal(t, "123", string(p.Rest))
 }
 
 func TestTargetConstraintsCheck(t *testing.T) {
@@ -471,7 +471,7 @@ func TestTargetConstraintsCheck(t *testing.T) {
 	src = []byte("1 1 abcdef")
 	ok, err = p.Extract(src)
 	require.True(t, ok)
-	require.Equal(t, "abcdef", string(p.rest))
+	require.Equal(t, "abcdef", string(p.Rest))
 }
 
 func TestIncludeChar(t *testing.T) {

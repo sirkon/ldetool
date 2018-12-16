@@ -17,7 +17,7 @@ import (
 
 // Rule ...
 type Rule struct {
-	rest     string
+	Rest     string
 	Data     string
 	Signed   int
 	Unsigned uint
@@ -25,7 +25,7 @@ type Rule struct {
 
 // Extract ...
 func (p *Rule) Extract(line string) (bool, error) {
-	p.rest = line
+	p.Rest = line
 	var err error
 	var pos int
 	var tmp string
@@ -33,33 +33,33 @@ func (p *Rule) Extract(line string) (bool, error) {
 	var tmpUint uint64
 
 	// Checks if the rest starts with '[' and pass it
-	if len(p.rest) >= 1 && p.rest[0] == '[' {
-		p.rest = p.rest[1:]
+	if len(p.Rest) >= 1 && p.Rest[0] == '[' {
+		p.Rest = p.Rest[1:]
 	} else {
 		return false, nil
 	}
 
 	// Take until ']' as Data(string)
-	pos = strings.IndexByte(p.rest, ']')
+	pos = strings.IndexByte(p.Rest, ']')
 	if pos >= 0 {
-		p.Data = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
+		p.Data = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
 	} else {
 		return false, nil
 	}
 
 	// Checks if the rest starts with ' ' and pass it
-	if len(p.rest) >= 1 && p.rest[0] == ' ' {
-		p.rest = p.rest[1:]
+	if len(p.Rest) >= 1 && p.Rest[0] == ' ' {
+		p.Rest = p.Rest[1:]
 	} else {
 		return false, nil
 	}
 
 	// Take until ' ' as Signed(int)
-	pos = strings.IndexByte(p.rest, ' ')
+	pos = strings.IndexByte(p.Rest, ' ')
 	if pos >= 0 {
-		tmp = p.rest[:pos]
-		p.rest = p.rest[pos+1:]
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
 	} else {
 		return false, nil
 	}
@@ -69,17 +69,17 @@ func (p *Rule) Extract(line string) (bool, error) {
 	p.Signed = int(tmpInt)
 
 	// Checks if the rest starts with ' ' and pass it
-	if len(p.rest) >= 1 && p.rest[0] == ' ' {
-		p.rest = p.rest[1:]
+	if len(p.Rest) >= 1 && p.Rest[0] == ' ' {
+		p.Rest = p.Rest[1:]
 	} else {
 		return false, nil
 	}
 
 	// Take the rest as Unsigned(uint)
-	if tmpUint, err = strconv.ParseUint(p.rest, 10, 64); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.rest), err)
+	if tmpUint, err = strconv.ParseUint(p.Rest, 10, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.Rest), err)
 	}
 	p.Unsigned = uint(tmpUint)
-	p.rest = p.rest[len(p.rest):]
+	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }
