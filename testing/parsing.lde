@@ -198,4 +198,8 @@ URL =
     )
     Host(string) ':'[1:] Port(uint16) ?'/' DBName(string);
 
+IncludeChar =
+    Data[string] '@' Field2(int) '@';
 
+IncludeString =
+    Data[string] "ab" Field2(int) "ab";

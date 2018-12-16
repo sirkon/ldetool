@@ -18,6 +18,8 @@ type Name struct {
 	token antlr.Token
 }
 
+var _ generator.Generator = &Generator{}
+
 // Generator implementation of generator.Generator
 // for Go target
 type Generator struct {

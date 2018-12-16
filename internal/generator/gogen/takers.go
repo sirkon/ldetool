@@ -86,7 +86,7 @@ func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
 }
 
 // TakeBeforeStringEx ...
-func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand bool) error {
+func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand, include bool) error {
 	if err := g.regVar("pos", "int"); err != nil {
 		return err
 	}
@@ -124,8 +124,8 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	if lower > 0 && lower == upper {
 		body.Append(srcobj.Comment(
 			fmt.Sprintf(
-				"Take until %s character if it starts %s substring%sas %s(%s)",
-				numerator(lower), anchor, ccc, name, fieldType)))
+				"Take until %s %s if it starts %s substring%sas %s(%s)",
+				numerator(lower), valueIfTrue(include, "including it"), anchor, ccc, name, fieldType)))
 
 		var unquoted string
 		if err := json.Unmarshal([]byte(anchor), &unquoted); err != nil {
@@ -156,7 +156,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 			Else: srcobj.Assign("pos", srcobj.Literal(-1)),
 		})
 	} else {
-		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%sas %s(%s)", anchor, ccc, name, fieldType)))
+		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%s%sas %s(%s)", anchor, valueIfTrue(include, " including it "), ccc, name, fieldType)))
 		var lookup srcobj.Source
 		if close {
 			lookup = srcobj.LookupStringShort(g.useString, "pos", rest, srcobj.Raw(constName))
@@ -237,11 +237,16 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	if lower > 0 && upper != lower {
 		offset = srcobj.OperatorAdd(offset, srcobj.Literal(lower))
 	}
-
-	var takeOff srcobj.Source = srcobj.Raw("pos")
-	if lower > 0 && upper != lower {
-		takeOff = srcobj.OperatorAdd(takeOff, srcobj.Literal(lower))
+	var takeOff srcobj.Source
+	if include {
+		takeOff = offset
+	} else {
+		takeOff = srcobj.Raw("pos")
+		if lower > 0 && upper != lower {
+			takeOff = srcobj.OperatorAdd(takeOff, srcobj.Literal(lower))
+		}
 	}
+
 	var mainPath srcobj.Source
 	if fieldType == "string" {
 		mainPath = srcobj.NewBody(
@@ -288,8 +293,15 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	return nil
 }
 
+func valueIfTrue(flag bool, value string) string {
+	if flag {
+		return value
+	}
+	return ""
+}
+
 // TakeBeforeChar ...
-func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand bool) error {
+func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand, include bool) error {
 	if err := g.regVar("pos", "int"); err != nil {
 		return err
 	}
@@ -325,8 +337,8 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 	if lower > 0 && lower == upper {
 		body.Append(srcobj.Comment(
 			fmt.Sprintf(
-				"Take until %s character if it is%s%sas %s(%s)",
-				numerator(lower), char, ccc, name, fieldType)))
+				"Take until %s character %sif it is%s%sas %s(%s)",
+				numerator(lower), valueIfTrue(include, "including it "), char, ccc, name, fieldType)))
 		cond := srcobj.OperatorAnd(
 			srcobj.OperatorGE(
 				srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
@@ -349,7 +361,7 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 			Else: srcobj.Assign("pos", srcobj.Literal(-1)),
 		})
 	} else {
-		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%sas %s(%s)", char, ccc, name, fieldType)))
+		body.Append(srcobj.Comment(fmt.Sprintf("Take until %s%s%sas %s(%s)", char, valueIfTrue(include, " including it"), ccc, name, fieldType)))
 		var lookup srcobj.Source
 		if close {
 			lookup = srcobj.LookupByteShort{
@@ -434,9 +446,14 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 		offset = srcobj.OperatorAdd(offset, srcobj.Literal(lower))
 	}
 
-	var takeOff srcobj.Source = srcobj.Raw("pos")
-	if lower > 0 && upper != lower {
-		takeOff = srcobj.OperatorAdd(takeOff, srcobj.Literal(lower))
+	var takeOff srcobj.Source
+	if include {
+		takeOff = offset
+	} else {
+		takeOff = srcobj.Raw("pos")
+		if lower > 0 && upper != lower {
+			takeOff = srcobj.OperatorAdd(takeOff, srcobj.Literal(lower))
+		}
 	}
 
 	var mainPath srcobj.Source

@@ -14,6 +14,8 @@ import (
 	"github.com/sirkon/ldetool/internal/parser"
 )
 
+var _ parser.LDEListener = &Listener{}
+
 type appender interface {
 	Append(i ast.Action)
 }
@@ -217,18 +219,38 @@ func (l *Listener) EnterTakeUntil(ctx *parser.TakeUntilContext) {
 // ExitTakeUntil is called when production takeUntil is exited.
 func (l *Listener) ExitTakeUntil(ctx *parser.TakeUntilContext) {}
 
+// EnterTakeUntilIncluding is called when production takeUntilIncluding is enterd
+func (l *Listener) EnterTakeUntilIncluding(ctx *parser.TakeUntilIncludingContext) {
+	checkReserved(ctx.Identifier().GetSymbol())
+	a := ast.TakeUntilTargetIncluding(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
+	l.seq().Append(a)
+	l.target = a.Limit
+}
+
+// ExitTakeUntilIncluding ...
+func (l *Listener) ExitTakeUntilIncluding(ctx *parser.TakeUntilIncludingContext) {}
+
 // EnterTakeUntilOrRest is called when production takeUntilOrRest is entered.
 func (l *Listener) EnterTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {
 	checkReserved(ctx.Identifier().GetSymbol())
-	a := ast.TakeUntilTargetOrRest(
-		ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart(),
-	)
+	a := ast.TakeUntilTargetOrRest(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 	l.seq().Append(a)
 	l.target = a.Limit
 }
 
 // ExitTakeUntilOrRest is called when production takeUntilOrRest is exited.
 func (l *Listener) ExitTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {}
+
+// EnterTakeUntilIncludingOrRest ...
+func (l *Listener) EnterTakeUntilIncludingOrRest(ctx *parser.TakeUntilIncludingOrRestContext) {
+	checkReserved(ctx.Identifier().GetSymbol())
+	a := ast.TakeUntilTargetIncludingOrRest(ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
+	l.seq().Append(a)
+	l.target = a.Limit
+}
+
+// ExitTakeUntilIncludingOrRest ...
+func (l *Listener) ExitTakeUntilIncludingOrRest(c *parser.TakeUntilIncludingOrRestContext) {}
 
 // EnterTakeUntilRest is called when production takeUntilRest is entered.
 func (l *Listener) EnterTakeUntilRest(ctx *parser.TakeUntilRestContext) {

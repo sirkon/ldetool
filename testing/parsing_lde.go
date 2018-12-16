@@ -16,6 +16,7 @@ import (
 	"unsafe"
 )
 
+var ab = []byte("ab")
 var ba = []byte("ba")
 var const123456789 = []byte("123456789")
 var const34 = []byte("34")
@@ -2027,7 +2028,7 @@ func (p *FixedLook) Extract(line []byte) (bool, error) {
 	var tmp []byte
 	var tmpInt int64
 
-	// Take until 3rd character if it starts "123456789" substring as Data(int32)
+	// Take until 3rd  if it starts "123456789" substring as Data(int32)
 	if len(p.rest) >= len(const123456789)+2 && bytes.HasPrefix(p.rest[2:], const123456789) {
 		pos = 2
 	} else {
@@ -2044,7 +2045,7 @@ func (p *FixedLook) Extract(line []byte) (bool, error) {
 	}
 	p.Data = int32(tmpInt)
 
-	// Take until 4th character if it starts "34" substring as Rest(int32)
+	// Take until 4th  if it starts "34" substring as Rest(int32)
 	if len(p.rest)-3 >= 2 && *(*uint64)(unsafe.Pointer(&p.rest[3]))&0xffff == 0x3433 {
 		pos = 3
 	} else {
@@ -2568,4 +2569,84 @@ func (p *URL) GetUserUser() (res []byte) {
 		res = p.User.User
 	}
 	return
+}
+
+// IncludeChar ...
+type IncludeChar struct {
+	rest   []byte
+	Data   []byte
+	Field2 int
+}
+
+// Extract ...
+func (p *IncludeChar) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpInt int64
+
+	// Take until '@' including it as Data(string)
+	pos = bytes.IndexByte(p.rest, '@')
+	if pos >= 0 {
+		p.Data = p.rest[:pos+1]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+
+	// Take until '@' as Field2(int)
+	pos = bytes.IndexByte(p.rest, '@')
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Field2 = int(tmpInt)
+
+	return true, nil
+}
+
+// IncludeString ...
+type IncludeString struct {
+	rest   []byte
+	Data   []byte
+	Field2 int
+}
+
+// Extract ...
+func (p *IncludeString) Extract(line []byte) (bool, error) {
+	p.rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpInt int64
+
+	// Take until "ab" including it  as Data(string)
+	pos = bytes.Index(p.rest, ab)
+	if pos >= 0 {
+		p.Data = p.rest[:pos+len(ab)]
+		p.rest = p.rest[pos+len(ab):]
+	} else {
+		return false, nil
+	}
+
+	// Take until "ab" as Field2(int)
+	pos = bytes.Index(p.rest, ab)
+	if pos >= 0 {
+		tmp = p.rest[:pos]
+		p.rest = p.rest[pos+len(ab):]
+	} else {
+		return false, nil
+	}
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.Field2 = int(tmpInt)
+
+	return true, nil
 }

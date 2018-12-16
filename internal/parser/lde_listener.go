@@ -1,4 +1,4 @@
-// Generated from LDE.g4 by ANTLR 4.7.
+// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
 
 package parser // LDE
 
@@ -38,8 +38,14 @@ type LDEListener interface {
 	// EnterTakeUntil is called when entering the takeUntil production.
 	EnterTakeUntil(c *TakeUntilContext)
 
+	// EnterTakeUntilIncluding is called when entering the takeUntilIncluding production.
+	EnterTakeUntilIncluding(c *TakeUntilIncludingContext)
+
 	// EnterTakeUntilOrRest is called when entering the takeUntilOrRest production.
 	EnterTakeUntilOrRest(c *TakeUntilOrRestContext)
+
+	// EnterTakeUntilIncludingOrRest is called when entering the takeUntilIncludingOrRest production.
+	EnterTakeUntilIncludingOrRest(c *TakeUntilIncludingOrRestContext)
 
 	// EnterTakeUntilRest is called when entering the takeUntilRest production.
 	EnterTakeUntilRest(c *TakeUntilRestContext)
@@ -104,8 +110,14 @@ type LDEListener interface {
 	// ExitTakeUntil is called when exiting the takeUntil production.
 	ExitTakeUntil(c *TakeUntilContext)
 
+	// ExitTakeUntilIncluding is called when exiting the takeUntilIncluding production.
+	ExitTakeUntilIncluding(c *TakeUntilIncludingContext)
+
 	// ExitTakeUntilOrRest is called when exiting the takeUntilOrRest production.
 	ExitTakeUntilOrRest(c *TakeUntilOrRestContext)
+
+	// ExitTakeUntilIncludingOrRest is called when exiting the takeUntilIncludingOrRest production.
+	ExitTakeUntilIncludingOrRest(c *TakeUntilIncludingOrRestContext)
 
 	// ExitTakeUntilRest is called when exiting the takeUntilRest production.
 	ExitTakeUntilRest(c *TakeUntilRestContext)

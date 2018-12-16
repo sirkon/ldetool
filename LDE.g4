@@ -24,7 +24,9 @@ atomicAction
     | passUntil
     | mayPassUntil
     | takeUntil
+    | takeUntilIncluding
     | takeUntilOrRest
+    | takeUntilIncludingOrRest
     | takeUntilRest
     | optionalNamedArea
     | optionalArea
@@ -52,8 +54,14 @@ mayPassUntil
 takeUntil
     : Identifier '(' fieldType ')' target;
 
+takeUntilIncluding
+    : Identifier '[' fieldType ']' target;
+
 takeUntilOrRest
     : Identifier '(' fieldType ')' '?' target;
+
+takeUntilIncludingOrRest
+    : Identifier '[' fieldType ']' '?' target;
 
 takeUntilRest
     : Identifier '(' fieldType ')';

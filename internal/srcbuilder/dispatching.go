@@ -220,7 +220,7 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 			}
 			if err := sb.gen.TakeBeforeString(
 				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
-				a.Limit.Close, false); err != nil {
+				a.Limit.Close, false, false); err != nil {
 				return err
 			}
 			return nil
@@ -232,7 +232,54 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 			}
 			if err := sb.gen.TakeBeforeChar(
 				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
-				a.Limit.Close, false); err != nil {
+				a.Limit.Close, false, false); err != nil {
+				return err
+			}
+			return nil
+		})
+	}
+	return nil
+}
+
+func (sb *SrcBuilder) DispatchTakeIncluding(a *ast.TakeIncluding) error {
+	if sb.anonDepth > 0 {
+		return fmt.Errorf(
+			"%d:%d: cannot take while being in anonymous area",
+			a.Field.NameToken.GetLine(),
+			a.Field.NameToken.GetColumn()+2,
+		)
+	}
+	if err := sb.checkField(a.Field); err != nil {
+		return err
+	}
+	sb.prefixTie(a.Field.Name)
+	defer sb.prefixUntie()
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	lower := a.Limit.Lower
+	upper := a.Limit.Upper
+	switch a.Limit.Type {
+	case ast.String:
+		sb.appendGens(func() error {
+			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+				return err
+			}
+			if err := sb.gen.TakeBeforeString(
+				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
+				a.Limit.Close, false, true); err != nil {
+				return err
+			}
+			return nil
+		})
+	case ast.Char:
+		sb.appendGens(func() error {
+			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+				return err
+			}
+			if err := sb.gen.TakeBeforeChar(
+				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
+				a.Limit.Close, false, true); err != nil {
 				return err
 			}
 			return nil
@@ -293,7 +340,7 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 			}
 			if err := sb.gen.TakeBeforeString(
 				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
-				a.Limit.Close, true); err != nil {
+				a.Limit.Close, true, false); err != nil {
 				return err
 			}
 			return nil
@@ -305,7 +352,52 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 			}
 			if err := sb.gen.TakeBeforeChar(
 				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
-				a.Limit.Close, true); err != nil {
+				a.Limit.Close, true, false); err != nil {
+				return err
+			}
+			return nil
+		})
+	}
+	return nil
+}
+
+func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncludingOrRest) error {
+	if sb.anonDepth > 0 {
+		return fmt.Errorf(
+			"%d:%d: cannot take in anonymous area",
+			a.Field.NameToken.GetLine(),
+			a.Field.NameToken.GetColumn()+2,
+		)
+	}
+	if err := sb.checkField(a.Field); err != nil {
+		return err
+	}
+	sb.prefixTie(a.Field.Name)
+	defer sb.prefixUntie()
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	switch a.Limit.Type {
+	case ast.String:
+		sb.appendGens(func() error {
+			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+				return err
+			}
+			if err := sb.gen.TakeBeforeString(
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
+				a.Limit.Close, true, true); err != nil {
+				return err
+			}
+			return nil
+		})
+	case ast.Char:
+		sb.appendGens(func() error {
+			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+				return err
+			}
+			if err := sb.gen.TakeBeforeChar(
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
+				a.Limit.Close, true, true); err != nil {
 				return err
 			}
 			return nil

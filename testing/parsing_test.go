@@ -413,7 +413,7 @@ func TestShift(t *testing.T) {
 		}
 		t.Errorf("Rule Shift2 must give a error on \033[1m%s\033[0m", string(src))
 	}
-	require.Equal(t, string(p3.B), "ba12")
+	require.Equal(t, "ba12", string(p3.B))
 
 	p4 := &Shift4{}
 	if ok, err := p4.Extract(src); !ok {
@@ -422,7 +422,7 @@ func TestShift(t *testing.T) {
 		}
 		t.Errorf("Rule Shift2 must give a error on \033[1m%s\033[0m", string(src))
 	}
-	require.Equal(t, string(p4.B), "ba12")
+	require.Equal(t, "ba12", string(p4.B))
 }
 
 func TestJump(t *testing.T) {
@@ -472,4 +472,28 @@ func TestTargetConstraintsCheck(t *testing.T) {
 	ok, err = p.Extract(src)
 	require.True(t, ok)
 	require.Equal(t, "abcdef", string(p.rest))
+}
+
+func TestIncludeChar(t *testing.T) {
+	p := &IncludeChar{}
+	src := []byte("abcd@12@")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, "abcd@", string(p.Data))
+	require.Equal(t, 12, p.Field2)
+}
+
+func TestingIncludeString(t *testing.T) {
+	p := &IncludeString{}
+	src := []byte("abcdab12ab")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, "abcdab", string(p.Data))
+	require.Equal(t, 12, p.Field2)
 }
