@@ -130,6 +130,56 @@ func (g *Generator) decodeUint64(src srcobj.Source, dest string) {
 	g.decode(src, "tmpUint", "uint64", dest, "strconv.ParseUint", srcobj.Literal(10), srcobj.Literal(64))
 }
 
+func (g *Generator) decodeHex(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint", dest, "strconv.ParseUint", srcobj.Literal(16), srcobj.Literal(64))
+}
+
+func (g *Generator) decodeHex8(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint8", dest, "strconv.ParseUint", srcobj.Literal(16), srcobj.Literal(8))
+}
+
+func (g *Generator) decodeHex16(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint16", dest, "strconv.ParseUint", srcobj.Literal(16), srcobj.Literal(16))
+}
+
+func (g *Generator) decodeHex32(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint32", dest, "strconv.ParseUint", srcobj.Literal(16), srcobj.Literal(32))
+}
+
+func (g *Generator) decodeHex64(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint64", dest, "strconv.ParseUint", srcobj.Literal(16), srcobj.Literal(64))
+}
+
+func (g *Generator) decodeOct(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint", dest, "strconv.ParseUint", srcobj.Literal(8), srcobj.Literal(64))
+}
+
+func (g *Generator) decodeOct8(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint8", dest, "strconv.ParseUint", srcobj.Literal(8), srcobj.Literal(8))
+}
+
+func (g *Generator) decodeOct16(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint16", dest, "strconv.ParseUint", srcobj.Literal(8), srcobj.Literal(8))
+}
+
+func (g *Generator) decodeOct32(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint32", dest, "strconv.ParseUint", srcobj.Literal(8), srcobj.Literal(32))
+}
+
+func (g *Generator) decodeOct64(src srcobj.Source, dest string) {
+	g.prepUint()
+	g.decode(src, "tmpUint", "uint64", dest, "strconv.ParseUint", srcobj.Literal(8), srcobj.Literal(64))
+}
+
 func (g *Generator) decodeFloat32(src srcobj.Source, dest string) {
 	g.prepFloat()
 	g.decode(src, "tmpFloat", "float32", dest, "strconv.ParseFloat", srcobj.Literal(32))
