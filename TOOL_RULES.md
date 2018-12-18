@@ -105,6 +105,8 @@ be the same.
     |int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|string|
     |---|----|-----|-----|-----|----|-----|------|------|------|-------|-------|------|
 
+    You can also use `hex` (`hex`, `hex8` … `hex64`) and `oct` (`oct`, `oct8` … `oct64`) types. They will be translated into respective `uintX` in Go structure and will use respective hexadecimal and octal number parsers on decoding
+
 3. As I mentioned, capture can be limited with char or text. The rules are absolutely the same as with character or string unconditional lookup, just replace ``_`` symbol with named capture description ``FieldName(type)``. There's a difference though in ``?....`` treatment. `?` for capturing will mean try to limit a capture area and if no boundary was found take everything to the rest.
     
 So, the rules
