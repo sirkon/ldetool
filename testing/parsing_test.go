@@ -486,14 +486,50 @@ func TestIncludeChar(t *testing.T) {
 	require.Equal(t, 12, p.Field2)
 }
 
-func TestingIncludeString(t *testing.T) {
+func TestIncludeString(t *testing.T) {
 	p := &IncludeString{}
-	src := []byte("abcdab12ab")
+	src := []byte("adcdab12ab")
 	ok, err := p.Extract(src)
 	require.True(t, ok)
 	if err != nil {
 		t.Fatal(err)
 	}
-	require.Equal(t, "abcdab", string(p.Data))
+	require.Equal(t, "adcdab", string(p.Data))
 	require.Equal(t, 12, p.Field2)
+}
+
+func TestHex(t *testing.T) {
+	p := &Hex{}
+	src := []byte("fffe ff ffff ffffffff ffffffffffffffff")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, &Hex{
+		Rest: []byte{},
+		F1:   0xfffe,
+		F2:   0xff,
+		F3:   0xffff,
+		F4:   0xffffffff,
+		F5:   0xffffffffffffffff,
+	}, p)
+}
+
+func TestOct(t *testing.T) {
+	p := &Oct{}
+	src := []byte("77 77 77 77 77")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, &Oct{
+		Rest: []byte{},
+		F1:   077,
+		F2:   077,
+		F3:   077,
+		F4:   077,
+		F5:   077,
+	}, p)
 }

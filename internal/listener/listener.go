@@ -434,6 +434,8 @@ var acceptableTypesMap = func() map[string]struct{} {
 		"int", "uint",
 		"int8", "int16", "int32", "int64",
 		"uint8", "uint16", "uint32", "uint64",
+		"hex", "hex8", "hex16", "hex32", "hex64",
+		"oct", "oct8", "oct16", "oct32", "oct64",
 		"float32", "float64",
 		"string",
 	}

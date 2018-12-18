@@ -203,3 +203,10 @@ IncludeChar =
 
 IncludeString =
     Data[string] "ab" Field2(int) "ab";
+
+Hex =
+    F1(hex) ' ' F2(hex8) ' ' F3(hex16) ' ' F4(hex32) ' ' F5(hex64);
+    
+Oct =
+    F1(oct) ' ' F2(oct8) ' ' F3(oct16) ' ' F4(oct32) ' ' F5(oct64);
+

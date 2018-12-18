@@ -2650,3 +2650,161 @@ func (p *IncludeString) Extract(line []byte) (bool, error) {
 
 	return true, nil
 }
+
+// Hex ...
+type Hex struct {
+	Rest []byte
+	F1   uint
+	F2   uint8
+	F3   uint16
+	F4   uint32
+	F5   uint64
+}
+
+// Extract ...
+func (p *Hex) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpUint uint64
+
+	// Take until ' ' as F1(hex)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F1 = uint(tmpUint)
+
+	// Take until ' ' as F2(hex8)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 8); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F2 = uint8(tmpUint)
+
+	// Take until ' ' as F3(hex16)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 16); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F3 = uint16(tmpUint)
+
+	// Take until ' ' as F4(hex32)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F4 = uint32(tmpUint)
+
+	// Take the rest as F5(hex64)
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&p.Rest)), 16, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.Rest), err)
+	}
+	p.F5 = uint64(tmpUint)
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
+
+// Oct ...
+type Oct struct {
+	Rest []byte
+	F1   uint
+	F2   uint8
+	F3   uint16
+	F4   uint32
+	F5   uint64
+}
+
+// Extract ...
+func (p *Oct) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpUint uint64
+
+	// Take until ' ' as F1(oct)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 8, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F1 = uint(tmpUint)
+
+	// Take until ' ' as F2(oct8)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 8, 8); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F2 = uint8(tmpUint)
+
+	// Take until ' ' as F3(oct16)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 8, 8); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F3 = uint16(tmpUint)
+
+	// Take until ' ' as F4(oct32)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 8, 32); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+	}
+	p.F4 = uint32(tmpUint)
+
+	// Take the rest as F5(oct64)
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&p.Rest)), 8, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.Rest), err)
+	}
+	p.F5 = uint64(tmpUint)
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
