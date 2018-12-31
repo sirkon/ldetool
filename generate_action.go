@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/sirkon/ldetool/internal/ast"
 	"os"
 	"path"
 	"strings"
@@ -41,8 +42,8 @@ func generateAction(c *cli.Context) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			switch v := r.(type) {
-			case *ErrorListener:
-				err = fmt.Errorf("%d:%d: %s", v.line, v.col, v.msg)
+			case *ast.ErrorListener:
+				err = fmt.Errorf("%d:%d: %s", v.Line, v.Col, v.Msg)
 			case string:
 				err = errors.New(v)
 			default:
@@ -76,7 +77,7 @@ func generateAction(c *cli.Context) (err error) {
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	p := parser.NewLDEParser(stream)
 	p.RemoveErrorListeners()
-	el := &ErrorListener{}
+	el := &ast.ErrorListener{}
 	p.AddErrorListener(el)
 	tree := p.Rules()
 	walker := antlr.NewParseTreeWalker()

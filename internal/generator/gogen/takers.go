@@ -2,6 +2,7 @@ package gogen
 
 import (
 	"fmt"
+	"github.com/sirkon/ldetool/internal/ast"
 	"strings"
 
 	"encoding/json"
@@ -86,7 +87,7 @@ func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
 }
 
 // TakeBeforeStringEx ...
-func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand, include bool) error {
+func (g *Generator) TakeBeforeString(name, fieldType, anchor string, meta ast.FieldMeta, lower, upper int, close, expand, include bool) error {
 	if err := g.regVar("pos", "int"); err != nil {
 		return err
 	}
@@ -286,9 +287,15 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, lower, uppe
 	})
 
 	if fieldType != "string" {
-		g.regRightVar("tmp")
-		decoder := g.decoderMap[fieldType]
-		decoder(srcobj.Raw("tmp"), "p."+item.name)
+		if err := g.regRightVar("tmp"); err != nil {
+			return err
+		}
+		if decoder, ok := g.decoderMap[fieldType]; ok {
+			decoder(srcobj.Raw("tmp"), "p."+item.name)
+		}
+		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
+			decoder(srcobj.Raw("tmp"), "p."+item.name, meta.Precision, meta.Scale)
+		}
 	}
 	return nil
 }
@@ -301,7 +308,7 @@ func valueIfTrue(flag bool, value string) string {
 }
 
 // TakeBeforeChar ...
-func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand, include bool) error {
+func (g *Generator) TakeBeforeChar(name, fieldType, char string, meta ast.FieldMeta, lower, upper int, close, expand, include bool) error {
 	if err := g.regVar("pos", "int"); err != nil {
 		return err
 	}
@@ -495,15 +502,21 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, lower, upper in
 	})
 
 	if fieldType != "string" {
-		g.regRightVar("tmp")
-		decoder := g.decoderMap[fieldType]
-		decoder(srcobj.Raw("tmp"), "p."+item.name)
+		if err := g.regRightVar("tmp"); err != nil {
+			return err
+		}
+		if decoder, ok := g.decoderMap[fieldType]; ok {
+			decoder(srcobj.Raw("tmp"), "p."+item.name)
+		}
+		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
+			decoder(srcobj.Raw("tmp"), "p."+item.name, meta.Precision, meta.Scale)
+		}
 	}
 	return nil
 }
 
 // TakeRest ...
-func (g *Generator) TakeRest(name, fieldType string) error {
+func (g *Generator) TakeRest(name, fieldType string, meta ast.FieldMeta) error {
 	item := g.fields[g.fullName(name)]
 	if err := g.getterGen(name, fieldType); err != nil {
 		return err
@@ -533,8 +546,12 @@ func (g *Generator) TakeRest(name, fieldType string) error {
 			),
 		)
 	} else {
-		decoder := g.decoderMap[fieldType]
-		decoder(g.rest(), g.varName(item.name))
+		if decoder, ok := g.decoderMap[fieldType]; ok {
+			decoder(g.rest(), "p."+item.name)
+		}
+		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
+			decoder(g.rest(), "p."+item.name, meta.Precision, meta.Scale)
+		}
 		body.Append(
 			srcobj.Assign(
 				g.curRestVar(),

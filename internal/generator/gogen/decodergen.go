@@ -180,6 +180,18 @@ func (g *Generator) decodeOct64(src srcobj.Source, dest string) {
 	g.decode(src, "tmpUint", "uint64", dest, "strconv.ParseUint", srcobj.Literal(8), srcobj.Literal(64))
 }
 
+func (g *Generator) decodeDec32(src srcobj.Source, dest string, precision, scale int) {
+	panic("implement me")
+}
+
+func (g *Generator) decodeDec64(src srcobj.Source, dest string, precision, scale int) {
+	panic("implement me")
+}
+
+func (g *Generator) decodeDec128(src srcobj.Source, dest string, precision, scale int) {
+	panic("implement me")
+}
+
 func (g *Generator) decodeFloat32(src srcobj.Source, dest string) {
 	g.prepFloat()
 	g.decode(src, "tmpFloat", "float32", dest, "strconv.ParseFloat", srcobj.Literal(32))

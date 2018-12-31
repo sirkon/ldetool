@@ -112,54 +112,11 @@ func (s *Strct) AddUint64(name string) {
 	s.addPrimitive(name, "uint64")
 }
 
-// AddHex add hex field
-func (s *Strct) AddHex(name string) {
-	s.addPrimitive(name, "uint")
-}
-
-// AddHex8 adds hex8 field
-func (s *Strct) AddHex8(name string) {
-	s.addPrimitive(name, "uint8")
-}
-
-// AddHex16 adds hex16 field
-func (s *Strct) AddHex16(name string) {
-	s.addPrimitive(name, "uint16")
-}
-
-// AddHex32 adds hex32 field
-func (s *Strct) AddHex32(name string) {
-	s.addPrimitive(name, "uint32")
-}
-
-// AddHex64 adds hex64 field
-func (s *Strct) AddHex64(name string) {
-	s.addPrimitive(name, "uint64")
-}
-
-// AddOct add oct field
-func (s *Strct) AddOct(name string) {
-	s.addPrimitive(name, "uint")
-}
-
-// AddOct8 adds oct8 field
-func (s *Strct) AddOct8(name string) {
-	s.addPrimitive(name, "uint8")
-}
-
-// AddOct16 adds oct16 field
-func (s *Strct) AddOct16(name string) {
-	s.addPrimitive(name, "uint16")
-}
-
-// AddOct32 adds oct32 field
-func (s *Strct) AddOct32(name string) {
-	s.addPrimitive(name, "uint32")
-}
-
-// AddOct64 adds oct64 field
-func (s *Strct) AddOct64(name string) {
-	s.addPrimitive(name, "uint64")
+// AddDec128 adds a couple of two elements in a structure emulating uint128 type
+func (s *Strct) AddDec128(name string) {
+	res := s.AddSubstruct(name)
+	res.addPrimitive("Lo", "uint64")
+	res.addPrimitive("Hi", "uint64")
 }
 
 // AddFloat32 adds float32 field
