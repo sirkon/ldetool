@@ -219,7 +219,7 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 				return err
 			}
 			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
 				a.Limit.Close, false, false); err != nil {
 				return err
 			}
@@ -231,7 +231,7 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 				return err
 			}
 			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
 				a.Limit.Close, false, false); err != nil {
 				return err
 			}
@@ -266,7 +266,7 @@ func (sb *SrcBuilder) DispatchTakeIncluding(a *ast.TakeIncluding) error {
 				return err
 			}
 			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
 				a.Limit.Close, false, true); err != nil {
 				return err
 			}
@@ -278,7 +278,7 @@ func (sb *SrcBuilder) DispatchTakeIncluding(a *ast.TakeIncluding) error {
 				return err
 			}
 			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, lower, upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
 				a.Limit.Close, false, true); err != nil {
 				return err
 			}
@@ -308,7 +308,7 @@ func (sb *SrcBuilder) DispatchTakeRest(a *ast.TakeRest) error {
 		if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 			return err
 		}
-		if err := sb.gen.TakeRest(a.Field.Name, a.Field.Type); err != nil {
+		if err := sb.gen.TakeRest(a.Field.Name, a.Field.Type, a.Field.Meta); err != nil {
 			return err
 		}
 		return nil
@@ -339,7 +339,7 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 				return err
 			}
 			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
 				a.Limit.Close, true, false); err != nil {
 				return err
 			}
@@ -351,7 +351,7 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 				return err
 			}
 			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
 				a.Limit.Close, true, false); err != nil {
 				return err
 			}
@@ -384,7 +384,7 @@ func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncluding
 				return err
 			}
 			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
 				a.Limit.Close, true, true); err != nil {
 				return err
 			}
@@ -396,7 +396,7 @@ func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncluding
 				return err
 			}
 			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Limit.Lower, a.Limit.Upper,
+				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
 				a.Limit.Close, true, true); err != nil {
 				return err
 			}

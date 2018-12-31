@@ -7,7 +7,6 @@ import (
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/mnemo"
-	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
 // constNameFromContent generates name of the constant based on content
@@ -95,38 +94,6 @@ func (g *Generator) gravityTend(pos int) string {
 	return ""
 }
 
-func (g *Generator) goType(inputType string) string {
-	goTypeName, ok := map[string]string{
-		"int":     "int",
-		"int8":    "int8",
-		"int16":   "int16",
-		"int32":   "int32",
-		"int64":   "int64",
-		"uint":    "uint",
-		"uint8":   "uint8",
-		"uint16":  "uint16",
-		"uint32":  "uint32",
-		"uint64":  "uint64",
-		"hex":     "uint",
-		"hex8":    "uint8",
-		"hex16":   "uint16",
-		"hex32":   "uint32",
-		"hex64":   "uint64",
-		"oct":     "uint",
-		"oct8":    "uint8",
-		"oct16":   "uint16",
-		"oct32":   "uint32",
-		"oct64":   "uint64",
-		"float32": "float32",
-		"float64": "float64",
-		"string":  srcobj.RightType(g.useString),
-	}[inputType]
-	if !ok {
-		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))
-	}
-	return goTypeName
-}
-
 func (g *Generator) tmpSuspectancy(inputType string) bool {
 	suspected, ok := map[string]bool{
 		"int":     true,
@@ -149,6 +116,9 @@ func (g *Generator) tmpSuspectancy(inputType string) bool {
 		"oct16":   true,
 		"oct32":   true,
 		"oct64":   true,
+		"dec16":   true,
+		"dec32":   true,
+		"dec64":   true,
 		"float32": true,
 		"float64": true,
 		"string":  false,

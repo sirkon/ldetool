@@ -47,12 +47,13 @@ type Generator struct {
 	gravity []string
 
 	// Source object representation primitives
-	file       *srcobj.File    // File image
-	body       *srcobj.Body    // Current method image
-	obj        []*srcobj.Strct // Image of the structure
-	optgetters *srcobj.Body    // Option getters for current structure
-	vargen     *srcobj.Vars    // Function variables image
-	decoderMap map[string]func(src srcobj.Source, dest string)
+	file              *srcobj.File    // File image
+	body              *srcobj.Body    // Current method image
+	obj               []*srcobj.Strct // Image of the structure
+	optgetters        *srcobj.Body    // Option getters for current structure
+	vargen            *srcobj.Vars    // Function variables image
+	decoderMap        map[string]func(src srcobj.Source, dest string)
+	decimalDecoderMap map[string]func(src srcobj.Source, dest string, precision, scale int)
 
 	ruleName string // Name of currently processing rule
 }
@@ -120,6 +121,11 @@ func NewGenerator(useString bool, goish *gotify.Gotify) *Generator {
 		"float32": res.decodeFloat32,
 		"float64": res.decodeFloat64,
 		"string":  res.decodeString,
+	}
+	res.decimalDecoderMap = map[string]func(src srcobj.Source, dest string, precision, scale int){
+		"dec32":  res.decodeDec32,
+		"dec64":  res.decodeDec64,
+		"dec128": res.decodeDec128,
 	}
 	return res
 }
@@ -211,16 +217,19 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 		"uint16":  s.AddUint16,
 		"uint32":  s.AddUint32,
 		"uint64":  s.AddUint64,
-		"hex":     s.AddHex,
-		"hex8":    s.AddHex8,
-		"hex16":   s.AddHex16,
-		"hex32":   s.AddHex32,
-		"hex64":   s.AddHex64,
-		"oct":     s.AddOct,
-		"oct8":    s.AddOct8,
-		"oct16":   s.AddOct16,
-		"oct32":   s.AddOct32,
-		"oct64":   s.AddOct64,
+		"hex":     s.AddUint,
+		"hex8":    s.AddUint8,
+		"hex16":   s.AddUint16,
+		"hex32":   s.AddUint32,
+		"hex64":   s.AddUint64,
+		"oct":     s.AddUint,
+		"oct8":    s.AddUint8,
+		"oct16":   s.AddUint16,
+		"oct32":   s.AddUint32,
+		"oct64":   s.AddUint64,
+		"dec32":   s.AddInt32,
+		"dec64":   s.AddInt64,
+		"dec128":  s.AddDec128,
 		"float32": s.AddFloat32,
 		"float64": s.AddFloat64,
 		"string":  s.AddString,
@@ -229,6 +238,7 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 		fieldNames := []string{
 			"int8", "int16", "int32", "int64",
 			"uint8", "uint16", "uint32", "uint64",
+			"dec32", "dec64", "dec128",
 			"float32", "float64",
 			"string",
 		}

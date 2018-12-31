@@ -210,3 +210,5 @@ Hex =
 Oct =
     F1(oct) ' ' F2(oct8) ' ' F3(oct16) ' ' F4(oct32) ' ' F5(oct64);
 
+Dec =
+    F1(dec8_3) ' ' F2(dec12_2) ' ' F3(dec30_8);

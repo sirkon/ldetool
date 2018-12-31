@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"github.com/sirkon/ldetool/internal/ast"
 	"io"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -30,11 +31,11 @@ type Generator interface {
 
 	// Takes
 	// Take before anchor (string or character)
-	TakeBeforeString(name, fieldType, anchor string, lower, upper int, close, expand, include bool) error
-	TakeBeforeChar(name, fieldType, char string, lower, upper int, close, expand, include bool) error
+	TakeBeforeString(name, fieldType, anchor string, meta ast.FieldMeta, lower, upper int, close, expand, include bool) error
+	TakeBeforeChar(name, fieldType, char string, meta ast.FieldMeta, lower, upper int, close, expand, include bool) error
 
 	// Take the rest
-	TakeRest(name, fieldType string) error
+	TakeRest(name, fieldType string, meta ast.FieldMeta) error
 
 	// Optionals
 	OpenOptionalScope(name string, t antlr.Token) error
