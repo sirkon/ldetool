@@ -7,8 +7,6 @@ import (
 
 	"fmt"
 
-	"strings"
-
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/ldetool/internal/ast"
 	"github.com/sirkon/ldetool/internal/parser"
@@ -428,40 +426,8 @@ func (l *Listener) EnterExact(ctx *parser.ExactContext) {
 // ExitExact is called when production exact is exited.
 func (l *Listener) ExitExact(ctx *parser.ExactContext) {}
 
-var acceptablesTypeList string
-var acceptableTypesMap = func() map[string]struct{} {
-	acceptableTypes := []string{
-		"int", "uint",
-		"int8", "int16", "int32", "int64",
-		"uint8", "uint16", "uint32", "uint64",
-		"hex", "hex8", "hex16", "hex32", "hex64",
-		"oct", "oct8", "oct16", "oct32", "oct64",
-		"dec32", "dec64", "dec128",
-		"float32", "float64",
-		"string",
-	}
-	res := map[string]struct{}{}
-	for i, typeName := range acceptableTypes {
-		res[typeName] = struct{}{}
-		acceptableTypes[i] = fmt.Sprintf("\033[1m%s\033[0m", typeName)
-	}
-	acceptablesTypeList = strings.Join(acceptableTypes, ", ")
-	return res
-}()
-
 // EnterFieldType is called when production fieldType is entered.
 func (l *Listener) EnterFieldType(ctx *parser.FieldTypeContext) {
-	// typeName := ctx.Identifier().GetText()
-	// if _, ok := acceptableTypesMap[typeName]; ok {
-	// 	return
-	// }
-	// panic(fmt.Sprintf(
-	// 	"%d:%d: unsupported type `\033[1m%s\033[0m`, must be one of %s",
-	// 	ctx.Identifier().GetSymbol().GetLine(),
-	// 	ctx.Identifier().GetSymbol().GetColumn()+1,
-	// 	typeName,
-	// 	acceptablesTypeList,
-	// ))
 }
 
 // ExitFieldType is called when production fieldType is exited.

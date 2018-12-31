@@ -104,8 +104,32 @@ be the same.
 
     |int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|string|
     |---|----|-----|-----|-----|----|-----|------|------|------|-------|-------|------|
+    
+    There is support for hexadecimal and octal values extraction:
+    
+    |LDE type|hex|hex8|hex16|hex32|hex64|oct|oct8|oct16|oct32|oct64|
+    |--------|---|----|-----|-----|-----|---|----|-----|-----|-----|
+    |Go type|uint|uint8|uint16|uint32|uint64|uint|uint8|uint16|uint32|uint64|
 
-    You can also use `hex` (`hex`, `hex8` … `hex64`) and `oct` (`oct`, `oct8` … `oct64`) types. They will be translated into respective `uintX` in Go structure and will use respective hexadecimal and octal number parsers on decoding
+    Also, there's support for "decimal" types in the following form:
+    
+    ```perl
+    Rule = Data(dec5_3);
+    ```
+    
+    `dec4_3` means decimal number with 10 digits where 3 of them are in fraction, e.g.
+    number `123.123` fits into `dec4_3`, while `12345.1` or `1.1111` don't. 
+    So, the generic form is `decX_Y` where 1 ≤ X ≤ 38 and Y ≤ X.
+    Go type behind these `decX_Y` depends on the X:
+    
+    |X range|Go type|
+    |-------|-------|
+    |1…9|int32|
+    |10…18|int64|
+    |19…38|`(uint64, uint64)`|
+    
+    `decX_Y` mirrors [`Decimal`](https://clickhouse.yandex/docs/en/data_types/decimal/) type in Clickhouse
+    
 
 3. As I mentioned, capture can be limited with char or text. The rules are absolutely the same as with character or string unconditional lookup, just replace ``_`` symbol with named capture description ``FieldName(type)``. There's a difference though in ``?....`` treatment. `?` for capturing will mean try to limit a capture area and if no boundary was found take everything to the rest.
     

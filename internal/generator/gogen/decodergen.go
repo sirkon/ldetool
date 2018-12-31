@@ -1,6 +1,8 @@
 package gogen
 
-import "github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
+import (
+	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
+)
 
 /* decode_int8 sample - other templates are the same
 tmp ={{ .Source }};
@@ -180,9 +182,12 @@ func (g *Generator) decodeOct64(src srcobj.Source, dest string) {
 	g.decode(src, "tmpUint", "uint64", dest, "strconv.ParseUint", srcobj.Literal(8), srcobj.Literal(64))
 }
 
-func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, precision, scale int) {
+func (g *Generator) prepDec() {
 	g.regVar("err", "error")
 	g.regImport("", "github.com/sirkon/decconv")
+}
+
+func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, precision, scale int) {
 	p := []srcobj.Source{
 		srcobj.Literal(precision),
 		srcobj.Literal(scale),
@@ -221,7 +226,37 @@ func (g *Generator) decodeDec64(src srcobj.Source, dest string, precision, scale
 }
 
 func (g *Generator) decodeDec128(src srcobj.Source, dest string, precision, scale int) {
-	panic("implement me")
+	g.prepDec()
+	p := []srcobj.Source{
+		srcobj.Literal(precision),
+		srcobj.Literal(scale),
+	}
+	if g.useString {
+		p = append(p, srcobj.NewCall("[]byte", src))
+	} else {
+		p = append(p, src)
+	}
+	g.body.Append(
+		srcobj.If{
+			Expr: srcobj.OperatorSemicolon(
+				srcobj.OperatorAssign(
+					srcobj.OperatorComma(
+						srcobj.OperatorComma(
+							srcobj.Raw(dest+".Lo"),
+							srcobj.Raw(dest+".Hi"),
+						),
+						srcobj.Raw("err"),
+					),
+					srcobj.NewCall(
+						"decconv.Decode128", // func name, strconv.ParseInt, for instance
+						p...,
+					),
+				),
+				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
+			),
+			Then: srcobj.ReturnError("Cannot parse `%s`: %s", srcobj.Stringify(src), srcobj.Raw("err")),
+		},
+	)
 }
 
 func (g *Generator) decodeFloat32(src srcobj.Source, dest string) {

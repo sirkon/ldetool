@@ -114,9 +114,13 @@ func (s *Strct) AddUint64(name string) {
 
 // AddDec128 adds a couple of two elements in a structure emulating uint128 type
 func (s *Strct) AddDec128(name string) {
-	res := s.AddSubstruct(name)
+	res := Struct(s.useString)
 	res.addPrimitive("Lo", "uint64")
 	res.addPrimitive("Hi", "uint64")
+	s.fields = append(s.fields, FieldDef{
+		Name: name,
+		Type: res,
+	})
 }
 
 // AddFloat32 adds float32 field

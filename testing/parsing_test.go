@@ -536,7 +536,7 @@ func TestOct(t *testing.T) {
 
 func TestDec(t *testing.T) {
 	p := &Dec{}
-	src := []byte("5445.333 121212.22")
+	src := []byte("5445.333 121212.22 512.22")
 	ok, err := p.Extract(src)
 	require.True(t, ok)
 	if err != nil {
@@ -546,5 +546,9 @@ func TestDec(t *testing.T) {
 		Rest: []byte{},
 		F1:   5445333,
 		F2:   12121222,
+		F3: struct {
+			Lo uint64
+			Hi uint64
+		}{Lo: 51222000000, Hi: 0},
 	}, p)
 }
