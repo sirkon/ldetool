@@ -30,7 +30,7 @@ func posLit(i int) string {
 	}
 }
 
-const decimalPrefix = "decimalPrefix"
+const decimalPrefix = "dec"
 
 // decimalExtractor ...
 type decimalExtractor struct {

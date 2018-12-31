@@ -436,6 +436,7 @@ var acceptableTypesMap = func() map[string]struct{} {
 		"uint8", "uint16", "uint32", "uint64",
 		"hex", "hex8", "hex16", "hex32", "hex64",
 		"oct", "oct8", "oct16", "oct32", "oct64",
+		"dec32", "dec64", "dec128",
 		"float32", "float64",
 		"string",
 	}
@@ -450,17 +451,17 @@ var acceptableTypesMap = func() map[string]struct{} {
 
 // EnterFieldType is called when production fieldType is entered.
 func (l *Listener) EnterFieldType(ctx *parser.FieldTypeContext) {
-	typeName := ctx.Identifier().GetText()
-	if _, ok := acceptableTypesMap[typeName]; ok {
-		return
-	}
-	panic(fmt.Sprintf(
-		"%d:%d: unsupported type `\033[1m%s\033[0m`, must be one of %s",
-		ctx.Identifier().GetSymbol().GetLine(),
-		ctx.Identifier().GetSymbol().GetColumn()+1,
-		typeName,
-		acceptablesTypeList,
-	))
+	// typeName := ctx.Identifier().GetText()
+	// if _, ok := acceptableTypesMap[typeName]; ok {
+	// 	return
+	// }
+	// panic(fmt.Sprintf(
+	// 	"%d:%d: unsupported type `\033[1m%s\033[0m`, must be one of %s",
+	// 	ctx.Identifier().GetSymbol().GetLine(),
+	// 	ctx.Identifier().GetSymbol().GetColumn()+1,
+	// 	typeName,
+	// 	acceptablesTypeList,
+	// ))
 }
 
 // ExitFieldType is called when production fieldType is exited.
