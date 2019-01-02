@@ -184,10 +184,12 @@ func (g *Generator) decodeOct64(src srcobj.Source, dest string) {
 
 func (g *Generator) prepDec() {
 	g.regVar("err", "error")
+	g.regImport("", "fmt")
 	g.regImport("", "github.com/sirkon/decconv")
 }
 
 func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, precision, scale int) {
+	g.regImport("", "fmt")
 	p := []srcobj.Source{
 		srcobj.Literal(precision),
 		srcobj.Literal(scale),
