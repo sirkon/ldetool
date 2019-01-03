@@ -55,7 +55,7 @@ func (p *decimalExtractor) Extract(line string) (bool, error) {
 	}
 
 	// Take until '_' as Precision(uint)
-	pos = strings.IndexByte(p.Rest, '_')
+	pos = strings.IndexByte(p.Rest, '.')
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
 		p.Rest = p.Rest[pos+1:]

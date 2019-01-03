@@ -27,6 +27,7 @@ func NewField(name antlr.Token, typeToken antlr.Token) Field {
 
 	var meta FieldMeta
 
+	fmt.Printf("******************************* %s\n", typeToken.GetText())
 	typeName := typeToken.GetText()
 	ok, err := de.Extract(typeName)
 	if err != nil {

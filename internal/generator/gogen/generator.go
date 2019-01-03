@@ -238,7 +238,7 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 		fieldNames := []string{
 			"int8", "int16", "int32", "int64",
 			"uint8", "uint16", "uint32", "uint64",
-			"dec32", "dec64", "dec128",
+			"decX.Y",
 			"float32", "float64",
 			"string",
 		}

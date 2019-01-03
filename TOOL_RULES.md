@@ -114,13 +114,13 @@ be the same.
     Also, there's support for "decimal" types in the following form:
     
     ```perl
-    Rule = Data(dec5_3);
+    Rule = Data(dec4.3);
     ```
     
-    `dec4_3` means decimal number with 10 digits where 3 of them are in fraction, e.g.
-    number `123.123` fits into `dec4_3`, while `12345.1` or `1.1111` don't. 
-    So, the generic form is `decX_Y` where 1 ≤ X ≤ 38 and Y ≤ X.
-    Go type behind these `decX_Y` depends on the X:
+    `dec4.3` means decimal number with 4 digits where 3 of them are in fraction, e.g.
+    number `1.123` fits into `dec4.3`, while `12.1` or `1.1111` don't. 
+    So, the generic form is `decX.Y` where 1 ≤ X ≤ 38 and Y ≤ X.
+    Go type behind these `decX.Y` depends on the X:
     
     |X range|Go type|
     |-------|-------|
@@ -128,7 +128,7 @@ be the same.
     |10…18|int64|
     |19…38|`(uint64, uint64)`|
     
-    `decX_Y` mirrors [`Decimal`](https://clickhouse.yandex/docs/en/data_types/decimal/) type in Clickhouse
+    `decX.Y` mirrors [`Decimal`](https://clickhouse.yandex/docs/en/data_types/decimal/) type in Clickhouse
     
 
 3. As I mentioned, capture can be limited with char or text. The rules are absolutely the same as with character or string unconditional lookup, just replace ``_`` symbol with named capture description ``FieldName(type)``. There's a difference though in ``?....`` treatment. `?` for capturing will mean try to limit a capture area and if no boundary was found take everything to the rest.
