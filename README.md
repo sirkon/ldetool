@@ -115,7 +115,7 @@ It is easy: put
 ```go
 l := &Line{}
 ```
-before and then feed `Parse` method with lines:
+before and then feed `Extract` method with lines:
 ```go
 scanner := bufio.NewScanner(reader)
 for scanner.Scan() {
