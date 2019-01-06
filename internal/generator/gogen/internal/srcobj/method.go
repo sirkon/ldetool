@@ -33,7 +33,7 @@ var go2resultType = map[string]hardToAccessResultType{
 	"oct64":   hardToAccessResultType("uint64"),
 	"dec32":   hardToAccessResultType("uint32"),
 	"dec64":   hardToAccessResultType("uint64"),
-	"dec128":  hardToAccessResultType("struct{ Lo uint64\tHi uint64}"),
+	"dec128":  hardToAccessResultType("struct{ Lo uint64;Hi uint64}"),
 	"float32": hardToAccessResultType("float32"),
 	"float64": hardToAccessResultType("float64"),
 	"string":  hardToAccessResultType("[]byte"),
