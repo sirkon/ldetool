@@ -42,10 +42,16 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 	var rest srcobj.Source
 	switch {
 	case lower > 0 && upper > 0:
-		rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
+		if err := g.regRightVar("tmpRest"); err != nil {
+			return err
+		}
+		rest = srcobj.Literal("tmpRest")
 
 	case lower == 0 && upper > 0:
-		rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
+		if err := g.regRightVar("tmpRest"); err != nil {
+			return err
+		}
+		rest = srcobj.Literal("tmpRest")
 
 	case lower > 0 && upper == 0:
 		rest = srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))
@@ -58,15 +64,29 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 
 	var lookup srcobj.Source
 	if upper > 0 {
-		body.Append(
-			srcobj.If{
-				Expr: srcobj.OperatorLT(
-					srcobj.NewCall("len", g.rest()),
-					srcobj.Literal(upper),
-				),
-				Then: g.sliceTooLarge(upper),
-			},
-		)
+		if lower > 0 {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorGE(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(upper),
+					),
+					Then: srcobj.Assign("tmpRest", srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))),
+					Else: srcobj.Assign("tmpRest", srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))),
+				},
+			)
+		} else {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorGE(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(upper),
+					),
+					Then: srcobj.Assign("tmpRest", srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))),
+					Else: srcobj.Assign("tmpRest", g.rest()),
+				},
+			)
+		}
 	} else if lower > 0 {
 		body.Append(
 			srcobj.If{
@@ -146,10 +166,16 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 	var rest srcobj.Source
 	switch {
 	case lower > 0 && upper > 0:
-		rest = srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))
+		if err := g.regRightVar("tmpRest"); err != nil {
+			return err
+		}
+		rest = srcobj.Literal("tmpRest")
 
 	case lower == 0 && upper > 0:
-		rest = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))
+		if err := g.regRightVar("tmpRest"); err != nil {
+			return err
+		}
+		rest = srcobj.Literal("tmpRest")
 
 	case lower > 0 && upper == 0:
 		rest = srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))
@@ -161,15 +187,29 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Looking for %s and then pass it", char)))
 	if upper > 0 {
-		body.Append(
-			srcobj.If{
-				Expr: srcobj.OperatorLT(
-					srcobj.NewCall("len", g.rest()),
-					srcobj.Literal(upper),
-				),
-				Then: g.sliceTooLarge(upper),
-			},
-		)
+		if lower > 0 {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorGE(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(upper),
+					),
+					Then: srcobj.Assign("tmpRest", srcobj.Slice(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower), srcobj.Literal(upper))),
+					Else: srcobj.Assign("tmpRest", srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(lower))),
+				},
+			)
+		} else {
+			body.Append(
+				srcobj.If{
+					Expr: srcobj.OperatorGE(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.Literal(upper),
+					),
+					Then: srcobj.Assign("tmpRest", srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(upper))),
+					Else: srcobj.Assign("tmpRest", g.rest()),
+				},
+			)
+		}
 	} else if lower > 0 {
 		body.Append(
 			srcobj.If{

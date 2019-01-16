@@ -445,7 +445,7 @@ func TestJump(t *testing.T) {
 
 func TestLookupJump(t *testing.T) {
 	p := &LookupJump{}
-	src := []byte("1  3445@@123")
+	src := []byte("1  3445@@123     ll123     ee123     e      f123")
 	if ok, err := p.Extract(src); !ok {
 		if err != nil {
 			t.Fatal(err)
