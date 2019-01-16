@@ -183,3 +183,6 @@ It is possible to use short lookup sign as well:
 |------|-----------|
 |``$``|Checks if the rest is empty. Signal error otherwise|
 |``!``|All mismatches after this symbol are treated as "serious" errors, i.e. ones producing error messages rather than just exit parsing|
+|``%<N``|Checks if less than N symbols left in the rest|
+|``%N``|Checks if exactly N symbols left in the rest|
+|``%>N``|Checks if more than N symbols left in the rest|

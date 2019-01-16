@@ -2859,3 +2859,24 @@ func (p *Dec) Extract(line []byte) (bool, error) {
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }
+
+// RestLength ...
+type RestLength struct {
+	Rest []byte
+}
+
+// Extract ...
+func (p *RestLength) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	if len(p.Rest) != 15 {
+		return false, nil
+	}
+	if len(p.Rest) >= 16 {
+		return false, nil
+	}
+	if len(p.Rest) <= 14 {
+		return false, nil
+	}
+
+	return true, nil
+}

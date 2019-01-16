@@ -8,6 +8,7 @@ package ast
 type ActionDispatcher interface {
 	DispatchAnonymousOption(a *AnonymousOption) error
 	DispatchAtEnd(a AtEnd) error
+	DispatchRestLengthCheck(a RestLengthCheck) error
 	DispatchErrorMismatch(a ErrorOnMismatch) error
 	DispatchMayBeStartChar(a *MayBeStartChar) error
 	DispatchMayBeStartString(a *MayBeStartString) error

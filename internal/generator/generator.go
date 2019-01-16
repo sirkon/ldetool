@@ -37,6 +37,9 @@ type Generator interface {
 	// Take the rest
 	TakeRest(name, fieldType string, meta ast.FieldMeta) error
 
+	// RestLengthCheck how many symbols left in the rest
+	RestLengthCheck(operator string, length int) error
+
 	// Optionals
 	OpenOptionalScope(name string, t antlr.Token) error
 	CloseOptionalScope() error
