@@ -207,6 +207,22 @@ func (l *Listener) ExitMayPassUntil(ctx *parser.MayPassUntilContext) {
 	}
 }
 
+func (l *Listener) EnterRestCheck(c *parser.RestCheckContext) {
+	var operator string
+	if c.ComparisonOperator() != nil {
+		operator = c.ComparisonOperator().GetText()
+	}
+	lengthLit := c.IntLit().GetText()
+	length, err := strconv.Atoi(lengthLit)
+	if err != nil {
+		panic(fmt.Sprintf("%d:%d: %s", c.GetStart().GetLine(), c.GetStart().GetColumn(), err))
+	}
+	a := ast.RestCheck(operator, length)
+	l.seq().Append(a)
+}
+
+func (l *Listener) ExitRestCheck(c *parser.RestCheckContext) {}
+
 // EnterTakeUntil is called when production takeUntil is entered.
 func (l *Listener) EnterTakeUntil(ctx *parser.TakeUntilContext) {
 	checkReserved(ctx.Identifier().GetSymbol())

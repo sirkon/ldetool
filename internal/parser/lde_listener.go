@@ -1,4 +1,4 @@
-// Code generated from LDE.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
 
 package parser // LDE
 
@@ -55,6 +55,9 @@ type LDEListener interface {
 
 	// EnterOptionalArea is called when entering the optionalArea production.
 	EnterOptionalArea(c *OptionalAreaContext)
+
+	// EnterRestCheck is called when entering the restCheck production.
+	EnterRestCheck(c *RestCheckContext)
 
 	// EnterAtEnd is called when entering the atEnd production.
 	EnterAtEnd(c *AtEndContext)
@@ -127,6 +130,9 @@ type LDEListener interface {
 
 	// ExitOptionalArea is called when exiting the optionalArea production.
 	ExitOptionalArea(c *OptionalAreaContext)
+
+	// ExitRestCheck is called when exiting the restCheck production.
+	ExitRestCheck(c *RestCheckContext)
 
 	// ExitAtEnd is called when exiting the atEnd production.
 	ExitAtEnd(c *AtEndContext)

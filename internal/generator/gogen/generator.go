@@ -284,6 +284,35 @@ func (g *Generator) indent() *srcobj.Body {
 	return g.body
 }
 
+func (g *Generator) RestLengthCheck(operator string, length int) error {
+	var operatorAction func(srcobj.Source, srcobj.Source) srcobj.Source
+	var errorFormat string
+	switch operator {
+	case "<":
+		operatorAction = srcobj.OperatorGE
+		errorFormat = "rest is longer than required (%d symbols)"
+	case "==":
+		operatorAction = srcobj.OperatorNEq
+		errorFormat = "rest is not %d symbols long"
+	case ">":
+		operatorAction = srcobj.OperatorLE
+		errorFormat = "rest is shorter than required (%d symbols)"
+	}
+	g.body.Append(
+		srcobj.If{
+			Expr: operatorAction(
+				srcobj.NewCall("len", g.rest()),
+				srcobj.Literal(length),
+			),
+			Then: g.failure(
+				errorFormat,
+				srcobj.Literal(length),
+			),
+		},
+	)
+	return nil
+}
+
 // PassN passes first N characters if they are there, otherwise signal a error
 func (g *Generator) PassN(n int) error {
 	g.body.Append(

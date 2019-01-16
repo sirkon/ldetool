@@ -30,6 +30,7 @@ atomicAction
     | takeUntilRest
     | optionalNamedArea
     | optionalArea
+    | restCheck
     | atEnd;
 
 passTargetPrefix
@@ -72,6 +73,10 @@ optionalNamedArea
 optionalArea
     : '?' '(' baseAction ')';
 
+restCheck
+    : '%' IntLit
+    | '%' ComparisonOperator IntLit;
+
 atEnd
     : '$';
     
@@ -109,6 +114,9 @@ fieldType
     | Identifier
     ;
 
+ComparisonOperator
+    : [<>]
+    ;
 
 Identifier
     : [a-zA-Z_] ([a-zA-Z0-9_]*)

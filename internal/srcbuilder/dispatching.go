@@ -38,6 +38,16 @@ func (sb *SrcBuilder) DispatchErrorMismatch(a ast.ErrorOnMismatch) error {
 	return nil
 }
 
+func (sb *SrcBuilder) DispatchRestLengthCheck(a ast.RestLengthCheck) error {
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	sb.appendGens(func() error {
+		return sb.gen.RestLengthCheck(a.Operator, a.Length)
+	})
+	return nil
+}
+
 func (sb *SrcBuilder) DispatchMayBeStartChar(a *ast.MayBeStartChar) error {
 	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
 		return err

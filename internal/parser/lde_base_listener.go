@@ -1,4 +1,4 @@
-// Code generated from LDE.g4 by ANTLR 4.7.2. DO NOT EDIT.
+// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
 
 package parser // LDE
 
@@ -116,6 +116,12 @@ func (s *BaseLDEListener) EnterOptionalArea(ctx *OptionalAreaContext) {}
 
 // ExitOptionalArea is called when production optionalArea is exited.
 func (s *BaseLDEListener) ExitOptionalArea(ctx *OptionalAreaContext) {}
+
+// EnterRestCheck is called when production restCheck is entered.
+func (s *BaseLDEListener) EnterRestCheck(ctx *RestCheckContext) {}
+
+// ExitRestCheck is called when production restCheck is exited.
+func (s *BaseLDEListener) ExitRestCheck(ctx *RestCheckContext) {}
 
 // EnterAtEnd is called when production atEnd is entered.
 func (s *BaseLDEListener) EnterAtEnd(ctx *AtEndContext) {}

@@ -1,6 +1,8 @@
 package ldetesting
 
 import (
+	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -551,4 +553,16 @@ func TestDec(t *testing.T) {
 			Hi uint64
 		}{Lo: 51222000000, Hi: 0},
 	}, p)
+}
+
+func TestRestLegth(t *testing.T) {
+	p := &RestLength{}
+	src := bytes.Repeat([]byte{'#'}, 15)
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	require.Equal(t, strings.Repeat("#", 15), string(p.Rest))
 }
