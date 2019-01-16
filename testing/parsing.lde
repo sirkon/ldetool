@@ -182,12 +182,17 @@ Jump = !
 
 LookupJump = !
     _' '[2:]
-    _"@@"[2:];
+    _"@@"[2:]
+    _"ll"[:12]
+    _"ee"[2:12]
+    _'e'[:12]
+    _'f'[2:12];
 
 TargetConstraintsCheck =
     _' '[1:]
     !
-    _' '[1:];
+    _' '[1:]
+    ;
 
 URL =
     ?UserPass(
