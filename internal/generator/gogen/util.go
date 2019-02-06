@@ -122,6 +122,7 @@ func (g *Generator) tmpSuspectancy(inputType string) bool {
 		"float32": true,
 		"float64": true,
 		"string":  false,
+		"str":     true,
 	}[inputType]
 	if !ok {
 		panic(fmt.Errorf("Unsupported type `\033[1m%s\033[0m`", inputType))

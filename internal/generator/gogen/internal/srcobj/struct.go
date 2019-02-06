@@ -138,6 +138,11 @@ func (s *Strct) AddString(name string) {
 	s.addPrimitive(name, RightType(s.useString))
 }
 
+// AddStr adds native string field
+func (s *Strct) AddStr(name string) {
+	s.addPrimitive(name, "string")
+}
+
 // AddSubstruct add substruct and returns it
 func (s *Strct) AddSubstruct(name string) *Strct {
 	res := Struct(s.useString)

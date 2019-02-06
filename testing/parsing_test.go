@@ -566,3 +566,19 @@ func TestRestLegth(t *testing.T) {
 
 	require.Equal(t, strings.Repeat("#", 15), string(p.Rest))
 }
+
+func TestStr(t *testing.T) {
+	p := &Str{}
+	src := []byte("abc abcdef")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	require.Equal(t, &Str{
+		Rest: []byte{},
+		F1:   "abc",
+		F2:   []byte("abcdef"),
+	}, p)
+}

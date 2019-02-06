@@ -3053,3 +3053,32 @@ func (p *RestLength) Extract(line []byte) (bool, error) {
 
 	return true, nil
 }
+
+// Str ...
+type Str struct {
+	Rest []byte
+	F1   string
+	F2   []byte
+}
+
+// Extract ...
+func (p *Str) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	var pos int
+	var tmp []byte
+
+	// Take until ' ' as F1(str)
+	pos = bytes.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	p.F1 = string(tmp)
+
+	// Take the rest as F2(string)
+	p.F2 = p.Rest
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}

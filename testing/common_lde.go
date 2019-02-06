@@ -21,6 +21,7 @@ type Rule struct {
 	Data     string
 	Signed   int
 	Unsigned uint
+	Str      string
 }
 
 // Extract ...
@@ -75,11 +76,21 @@ func (p *Rule) Extract(line string) (bool, error) {
 		return false, nil
 	}
 
-	// Take the rest as Unsigned(uint)
-	if tmpUint, err = strconv.ParseUint(p.Rest, 10, 64); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.Rest), err)
+	// Take until ' ' as Unsigned(uint)
+	pos = strings.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(tmp, 10, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Unsigned = uint(tmpUint)
+
+	// Take the rest as Str(str)
+	p.Str = p.Rest
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }

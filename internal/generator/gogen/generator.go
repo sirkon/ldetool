@@ -121,6 +121,7 @@ func NewGenerator(useString bool, goish *gotify.Gotify) *Generator {
 		"float32": res.decodeFloat32,
 		"float64": res.decodeFloat64,
 		"string":  res.decodeString,
+		"str":     res.decodeStr,
 	}
 	res.decimalDecoderMap = map[string]func(src srcobj.Source, dest string, precision, scale int){
 		"dec32":  res.decodeDec32,
@@ -233,6 +234,7 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 		"float32": s.AddFloat32,
 		"float64": s.AddFloat64,
 		"string":  s.AddString,
+		"str":     s.AddStr,
 	}[fieldType]
 	if !ok {
 		fieldNames := []string{
@@ -240,7 +242,7 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 			"uint8", "uint16", "uint32", "uint64",
 			"decX.Y",
 			"float32", "float64",
-			"string",
+			"string", "str",
 		}
 		for i, fieldName := range fieldNames {
 			fieldNames[i] = fmt.Sprintf("\033[1m%s\033[0m", fieldName)
