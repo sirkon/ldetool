@@ -277,3 +277,16 @@ func (g *Generator) decodeString(src srcobj.Source, dest string) {
 		Expr:     src,
 	})
 }
+func (g *Generator) decodeStr(src srcobj.Source, dest string) {
+	if g.useString {
+		g.body.Append(srcobj.LineAssign{
+			Receiver: dest,
+			Expr:     src,
+		})
+	} else {
+		g.body.Append(srcobj.LineAssign{
+			Receiver: dest,
+			Expr:     srcobj.NewCall("string", src),
+		})
+	}
+}

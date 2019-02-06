@@ -1,4 +1,5 @@
 Rule =
     ^'[' Data(string) ']'
     ^' ' Signed(int) ' '
-    ^' ' Unsigned(uint);
+    ^' ' Unsigned(uint) ' '
+    Str(str);

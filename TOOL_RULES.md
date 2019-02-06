@@ -102,8 +102,11 @@ be the same.
 1. There's currently only Go code generator, so I will base the further description on Go-specific syntax. Capturing rules are all named and these names are mapped into Go struct field names.
 2. Capturing can be limited and unlimited. Limited capture takes all symbols right to the start of some boundary (text or character) or all symbols to the rest. Captured value can be stored in one of the following type. Capturing as numeric type can cause number parsing errors and these are always treated as "serious" ones.
 
-    |int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|string|
-    |---|----|-----|-----|-----|----|-----|------|------|------|-------|-------|------|
+    |int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|string|str|
+    |---|----|-----|-----|-----|----|-----|------|------|------|-------|-------|------|---|
+    
+    Remember, type `string` is treated as `[]byte` by default for the sake of performance and switches to 
+    `string` with flag `--go-string`. You may use `str` to have exactly `string`.
     
     There is support for hexadecimal and octal values extraction:
     
