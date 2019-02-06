@@ -7,15 +7,20 @@ import (
 
 // For range representation
 type For struct {
-	I         string
-	Value     string
-	Container Source
-	Body      Source
+	I          string
+	Value      string
+	Container  Source
+	Body       Source
+	DontAssign bool
 }
 
 // Dump ...
 func (f For) Dump(w io.Writer) error {
-	if _, err := fmt.Fprintf(w, "for %s, %s := range ", f.I, f.Value); err != nil {
+	assign := ":="
+	if f.DontAssign {
+		assign = "="
+	}
+	if _, err := fmt.Fprintf(w, "for %s, %s "+assign+" range ", f.I, f.Value); err != nil {
 		return err
 	}
 	if err := f.Container.Dump(w); err != nil {

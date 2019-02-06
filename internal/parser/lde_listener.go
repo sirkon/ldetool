@@ -20,6 +20,9 @@ type LDEListener interface {
 	// EnterAtomicAction is called when entering the atomicAction production.
 	EnterAtomicAction(c *AtomicActionContext)
 
+	// EnterPassHeadingCharacters is called when entering the passHeadingCharacters production.
+	EnterPassHeadingCharacters(c *PassHeadingCharactersContext)
+
 	// EnterPassTargetPrefix is called when entering the passTargetPrefix production.
 	EnterPassTargetPrefix(c *PassTargetPrefixContext)
 
@@ -94,6 +97,9 @@ type LDEListener interface {
 
 	// ExitAtomicAction is called when exiting the atomicAction production.
 	ExitAtomicAction(c *AtomicActionContext)
+
+	// ExitPassHeadingCharacters is called when exiting the passHeadingCharacters production.
+	ExitPassHeadingCharacters(c *PassHeadingCharactersContext)
 
 	// ExitPassTargetPrefix is called when exiting the passTargetPrefix production.
 	ExitPassTargetPrefix(c *PassTargetPrefixContext)

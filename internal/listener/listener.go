@@ -448,3 +448,10 @@ func (l *Listener) EnterFieldType(ctx *parser.FieldTypeContext) {
 
 // ExitFieldType is called when production fieldType is exited.
 func (l *Listener) ExitFieldType(ctx *parser.FieldTypeContext) {}
+
+func (l *Listener) EnterPassHeadingCharacters(c *parser.PassHeadingCharactersContext) {
+	a := ast.PassHeadingCharacters(c.CharLit().GetText())
+	l.seq().Append(a)
+}
+
+func (l *Listener) ExitPassHeadingCharacters(c *parser.PassHeadingCharactersContext) {}
