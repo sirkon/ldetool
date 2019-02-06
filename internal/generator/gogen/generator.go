@@ -340,6 +340,36 @@ func (g *Generator) PassN(n int) error {
 	return nil
 }
 
+func (g *Generator) PassHeadCharacters(char string) error {
+	const (
+		counter = "headPassCounter"
+		value   = "headPassValue"
+	)
+	if err := g.regVar(counter, "int"); err != nil {
+		return err
+	}
+	if err := g.regVar(value, "byte"); err != nil {
+		return err
+	}
+	g.body.Append(
+		srcobj.For{
+			I:         counter,
+			Value:     value,
+			Container: g.rest(),
+			Body: srcobj.If{
+				Expr: srcobj.OperatorNEq(srcobj.Raw(value), srcobj.Raw(char)),
+				Then: srcobj.Break,
+			},
+			DontAssign: true,
+		},
+	)
+	g.body.Append(srcobj.If{
+		Expr: srcobj.OperatorGT(srcobj.Raw(counter), srcobj.Literal(0)),
+		Then: srcobj.OperatorAssign(g.rest(), srcobj.SliceFrom(g.rest(), srcobj.Raw(counter))),
+	})
+	return nil
+}
+
 // Stress mismatches should be treated as critical errors
 func (g *Generator) Stress() error {
 	g.critical = true

@@ -59,6 +59,7 @@ Rule and capture names must be public and starts from capital letter (i.e. `Name
 |Syntax|Description|Example of rule application<br>``rule(rest) → new rest``|
 |:-----|-----------|--------------------------------------------------------|
 |``_[N:]``|Pass first N characters of the rest.<br>Signal error if the rest is shorter than N|``_[2:]("12ab") → "ab"``|
+|``*'c'``|Pass all c characters right from the head|``*'@'("@@1") → "1"``| 
 |``^'c'``|Check if the rest starts with the given character *c* and pass it.<br>Signal error otherwise|``^'@'("@usr") → "usr"``|
 |``?^`c'``|If the rest starts with the given character *c* then pass it|``?^'@'("@usr") → "usr"``<br>``?^'@'("usr") → "usr"``|
 |``^"t"``|Check if the rest starts with the given text *t* and pass it.<br> Signal error otherwise|``^"ab"("ab12") → "12"``|

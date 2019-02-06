@@ -3082,3 +3082,34 @@ func (p *Str) Extract(line []byte) (bool, error) {
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }
+
+// Star ...
+type Star struct {
+	Rest []byte
+	F    int
+}
+
+// Extract ...
+func (p *Star) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	var err error
+	var headPassCounter int
+	var headPassValue byte
+	var tmpInt int64
+	for headPassCounter, headPassValue = range p.Rest {
+		if headPassValue != 'a' {
+			break
+		}
+	}
+	if headPassCounter > 0 {
+		p.Rest = p.Rest[headPassCounter:]
+	}
+
+	// Take the rest as F(int)
+	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&p.Rest)), 10, 64); err != nil {
+		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.Rest), err)
+	}
+	p.F = int(tmpInt)
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}

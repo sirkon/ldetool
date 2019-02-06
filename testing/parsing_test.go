@@ -582,3 +582,17 @@ func TestStr(t *testing.T) {
 		F2:   []byte("abcdef"),
 	}, p)
 }
+
+func TestStar(t *testing.T) {
+	var p Star
+	src := []byte("aaaaaaaaaaaaaaaa123")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, Star{
+		Rest: []byte{},
+		F:    123,
+	}, p)
+}

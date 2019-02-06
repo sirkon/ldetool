@@ -19,6 +19,7 @@ baseAction
 
 atomicAction
     : passTargetPrefix
+    | passHeadingCharacters
     | mayBePassTargetPrefix
     | passChars
     | passUntil
@@ -32,6 +33,9 @@ atomicAction
     | optionalArea
     | restCheck
     | atEnd;
+
+passHeadingCharacters
+    : '*' CharLit;
 
 passTargetPrefix
     : '^' targetLit '[' IntLit ']'

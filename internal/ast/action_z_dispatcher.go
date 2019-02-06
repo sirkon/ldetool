@@ -13,6 +13,7 @@ type ActionDispatcher interface {
 	DispatchMayBeStartChar(a *MayBeStartChar) error
 	DispatchMayBeStartString(a *MayBeStartString) error
 	DispatchOptional(a *Optional) error
+	DispatchPassHeadingCharacters(a PassHeadingCharacters) error
 	DispatchPassFirst(a PassFixed) error
 	DispatchPassUntil(a *PassUntil) error
 	DispatchPassUntilOrIgnore(a *PassUntilOrIgnore) error

@@ -45,6 +45,12 @@ func (s *BaseLDEListener) EnterAtomicAction(ctx *AtomicActionContext) {}
 // ExitAtomicAction is called when production atomicAction is exited.
 func (s *BaseLDEListener) ExitAtomicAction(ctx *AtomicActionContext) {}
 
+// EnterPassHeadingCharacters is called when production passHeadingCharacters is entered.
+func (s *BaseLDEListener) EnterPassHeadingCharacters(ctx *PassHeadingCharactersContext) {}
+
+// ExitPassHeadingCharacters is called when production passHeadingCharacters is exited.
+func (s *BaseLDEListener) ExitPassHeadingCharacters(ctx *PassHeadingCharactersContext) {}
+
 // EnterPassTargetPrefix is called when production passTargetPrefix is entered.
 func (s *BaseLDEListener) EnterPassTargetPrefix(ctx *PassTargetPrefixContext) {}
 

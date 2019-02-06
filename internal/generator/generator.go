@@ -15,6 +15,7 @@ type Generator interface {
 
 	// Pass
 	PassN(n int) error
+	PassHeadCharacters(char string) error
 
 	//
 	AtEnd() error

@@ -218,3 +218,5 @@ Dec = F1(dec8.3) ' ' F2(dec12.2) ' ' F3(dec30.8);
 RestLength = %15 %<16 %>14;
 
 Str = F1(str) ' ' F2(string);
+
+Star = *'a' F(int);

@@ -94,6 +94,16 @@ func (sb *SrcBuilder) DispatchOptional(a *ast.Optional) error {
 	return nil
 }
 
+func (sb *SrcBuilder) DispatchPassHeadingCharacters(a ast.PassHeadingCharacters) error {
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	sb.appendGens(func() error {
+		return sb.gen.PassHeadCharacters(string(a))
+	})
+	return nil
+}
+
 func (sb *SrcBuilder) DispatchPassFirst(a ast.PassFixed) error {
 	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
 		return err
