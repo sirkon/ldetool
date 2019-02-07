@@ -1,9 +1,6 @@
 package gogen
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
@@ -36,10 +33,8 @@ func (g *Generator) prepFloat() {
 	g.regVar("tmpFloat", "float64")
 }
 
-func (g *Generator) returnError(srcName srcobj.Source, fieldName, typeName string) srcobj.Source {
-	pos := strings.IndexByte(fieldName, '.')
-	fieldName = fieldName[pos+1:]
-	return srcobj.ReturnError("Cannot parse `%s` into "+fieldName+"("+typeName+"): %s",
+func (g *Generator) returnError(srcName srcobj.Source) srcobj.Source {
+	return srcobj.ReturnError("cannot parse `%s` into field "+g.curField.name+"("+g.curFieldType+"): %s",
 		srcName,
 		srcobj.Raw("err"),
 	)
@@ -50,10 +45,10 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 
 	var p []srcobj.Source
 	if g.useString {
-		//g.regVar("tmpChar", "byte")
-		//g.body.Append(srcobj.Assign("tmpChar", src))
-		//g.body.Append(srcobj.Raw("\n"))
-		//src = srcobj.Raw("tmpChar")
+		// g.regVar("tmpChar", "byte")
+		// g.body.Append(srcobj.Assign("tmpChar", src))
+		// g.body.Append(srcobj.Raw("\n"))
+		// src = srcobj.Raw("tmpChar")
 		p = []srcobj.Source{src}
 	} else {
 		g.regImport("", "unsafe")
@@ -85,7 +80,7 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 				),
 				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
 			),
-			Then: g.returnError(p[0], dest, gotype),
+			Then: g.returnError(p[0]),
 		},
 	)
 	g.body.Append(srcobj.LineAssign{
@@ -232,7 +227,7 @@ func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, 
 				),
 				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
 			),
-			Then: g.returnError(printSrc, dest, fmt.Sprintf("dec%d.%d", precision, scale)),
+			Then: g.returnError(printSrc),
 		},
 	)
 }
@@ -280,7 +275,7 @@ func (g *Generator) decodeDec128(src srcobj.Source, dest string, precision, scal
 				),
 				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
 			),
-			Then: g.returnError(printSrc, dest, fmt.Sprintf("dec%d.%d", precision, scale)),
+			Then: g.returnError(printSrc),
 		},
 	)
 }

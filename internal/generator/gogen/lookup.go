@@ -112,7 +112,7 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 	var failure srcobj.Source
 	if !ignore {
 		failure = g.failure(
-			"Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`",
+			"cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`",
 			srcobj.Raw(constName),
 			srcobj.Stringify(rest),
 		)
@@ -234,7 +234,7 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 	var failure srcobj.Source
 	if !ignore {
 		failure = g.failure(
-			"Cannot find \033[1m%s\033[0m in `\033[1m%s\033[0m`",
+			"cannot find \033[1m%s\033[0m in `\033[1m%s\033[0m`",
 			srcobj.DrawChar(char),
 			srcobj.Stringify(rest),
 		)

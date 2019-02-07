@@ -65,7 +65,7 @@ func (p *Rule) Extract(line string) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s` into Signed(int): %s", tmp, err)
+		return false, fmt.Errorf("cannot parse `%s` into field Signed(int): %s", tmp, err)
 	}
 	p.Signed = int(tmpInt)
 
@@ -85,7 +85,7 @@ func (p *Rule) Extract(line string) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(tmp, 10, 64); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s` into Unsigned(uint): %s", tmp, err)
+		return false, fmt.Errorf("cannot parse `%s` into field Unsigned(uint): %s", tmp, err)
 	}
 	p.Unsigned = uint(tmpUint)
 

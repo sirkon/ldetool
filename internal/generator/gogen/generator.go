@@ -56,6 +56,9 @@ type Generator struct {
 	decimalDecoderMap map[string]func(src srcobj.Source, dest string, precision, scale int)
 
 	ruleName string // Name of currently processing rule
+
+	curField     Name
+	curFieldType string
 }
 
 // PlatformType holds an information what type of platform to generate code for:
@@ -333,7 +336,7 @@ func (g *Generator) PassN(n int) error {
 				srcobj.SliceFrom(g.rest(), srcobj.Literal(n)),
 			),
 			Else: g.failure(
-				"Cannot skip first %d symbols: only %d left in the rest",
+				"cannot skip first %d symbols: only %d left in the rest",
 				srcobj.Literal(n),
 				srcobj.NewCall("len", g.rest()),
 			),

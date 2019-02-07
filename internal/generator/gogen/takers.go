@@ -71,7 +71,7 @@ func numerator(num int) string {
 }
 
 func (g *Generator) sliceTooLarge(upper int) srcobj.Source {
-	return g.failure("Cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
+	return g.failure("cannot slice up to %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
 		srcobj.Literal(upper),
 		srcobj.NewCall("len", g.rest()),
 		srcobj.Stringify(g.rest()))
@@ -79,7 +79,7 @@ func (g *Generator) sliceTooLarge(upper int) srcobj.Source {
 
 func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
 	return g.failure(
-		"Cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
+		"cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)",
 		srcobj.Literal(lower),
 		srcobj.NewCall("len", g.rest()),
 		srcobj.Stringify(g.rest()),
@@ -99,6 +99,8 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, meta ast.Fi
 	if err := g.getterGen(name, fieldType); err != nil {
 		return err
 	}
+	g.curField = item
+	g.curFieldType = fieldType
 
 	constName := g.constNameFromContent(anchor)
 
@@ -214,7 +216,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, meta ast.Fi
 	var alternative srcobj.Source
 	if !expand {
 		alternative = g.failure(
-			"Cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
+			"cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
 			srcobj.Raw(constName),
 			srcobj.Stringify(rest),
 		)
@@ -340,6 +342,8 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, meta ast.FieldM
 	if err := g.getterGen(name, fieldType); err != nil {
 		return err
 	}
+	g.curField = item
+	g.curFieldType = fieldType
 
 	var rest srcobj.Source
 	switch {
@@ -448,7 +452,7 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, meta ast.FieldM
 	var alternative srcobj.Source
 	if !expand {
 		alternative = g.failure(
-			"Cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
+			"cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
 			srcobj.Raw(char),
 			srcobj.Stringify(rest),
 		)

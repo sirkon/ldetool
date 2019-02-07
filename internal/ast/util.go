@@ -63,13 +63,13 @@ func (p *decimalExtractor) Extract(line string) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(tmp, 10, 64); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s`: %s", string(tmp), err)
+		return false, fmt.Errorf("cannot parse `%s`: %s", string(tmp), err)
 	}
 	p.Precision = uint(tmpUint)
 
 	// Take the rest as Scale(uint)
 	if tmpUint, err = strconv.ParseUint(p.Rest, 10, 64); err != nil {
-		return false, fmt.Errorf("Cannot parse `%s`: %s", string(p.Rest), err)
+		return false, fmt.Errorf("cannot parse `%s`: %s", string(p.Rest), err)
 	}
 	p.Scale = uint(tmpUint)
 	p.Rest = p.Rest[len(p.Rest):]
