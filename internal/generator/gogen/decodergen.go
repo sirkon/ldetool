@@ -1,6 +1,9 @@
 package gogen
 
 import (
+	"fmt"
+	"strings"
+
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
@@ -31,6 +34,15 @@ func (g *Generator) prepUint() {
 func (g *Generator) prepFloat() {
 	g.prepNumeric()
 	g.regVar("tmpFloat", "float64")
+}
+
+func (g *Generator) returnError(srcName srcobj.Source, fieldName, typeName string) srcobj.Source {
+	pos := strings.IndexByte(fieldName, '.')
+	return srcobj.ReturnError("Cannot parse `%s` into %s("+typeName+"): %s",
+		srcName,
+		srcobj.Raw(`"`+fieldName[pos+1:]+`"`),
+		srcobj.Raw("err"),
+	)
 }
 
 func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string, params ...srcobj.Source) {
@@ -73,7 +85,7 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 				),
 				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
 			),
-			Then: srcobj.ReturnError("Cannot parse `%s`: %s", srcobj.Stringify(src), srcobj.Raw("err")),
+			Then: g.returnError(p[0], dest, gotype),
 		},
 	)
 	g.body.Append(srcobj.LineAssign{
@@ -199,6 +211,12 @@ func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, 
 	} else {
 		p = append(p, src)
 	}
+	var printSrc srcobj.Source
+	if g.useString {
+		printSrc = src
+	} else {
+		printSrc = srcobj.NewCall("string", src)
+	}
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorSemicolon(
@@ -214,7 +232,7 @@ func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, 
 				),
 				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
 			),
-			Then: srcobj.ReturnError("Cannot parse `%s`: %s", srcobj.Stringify(src), srcobj.Raw("err")),
+			Then: g.returnError(printSrc, dest, fmt.Sprintf("dec%d.%d", precision, scale)),
 		},
 	)
 }
@@ -238,6 +256,12 @@ func (g *Generator) decodeDec128(src srcobj.Source, dest string, precision, scal
 	} else {
 		p = append(p, src)
 	}
+	var printSrc srcobj.Source
+	if g.useString {
+		printSrc = src
+	} else {
+		printSrc = srcobj.NewCall("string", src)
+	}
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorSemicolon(
@@ -256,7 +280,7 @@ func (g *Generator) decodeDec128(src srcobj.Source, dest string, precision, scal
 				),
 				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
 			),
-			Then: srcobj.ReturnError("Cannot parse `%s`: %s", srcobj.Stringify(src), srcobj.Raw("err")),
+			Then: g.returnError(printSrc, dest, fmt.Sprintf("dec%d.%d", precision, scale)),
 		},
 	)
 }
