@@ -3,11 +3,11 @@ package gogen
 import (
 	"fmt"
 	"io"
-
 	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
+
 	"github.com/sirkon/ldetool/internal/generator"
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
@@ -317,6 +317,8 @@ func (g *Generator) RestLengthCheck(operator string, length int) error {
 
 // PassN passes first N characters if they are there, otherwise signal a error
 func (g *Generator) PassN(n int) error {
+	g.body.Append(srcobj.Literal("\n"))
+	g.body.Append(srcobj.Comment(fmt.Sprintf("Pass first N symbols in the rest")))
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorGE(
@@ -351,6 +353,8 @@ func (g *Generator) PassHeadCharacters(char string) error {
 	if err := g.regVar(value, "byte"); err != nil {
 		return err
 	}
+	g.body.Append(srcobj.Literal("\n"))
+	g.body.Append(srcobj.Comment(fmt.Sprintf("Pass all characters %s at the rest start", char)))
 	g.body.Append(
 		srcobj.For{
 			I:         counter,
