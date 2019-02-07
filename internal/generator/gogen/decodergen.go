@@ -38,9 +38,9 @@ func (g *Generator) prepFloat() {
 
 func (g *Generator) returnError(srcName srcobj.Source, fieldName, typeName string) srcobj.Source {
 	pos := strings.IndexByte(fieldName, '.')
-	return srcobj.ReturnError("Cannot parse `%s` into %s("+typeName+"): %s",
+	fieldName = fieldName[pos+1:]
+	return srcobj.ReturnError("Cannot parse `%s` into "+fieldName+"("+typeName+"): %s",
 		srcName,
-		srcobj.Raw(`"`+fieldName[pos+1:]+`"`),
 		srcobj.Raw("err"),
 	)
 }
