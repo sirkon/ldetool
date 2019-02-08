@@ -3010,7 +3010,7 @@ func (p *Dec) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if p.F1, err = decconv.Decode32(8, 3, tmp); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field F1(dec32): %s", string(tmp), err)
+		return false, fmt.Errorf("cannot parse `%s` into field F1(dec8.3): %s", string(tmp), err)
 	}
 
 	// Take until ' ' as F2(dec64)
@@ -3022,12 +3022,12 @@ func (p *Dec) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	if p.F2, err = decconv.Decode64(12, 2, tmp); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field F2(dec64): %s", string(tmp), err)
+		return false, fmt.Errorf("cannot parse `%s` into field F2(dec12.2): %s", string(tmp), err)
 	}
 
 	// Take the rest as F3(dec128)
 	if p.F3.Lo, p.F3.Hi, err = decconv.Decode128(30, 8, p.Rest); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field F2(dec64): %s", string(p.Rest), err)
+		return false, fmt.Errorf("cannot parse `%s` into field F2(dec30.8): %s", string(p.Rest), err)
 	}
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil

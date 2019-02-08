@@ -1,6 +1,8 @@
 package gogen
 
 import (
+	"fmt"
+
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
@@ -212,6 +214,7 @@ func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, 
 	} else {
 		printSrc = srcobj.NewCall("string", src)
 	}
+	g.curFieldType = fmt.Sprintf("dec%d.%d", precision, scale)
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorSemicolon(
@@ -257,6 +260,7 @@ func (g *Generator) decodeDec128(src srcobj.Source, dest string, precision, scal
 	} else {
 		printSrc = srcobj.NewCall("string", src)
 	}
+	g.curFieldType = fmt.Sprintf("dec%d.%d", precision, scale)
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorSemicolon(
