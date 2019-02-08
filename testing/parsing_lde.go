@@ -2897,7 +2897,7 @@ func (p *Hex) Extract(line []byte) (bool, error) {
 
 	// Take the rest as F5(hex64)
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&p.Rest)), 16, 64); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field F4(hex32): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
+		return false, fmt.Errorf("cannot parse `%s` into field F5(hex64): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
 	}
 	p.F5 = uint64(tmpUint)
 	p.Rest = p.Rest[len(p.Rest):]
@@ -2976,7 +2976,7 @@ func (p *Oct) Extract(line []byte) (bool, error) {
 
 	// Take the rest as F5(oct64)
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&p.Rest)), 8, 64); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field F4(oct32): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
+		return false, fmt.Errorf("cannot parse `%s` into field F5(oct64): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
 	}
 	p.F5 = uint64(tmpUint)
 	p.Rest = p.Rest[len(p.Rest):]
@@ -3027,7 +3027,7 @@ func (p *Dec) Extract(line []byte) (bool, error) {
 
 	// Take the rest as F3(dec128)
 	if p.F3.Lo, p.F3.Hi, err = decconv.Decode128(30, 8, p.Rest); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field F2(dec30.8): %s", string(p.Rest), err)
+		return false, fmt.Errorf("cannot parse `%s` into field F3(dec30.8): %s", string(p.Rest), err)
 	}
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
@@ -3109,7 +3109,7 @@ func (p *Star) Extract(line []byte) (bool, error) {
 
 	// Take the rest as F(int)
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&p.Rest)), 10, 64); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field F1(str): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
+		return false, fmt.Errorf("cannot parse `%s` into field F(int): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
 	}
 	p.F = int(tmpInt)
 	p.Rest = p.Rest[len(p.Rest):]

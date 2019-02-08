@@ -566,6 +566,9 @@ func (g *Generator) TakeRest(name, fieldType string, meta ast.FieldMeta) error {
 		return err
 	}
 
+	g.curField = item
+	g.curFieldType = fieldType
+
 	body := g.indent()
 	body.Append(srcobj.Comment(fmt.Sprintf("Take the rest as %s(%s)", name, fieldType)))
 
