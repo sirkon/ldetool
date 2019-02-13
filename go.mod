@@ -8,9 +8,12 @@ require (
 	github.com/sirkon/decconv v1.0.0
 	github.com/sirkon/gosrcfmt v1.5.0
 	github.com/sirkon/gotify v0.5.0
+	github.com/sirkon/ldetool/internal v0.0.0-00010101000000-000000000000
 	github.com/sirkon/message v1.5.1
 	github.com/stretchr/testify v1.2.2
 	github.com/urfave/cli v1.20.0
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.2.1 // indirect
 )
+
+replace github.com/sirkon/ldetool/internal => ./internal
