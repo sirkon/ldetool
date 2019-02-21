@@ -165,7 +165,7 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 
 	var rest srcobj.Source
 	switch {
-	case lower > 0 && upper > 0:
+	case lower > 0 && upper > 0 && lower != upper:
 		if err := g.regRightVar("tmpRest"); err != nil {
 			return err
 		}

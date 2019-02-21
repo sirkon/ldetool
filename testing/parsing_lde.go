@@ -2243,7 +2243,6 @@ type Split struct {
 func (p *Split) Extract(line []byte) (bool, error) {
 	p.Rest = line
 	var pos int
-	var tmpRest []byte
 
 	// Take until '|' as Name(string)
 	pos = -1
@@ -2291,7 +2290,7 @@ func (p *Split) Extract(line []byte) (bool, error) {
 		p.Count = p.Rest[:pos]
 		p.Rest = p.Rest[pos+1:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", '|', string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", '|', string(p.Rest))
 	}
 
 	return true, nil
@@ -3112,6 +3111,47 @@ func (p *Star) Extract(line []byte) (bool, error) {
 		return false, fmt.Errorf("cannot parse `%s` into field F(int): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
 	}
 	p.F = int(tmpInt)
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
+
+// JustToCompile ...
+type JustToCompile struct {
+	Rest []byte
+	Head uint16
+	Tail uint16
+}
+
+// Extract ...
+func (p *JustToCompile) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	var err error
+	var pos int
+	var tmp []byte
+	var tmpUint uint64
+
+	// Take until 5th character if it is'-' as Head(hex16)
+	if len(p.Rest) >= 4+1 && p.Rest[4] == '-' {
+		pos = 4
+	} else {
+		pos = -1
+	}
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 16); err != nil {
+		return false, fmt.Errorf("cannot parse `%s` into field Head(hex16): %s", *(*string)(unsafe.Pointer(&tmp)), err)
+	}
+	p.Head = uint16(tmpUint)
+
+	// Take the rest as Tail(hex16)
+	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&p.Rest)), 16, 16); err != nil {
+		return false, fmt.Errorf("cannot parse `%s` into field Tail(hex16): %s", *(*string)(unsafe.Pointer(&p.Rest)), err)
+	}
+	p.Tail = uint16(tmpUint)
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }

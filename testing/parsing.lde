@@ -221,3 +221,4 @@ Str = F1(str) ' ' F2(string);
 
 Star = *'a' F(int);
 
+JustToCompile = Head(hex16) '-'[4] Tail(hex16);
