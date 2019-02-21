@@ -106,7 +106,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, meta ast.Fi
 
 	var rest srcobj.Source
 	switch {
-	case lower > 0 && upper > 0:
+	case lower > 0 && upper > 0 && lower != upper:
 		if err := g.regRightVar("tmpRest"); err != nil {
 			return err
 		}

@@ -596,3 +596,43 @@ func TestStar(t *testing.T) {
 		F:    123,
 	}, p)
 }
+
+func TestJustToCompile(t *testing.T) {
+	var p JustToCompile
+	src := []byte("aaaa-9999")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, JustToCompile{
+		Rest: []byte(""),
+		Head: 0xAAAA,
+		Tail: 0x9999,
+	}, p)
+
+	ok, err = p.Extract([]byte("gggg-123"))
+	require.False(t, ok)
+	require.Error(t, err)
+}
+
+func TestJustToString(t *testing.T) {
+	var p JustToCompileString
+	src := []byte("aaaaabcd9999")
+	ok, err := p.Extract(src)
+	require.True(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+	require.Equal(t, JustToCompileString{
+		Rest: []byte(""),
+		Head: 0xAAAA,
+		Tail: 0x9999,
+	}, p)
+
+	ok, err = p.Extract([]byte("gggg-123"))
+	require.False(t, ok)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
