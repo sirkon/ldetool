@@ -63,10 +63,13 @@ Rule and capture names must be public and starts from capital letter (i.e. `Name
 |``^'c'``|Check if the rest starts with the given character *c* and pass it.<br>Signal error otherwise|``^'@'("@usr") → "usr"``|
 |``?^`c'``|If the rest starts with the given character *c* then pass it|``?^'@'("@usr") → "usr"``<br>``?^'@'("usr") → "usr"``|
 |``^"t"``|Check if the rest starts with the given text *t* and pass it.<br> Signal error otherwise|``^"ab"("ab12") → "12"``|
+|``@"t"``|Check if the rest starts with the given text *t* without passing it.<br> Signal error otherwise|``@"ab"("ab12") → "ab12"``|
 |``?^"t"``|If the rest starts with the given text *t* then pass it|``^"ab"("ab12") → "12"``<br>``^"ab"("a12") → "a12"``|
 |``_'c'``|Look for the character *c* in the rest and pass it.<br>Signal error when it was not found|``_'1'("a12") → "2"``|
+|``..'c'``|Look for the character *c* in the rest without passing it.<br>Signal error when it was not found|``..'1'("a12") → "12"``|
 |``_?'c'``|Works exactly like ``_'c'`` if the character *c* was found.<br>Do nothing otherwise|``_'1'("a12") → "2"``<br>``_'1'("a2") → "a2"``|
-|``_'c'[:N]``|Look for the character *c* in first N characters the rest and pass it.<br>Signal error when it was not found|``_'1'[:2]("a12") → "2"``<br>``_'1'[:2]("aa12") → error``<br>``_'1'[:3]("aa123c") → "23c"``|
+|``..?'c'``|Works exactly like ``..'c'`` if the character *c* was found.<br>Do nothing otherwise|``..'1'("a12") → "12"``<br>``..'1'("a2") → "a2"``|
+|``'c'[:N]``|Look for the character *c* in first N characters the rest and pass it.<br>Signal error when it was not found|``_'1'[:2]("a12") → "2"``<br>``_'1'[:2]("aa12") → error``<br>``_'1'[:3]("aa123c") → "23c"``|
 |``_?'c'[:N]``|Look for the character *c* in first N characters the rest and pass it.<br>Ignore when text *t* was not found|``_'1'[:2]("a12") → "2"``<br>``_'1'[:2]("aa12") → "aa12"``<br>``_'1'[:3]("aa123c") → "23c"``|
 |``_'c'[M:N]``|Look for the character *c* in the M..N-1 characters of the rest<br>and pass it.<br>Signal error when it was not found|``_'1'[1:2]("a12") → "2"``<br>``_'1'[1:2]("12") → error``<br>``_'1'[0:2]("123c") → "23c"``|
 |``_'c'[M:]``|Look for the character *c* in the M, M+1, etc characters of the rest<br>and pass it.<br>Signal error when it was not found|``_'1'[1:]("a12") → "2"``<br>``_'1'[1:]("12") → error``<br>``_'1'[0:]("123c") → "23c"``|
@@ -81,6 +84,8 @@ Rule and capture names must be public and starts from capital letter (i.e. `Name
 |``_"t"[M:]``| |``_"ab"[1:]("1ab2") → "2"``<br>``_?"ab"[2:]("1ab2") → error``|
 |``_"t"[M]``|Symbols of the rest from (M+1)-th position must starts with *t* |``_"ab"[1:3]("1ab2") → "2"``<br>``_?"ab"[2:4]("1ab2") → error``|
 |``_?"t"[M:N]``| |``_?"ab"[1:3]("1ab2") → "2"``<br>``_?"ab"[2:4]("1ab2") → "1ab2"``|
+
+> Notice, each `_<something>` action except `_[N:]` has its `..<something>` counterpart which works exactly like `_` except it stops right before the target without passing it. 
 
 #### Note
 You can put `~` sign before a char or string you are looking for. This means "short" lookup: for loop will be used for

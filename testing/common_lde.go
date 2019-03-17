@@ -15,6 +15,8 @@ import (
 	"strings"
 )
 
+var abc = "abc"
+
 // Rule ...
 type Rule struct {
 	Rest     string
@@ -91,6 +93,52 @@ func (p *Rule) Extract(line string) (bool, error) {
 
 	// Take the rest as Str(str)
 	p.Str = p.Rest
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
+
+// BeforeLookup ...
+type BeforeLookup struct {
+	Rest string
+	Data string
+}
+
+// Extract ...
+func (p *BeforeLookup) Extract(line string) (bool, error) {
+	p.Rest = line
+	var pos int
+
+	// Looking for "abc" and then pass it
+	pos = strings.Index(p.Rest, abc)
+	if pos >= 0 {
+		p.Rest = p.Rest[pos:]
+	} else {
+		return false, nil
+	}
+
+	// Take the rest as Data(string)
+	p.Data = p.Rest
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
+
+// CheckPrefix ...
+type CheckPrefix struct {
+	Rest string
+	Data string
+}
+
+// Extract ...
+func (p *CheckPrefix) Extract(line string) (bool, error) {
+	p.Rest = line
+
+	// Checks if the rest starts with `"abc"`
+	if !strings.HasPrefix(p.Rest, abc) {
+		return false, nil
+	}
+
+	// Take the rest as Data(string)
+	p.Data = p.Rest
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }

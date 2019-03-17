@@ -20,3 +20,29 @@ func TestCommon(t *testing.T) {
 	require.Equal(t, uint(234), e.Unsigned)
 	require.Equal(t, "abcdef", e.Str)
 }
+
+func TestBeforeLookup(t *testing.T) {
+	data := "     abc123"
+	var e BeforeLookup
+	if ok, err := e.Extract(data); !ok || err != nil {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "abc123", e.Data)
+	require.Equal(t, "", e.Rest)
+}
+
+func TestCheckPrefix(t *testing.T) {
+	data := "abc123"
+	var e CheckPrefix
+	if ok, err := e.Extract(data); !ok || err != nil {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "abc123", e.Data)
+	require.Equal(t, "", e.Rest)
+}

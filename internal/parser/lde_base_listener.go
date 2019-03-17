@@ -1,4 +1,4 @@
-// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
+// Code generated from LDE.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // LDE
 
@@ -57,6 +57,12 @@ func (s *BaseLDEListener) EnterPassTargetPrefix(ctx *PassTargetPrefixContext) {}
 // ExitPassTargetPrefix is called when production passTargetPrefix is exited.
 func (s *BaseLDEListener) ExitPassTargetPrefix(ctx *PassTargetPrefixContext) {}
 
+// EnterCheckTargetPrefix is called when production checkTargetPrefix is entered.
+func (s *BaseLDEListener) EnterCheckTargetPrefix(ctx *CheckTargetPrefixContext) {}
+
+// ExitCheckTargetPrefix is called when production checkTargetPrefix is exited.
+func (s *BaseLDEListener) ExitCheckTargetPrefix(ctx *CheckTargetPrefixContext) {}
+
 // EnterMayBePassTargetPrefix is called when production mayBePassTargetPrefix is entered.
 func (s *BaseLDEListener) EnterMayBePassTargetPrefix(ctx *MayBePassTargetPrefixContext) {}
 
@@ -68,6 +74,18 @@ func (s *BaseLDEListener) EnterPassChars(ctx *PassCharsContext) {}
 
 // ExitPassChars is called when production passChars is exited.
 func (s *BaseLDEListener) ExitPassChars(ctx *PassCharsContext) {}
+
+// EnterGoUntil is called when production goUntil is entered.
+func (s *BaseLDEListener) EnterGoUntil(ctx *GoUntilContext) {}
+
+// ExitGoUntil is called when production goUntil is exited.
+func (s *BaseLDEListener) ExitGoUntil(ctx *GoUntilContext) {}
+
+// EnterMayGoUntil is called when production mayGoUntil is entered.
+func (s *BaseLDEListener) EnterMayGoUntil(ctx *MayGoUntilContext) {}
+
+// ExitMayGoUntil is called when production mayGoUntil is exited.
+func (s *BaseLDEListener) ExitMayGoUntil(ctx *MayGoUntilContext) {}
 
 // EnterPassUntil is called when production passUntil is entered.
 func (s *BaseLDEListener) EnterPassUntil(ctx *PassUntilContext) {}

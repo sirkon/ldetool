@@ -15,10 +15,14 @@ type ActionDispatcher interface {
 	DispatchOptional(a *Optional) error
 	DispatchPassHeadingCharacters(a PassHeadingCharacters) error
 	DispatchPassFirst(a PassFixed) error
-	DispatchPassUntil(a *PassUntil) error
-	DispatchPassUntilOrIgnore(a *PassUntilOrIgnore) error
+	DispatchPassAfter(a *PassAfter) error
+	DispatchPassAfterOrIgnore(a *PassAfterOrIgnore) error
+	DispatchPassBefore(a *PassBefore) error
+	DispatchPassBeforeOrIgnore(a *PassBeforeOrIgnore) error
 	DispatchStartChar(a *StartChar) error
+	DispatchStartCharWithoutPass(a *StartCharWithoutPass) error
 	DispatchStartString(a *StartString) error
+	DispatchStartStringWithoutPass(a *StartStringWithoutPass) error
 	DispatchTake(a *Take) error
 	DispatchTakeIncluding(a *TakeIncluding) error
 	DispatchTakeRest(a *TakeRest) error

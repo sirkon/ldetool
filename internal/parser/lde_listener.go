@@ -1,4 +1,4 @@
-// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
+// Code generated from LDE.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // LDE
 
@@ -26,11 +26,20 @@ type LDEListener interface {
 	// EnterPassTargetPrefix is called when entering the passTargetPrefix production.
 	EnterPassTargetPrefix(c *PassTargetPrefixContext)
 
+	// EnterCheckTargetPrefix is called when entering the checkTargetPrefix production.
+	EnterCheckTargetPrefix(c *CheckTargetPrefixContext)
+
 	// EnterMayBePassTargetPrefix is called when entering the mayBePassTargetPrefix production.
 	EnterMayBePassTargetPrefix(c *MayBePassTargetPrefixContext)
 
 	// EnterPassChars is called when entering the passChars production.
 	EnterPassChars(c *PassCharsContext)
+
+	// EnterGoUntil is called when entering the goUntil production.
+	EnterGoUntil(c *GoUntilContext)
+
+	// EnterMayGoUntil is called when entering the mayGoUntil production.
+	EnterMayGoUntil(c *MayGoUntilContext)
 
 	// EnterPassUntil is called when entering the passUntil production.
 	EnterPassUntil(c *PassUntilContext)
@@ -104,11 +113,20 @@ type LDEListener interface {
 	// ExitPassTargetPrefix is called when exiting the passTargetPrefix production.
 	ExitPassTargetPrefix(c *PassTargetPrefixContext)
 
+	// ExitCheckTargetPrefix is called when exiting the checkTargetPrefix production.
+	ExitCheckTargetPrefix(c *CheckTargetPrefixContext)
+
 	// ExitMayBePassTargetPrefix is called when exiting the mayBePassTargetPrefix production.
 	ExitMayBePassTargetPrefix(c *MayBePassTargetPrefixContext)
 
 	// ExitPassChars is called when exiting the passChars production.
 	ExitPassChars(c *PassCharsContext)
+
+	// ExitGoUntil is called when exiting the goUntil production.
+	ExitGoUntil(c *GoUntilContext)
+
+	// ExitMayGoUntil is called when exiting the mayGoUntil production.
+	ExitMayGoUntil(c *MayGoUntilContext)
 
 	// ExitPassUntil is called when exiting the passUntil production.
 	ExitPassUntil(c *PassUntilContext)

@@ -21,14 +21,14 @@ type Generator interface {
 	AtEnd() error
 
 	// Head
-	HeadString(anchor string, ignore bool) error
-	HeadChar(char string, ignore bool) error
+	HeadString(anchor string, ignore bool, pass bool) error
+	HeadChar(char string, ignore bool, pass bool) error
 
 	// Lookups
-	LookupString(anchor string, lower, upper int, close, ignore bool) error
-	LookupFixedString(anchor string, offset int, ignore bool) error
-	LookupChar(anchor string, lower, upper int, close, ignore bool) error
-	LookupFixedChar(anchor string, offset int, ignore bool) error
+	LookupString(anchor string, lower, upper int, close, ignore, pass bool) error
+	LookupFixedString(anchor string, offset int, ignore, pass bool) error
+	LookupChar(anchor string, lower, upper int, close, ignore, pass bool) error
+	LookupFixedChar(anchor string, offset int, ignore, pass bool) error
 
 	// Takes
 	// Take before anchor (string or character)

@@ -26,7 +26,7 @@ func (g *Generator) regRightVar(name string) error {
 }
 
 // LookupString ...
-func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore bool) error {
+func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore, pass bool) error {
 	if err := g.regVar("pos", "int"); err != nil {
 		return err
 	}
@@ -120,19 +120,30 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 
 	var offset srcobj.Source
 	if lower == 0 {
-		offset = srcobj.OperatorAdd(
-			srcobj.Raw("pos"),
-			srcobj.NewCall("len", srcobj.Raw(constName)),
-		)
+		if pass {
+			offset = srcobj.OperatorAdd(
+				srcobj.Raw("pos"),
+				srcobj.NewCall("len", srcobj.Raw(constName)),
+			)
+		} else {
+			offset = srcobj.Raw("pos")
+		}
 	} else {
 		l := fmt.Sprintf("%d", lower)
-		offset = srcobj.OperatorAdd(
-			srcobj.Raw("pos"),
-			srcobj.OperatorAdd(
-				srcobj.NewCall("len", srcobj.Raw(constName)),
+		if pass {
+			offset = srcobj.OperatorAdd(
+				srcobj.Raw("pos"),
+				srcobj.OperatorAdd(
+					srcobj.NewCall("len", srcobj.Raw(constName)),
+					srcobj.Raw(l),
+				),
+			)
+		} else {
+			offset = srcobj.OperatorAdd(
+				srcobj.Raw("pos"),
 				srcobj.Raw(l),
-			),
-		)
+			)
+		}
 	}
 
 	body.Append(srcobj.If{
@@ -146,16 +157,17 @@ func (g *Generator) LookupString(anchor string, lower, upper int, close, ignore 
 		},
 		Else: failure,
 	})
+
 	return nil
 }
 
 // LookupFixedString ...
-func (g *Generator) LookupFixedString(anchor string, offset int, ignore bool) error {
-	return g.checkStringPrefix(anchor, offset, ignore)
+func (g *Generator) LookupFixedString(anchor string, offset int, ignore, pass bool) error {
+	return g.checkStringPrefix(anchor, offset, ignore, pass)
 }
 
 // LookupCharEx ...
-func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool) error {
+func (g *Generator) LookupChar(char string, lower, upper int, close, ignore, pass bool) error {
 	if err := g.regVar("pos", "int"); err != nil {
 		return err
 	}
@@ -242,19 +254,27 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 
 	var offset srcobj.Source
 	if lower <= 0 {
-		offset = srcobj.OperatorAdd(
-			srcobj.Raw("pos"),
-			srcobj.Raw("1"),
-		)
+		if pass {
+			offset = srcobj.OperatorAdd(
+				srcobj.Raw("pos"),
+				srcobj.Raw("1"),
+			)
+		} else {
+			offset = srcobj.Raw("pos")
+		}
 	} else {
 		l := fmt.Sprintf("%d", lower)
-		offset = srcobj.OperatorAdd(
-			srcobj.Raw("pos"),
-			srcobj.OperatorAdd(
-				srcobj.Raw("1"),
-				srcobj.Raw(l),
-			),
-		)
+		if pass {
+			offset = srcobj.OperatorAdd(
+				srcobj.Raw("pos"),
+				srcobj.OperatorAdd(
+					srcobj.Raw("1"),
+					srcobj.Raw(l),
+				),
+			)
+		} else {
+			offset = srcobj.OperatorAdd(srcobj.Raw("pos"), srcobj.Raw(l))
+		}
 	}
 
 	body.Append(srcobj.If{
@@ -272,6 +292,6 @@ func (g *Generator) LookupChar(char string, lower, upper int, close, ignore bool
 }
 
 // LookupFixedChar ...
-func (g *Generator) LookupFixedChar(anchor string, offset int, ignore bool) error {
-	return g.checkCharPrefix(anchor, offset, ignore)
+func (g *Generator) LookupFixedChar(anchor string, offset int, ignore, pass bool) error {
+	return g.checkCharPrefix(anchor, offset, ignore, pass)
 }

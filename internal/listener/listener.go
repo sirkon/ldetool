@@ -48,6 +48,7 @@ type Listener struct {
 	optional       bool
 	lookup         bool
 	stateIsPrefix  bool
+	dontPass       bool
 	expectEnd      bool
 	mustNotBeExact bool
 }
@@ -126,6 +127,7 @@ func (l *Listener) ExitAtomicAction(ctx *parser.AtomicActionContext) {}
 // EnterPassTargetPrefix is called when production passTargetPrefix is entered.
 func (l *Listener) EnterPassTargetPrefix(ctx *parser.PassTargetPrefixContext) {
 	l.stateIsPrefix = true
+	l.dontPass = false
 	l.prefixJump = 0
 	if ctx.IntLit() != nil {
 		l.prefixJump, _ = strconv.Atoi(ctx.IntLit().GetText())
@@ -134,6 +136,20 @@ func (l *Listener) EnterPassTargetPrefix(ctx *parser.PassTargetPrefixContext) {
 
 // ExitPassTargetPrefix is called when production passTargetPrefix is exited.
 func (l *Listener) ExitPassTargetPrefix(ctx *parser.PassTargetPrefixContext) {
+	l.stateIsPrefix = false
+	l.optional = false
+}
+
+func (l *Listener) EnterCheckTargetPrefix(ctx *parser.CheckTargetPrefixContext) {
+	l.stateIsPrefix = true
+	l.dontPass = true
+	l.prefixJump = 0
+	if ctx.IntLit() != nil {
+		l.prefixJump, _ = strconv.Atoi(ctx.IntLit().GetText())
+	}
+}
+
+func (l *Listener) ExitCheckTargetPrefix(c *parser.CheckTargetPrefixContext) {
 	l.stateIsPrefix = false
 	l.optional = false
 }
@@ -169,7 +185,7 @@ func (l *Listener) ExitPassChars(ctx *parser.PassCharsContext) {}
 
 // EnterPassUntil is called when production passUntil is entered.
 func (l *Listener) EnterPassUntil(ctx *parser.PassUntilContext) {
-	a := ast.PassUntilTarget()
+	a := ast.PassAfterTarget()
 	l.seq().Append(a)
 	l.target = a.Limit
 	l.lookup = true
@@ -187,9 +203,27 @@ func (l *Listener) ExitPassUntil(ctx *parser.PassUntilContext) {
 	}
 }
 
+func (l *Listener) EnterGoUntil(c *parser.GoUntilContext) {
+	a := ast.PassBeforeTarget()
+	l.seq().Append(a)
+	l.target = a.Limit
+	l.lookup = true
+}
+
+func (l *Listener) ExitGoUntil(ctx *parser.GoUntilContext) {
+	l.lookup = false
+	if l.mustNotBeExact {
+		panic(fmt.Sprintf(
+			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			ctx.GetStart().GetLine(),
+			ctx.GetStart().GetColumn()+1,
+		))
+	}
+}
+
 // EnterMayPassUntil is called when production mayPassUntil is entered.
 func (l *Listener) EnterMayPassUntil(ctx *parser.MayPassUntilContext) {
-	a := ast.PassUntilTargetOrIgnore()
+	a := ast.PassAfterTargetOrIgnore()
 	l.seq().Append(a)
 	l.target = a.Limit
 	l.lookup = true
@@ -197,6 +231,24 @@ func (l *Listener) EnterMayPassUntil(ctx *parser.MayPassUntilContext) {
 
 // ExitMayPassUntil is called when production mayPassUntil is exited.
 func (l *Listener) ExitMayPassUntil(ctx *parser.MayPassUntilContext) {
+	l.lookup = false
+	if l.mustNotBeExact {
+		panic(fmt.Sprintf(
+			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			ctx.GetStart().GetLine(),
+			ctx.GetStart().GetColumn()+1,
+		))
+	}
+}
+
+func (l *Listener) EnterMayGoUntil(ctx *parser.MayGoUntilContext) {
+	a := ast.PassBeforeTarget()
+	l.seq().Append(a)
+	l.target = a.Limit
+	l.lookup = true
+}
+
+func (l *Listener) ExitMayGoUntil(ctx *parser.MayGoUntilContext) {
 	l.lookup = false
 	if l.mustNotBeExact {
 		panic(fmt.Sprintf(
@@ -333,13 +385,22 @@ func (l *Listener) EnterTargetLit(ctx *parser.TargetLitContext) {
 				if l.optional {
 					a = ast.MayBeStartsWithString(ctx.StringLit().GetSymbol())
 				} else {
-					a = ast.StartsWithString(ctx.StringLit().GetSymbol())
+					if l.dontPass {
+						a = ast.StartsWithStringWithoutPass(ctx.StringLit().GetSymbol())
+					} else {
+						a = ast.StartsWithString(ctx.StringLit().GetSymbol())
+					}
 				}
 			} else if ctx.CharLit() != nil {
 				if l.optional {
 					a = ast.MayBeStartsWithChar(ctx.CharLit().GetSymbol())
 				} else {
-					a = ast.StartsWithChar(ctx.CharLit().GetSymbol())
+					if l.dontPass {
+						a = ast.StartsWithCharWithoutPass(ctx.CharLit().GetSymbol())
+						a = ast.StartsWithCharWithoutPass(ctx.CharLit().GetSymbol())
+					} else {
+						a = ast.StartsWithChar(ctx.CharLit().GetSymbol())
+					}
 				}
 			}
 			if a != nil {
@@ -348,11 +409,11 @@ func (l *Listener) EnterTargetLit(ctx *parser.TargetLitContext) {
 			return
 		} else {
 			if l.optional {
-				ll := ast.PassUntilTargetOrIgnore()
+				ll := ast.PassAfterTargetOrIgnore()
 				a = ll
 				l.target = ll.Limit
 			} else {
-				ll := ast.PassUntilTarget()
+				ll := ast.PassAfterTarget()
 				a = ll
 				l.target = ll.Limit
 			}

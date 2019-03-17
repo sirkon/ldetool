@@ -19,11 +19,14 @@ baseAction
 
 atomicAction
     : passTargetPrefix
+    | checkTargetPrefix
     | passHeadingCharacters
     | mayBePassTargetPrefix
     | passChars
     | passUntil
     | mayPassUntil
+    | goUntil
+    | mayGoUntil
     | takeUntil
     | takeUntilIncluding
     | takeUntilOrRest
@@ -42,6 +45,11 @@ passTargetPrefix
     | '^' targetLit
     ;
 
+checkTargetPrefix
+    : '@' targetLit '[' IntLit ']'
+    | '@' targetLit
+    ;
+
 mayBePassTargetPrefix
     : '?' '^' targetLit '[' IntLit ']'
     | '?' '^' targetLit
@@ -49,6 +57,12 @@ mayBePassTargetPrefix
 
 passChars
     : '_' '[' IntLit ':' ']';
+
+goUntil
+    : '..' target;
+
+mayGoUntil
+    : '?' '..' target;
 
 passUntil
     : '_' target;

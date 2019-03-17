@@ -53,7 +53,7 @@ func (sb *SrcBuilder) DispatchMayBeStartChar(a *ast.MayBeStartChar) error {
 		return err
 	}
 	sb.appendGens(func() error {
-		return sb.gen.HeadChar(a.Value, true)
+		return sb.gen.HeadChar(a.Value, true, true)
 	})
 	return nil
 }
@@ -63,7 +63,7 @@ func (sb *SrcBuilder) DispatchMayBeStartString(a *ast.MayBeStartString) error {
 		return err
 	}
 	sb.appendGens(func() error {
-		return sb.gen.HeadString(a.Value, true)
+		return sb.gen.HeadString(a.Value, true, true)
 	})
 	return nil
 }
@@ -114,7 +114,7 @@ func (sb *SrcBuilder) DispatchPassFirst(a ast.PassFixed) error {
 	return nil
 }
 
-func (sb *SrcBuilder) DispatchPassUntil(a *ast.PassUntil) error {
+func (sb *SrcBuilder) DispatchPassBefore(a *ast.PassBefore) error {
 	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
 		return err
 	}
@@ -129,11 +129,11 @@ func (sb *SrcBuilder) DispatchPassUntil(a *ast.PassUntil) error {
 		switch l.Type {
 		case ast.String:
 			sb.appendGens(func() error {
-				return sb.gen.LookupFixedString(l.Value, lower, false)
+				return sb.gen.LookupFixedString(l.Value, lower, false, false)
 			})
 		case ast.Char:
 			sb.appendGens(func() error {
-				return sb.gen.LookupFixedChar(l.Value, lower, false)
+				return sb.gen.LookupFixedChar(l.Value, lower, false, false)
 			})
 		default:
 			return fmt.Errorf("fatal flow: passing action integrity error, got unexpected type %s", l.Type)
@@ -143,11 +143,11 @@ func (sb *SrcBuilder) DispatchPassUntil(a *ast.PassUntil) error {
 		switch l.Type {
 		case ast.String:
 			sb.appendGens(func() error {
-				return sb.gen.LookupString(l.Value, lower, upper, l.Close, false)
+				return sb.gen.LookupString(l.Value, lower, upper, l.Close, false, false)
 			})
 		case ast.Char:
 			sb.appendGens(func() error {
-				return sb.gen.LookupChar(l.Value, lower, upper, l.Close, false)
+				return sb.gen.LookupChar(l.Value, lower, upper, l.Close, false, false)
 			})
 		default:
 			return fmt.Errorf("fatal flow: passing action integrity error, got unexpected type %s", l.Type)
@@ -156,7 +156,7 @@ func (sb *SrcBuilder) DispatchPassUntil(a *ast.PassUntil) error {
 	return nil
 }
 
-func (sb *SrcBuilder) DispatchPassUntilOrIgnore(a *ast.PassUntilOrIgnore) error {
+func (sb *SrcBuilder) DispatchPassBeforeOrIgnore(a *ast.PassBeforeOrIgnore) error {
 	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
 		return err
 	}
@@ -171,11 +171,11 @@ func (sb *SrcBuilder) DispatchPassUntilOrIgnore(a *ast.PassUntilOrIgnore) error 
 		switch l.Type {
 		case ast.String:
 			sb.appendGens(func() error {
-				return sb.gen.LookupFixedString(l.Value, lower, true)
+				return sb.gen.LookupFixedString(l.Value, lower, true, false)
 			})
 		case ast.Char:
 			sb.appendGens(func() error {
-				return sb.gen.LookupFixedChar(l.Value, lower, true)
+				return sb.gen.LookupFixedChar(l.Value, lower, true, false)
 			})
 		}
 	} else {
@@ -183,11 +183,91 @@ func (sb *SrcBuilder) DispatchPassUntilOrIgnore(a *ast.PassUntilOrIgnore) error 
 		switch l.Type {
 		case ast.String:
 			sb.appendGens(func() error {
-				return sb.gen.LookupString(l.Value, lower, upper, l.Close, true)
+				return sb.gen.LookupString(l.Value, lower, upper, l.Close, true, false)
 			})
 		case ast.Char:
 			sb.appendGens(func() error {
-				return sb.gen.LookupChar(l.Value, lower, upper, l.Close, true)
+				return sb.gen.LookupChar(l.Value, lower, upper, l.Close, true, false)
+			})
+		}
+	}
+	return nil
+}
+
+func (sb *SrcBuilder) DispatchPassAfter(a *ast.PassAfter) error {
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	l := a.Limit
+	var lower int
+	var upper int
+	lower = l.Lower
+	upper = l.Upper
+
+	if lower == upper && lower > 0 {
+		// Fixed position check
+		switch l.Type {
+		case ast.String:
+			sb.appendGens(func() error {
+				return sb.gen.LookupFixedString(l.Value, lower, false, true)
+			})
+		case ast.Char:
+			sb.appendGens(func() error {
+				return sb.gen.LookupFixedChar(l.Value, lower, false, true)
+			})
+		default:
+			return fmt.Errorf("fatal flow: passing action integrity error, got unexpected type %s", l.Type)
+		}
+	} else {
+		// It is either short or limited/bounded lookup
+		switch l.Type {
+		case ast.String:
+			sb.appendGens(func() error {
+				return sb.gen.LookupString(l.Value, lower, upper, l.Close, false, true)
+			})
+		case ast.Char:
+			sb.appendGens(func() error {
+				return sb.gen.LookupChar(l.Value, lower, upper, l.Close, false, true)
+			})
+		default:
+			return fmt.Errorf("fatal flow: passing action integrity error, got unexpected type %s", l.Type)
+		}
+	}
+	return nil
+}
+
+func (sb *SrcBuilder) DispatchPassAfterOrIgnore(a *ast.PassAfterOrIgnore) error {
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	l := a.Limit
+	var lower int
+	var upper int
+	lower = l.Lower
+	upper = l.Upper
+
+	if lower == upper && lower > 0 {
+		// Fixed position check
+		switch l.Type {
+		case ast.String:
+			sb.appendGens(func() error {
+				return sb.gen.LookupFixedString(l.Value, lower, true, true)
+			})
+		case ast.Char:
+			sb.appendGens(func() error {
+				return sb.gen.LookupFixedChar(l.Value, lower, true, true)
+			})
+		}
+	} else {
+		// It is either short or limited/bounded lookup
+		switch l.Type {
+		case ast.String:
+			sb.appendGens(func() error {
+				return sb.gen.LookupString(l.Value, lower, upper, l.Close, true, true)
+			})
+		case ast.Char:
+			sb.appendGens(func() error {
+				return sb.gen.LookupChar(l.Value, lower, upper, l.Close, true, true)
 			})
 		}
 	}
@@ -199,7 +279,17 @@ func (sb *SrcBuilder) DispatchStartChar(a *ast.StartChar) error {
 		return err
 	}
 	sb.appendGens(func() error {
-		return sb.gen.HeadChar(a.Value, false)
+		return sb.gen.HeadChar(a.Value, false, true)
+	})
+	return nil
+}
+
+func (sb *SrcBuilder) DispatchStartCharWithoutPass(a *ast.StartCharWithoutPass) error {
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	sb.appendGens(func() error {
+		return sb.gen.HeadChar(a.Value, false, false)
 	})
 	return nil
 }
@@ -209,7 +299,17 @@ func (sb *SrcBuilder) DispatchStartString(a *ast.StartString) error {
 		return err
 	}
 	sb.appendGens(func() error {
-		return sb.gen.HeadString(a.Value, false)
+		return sb.gen.HeadString(a.Value, false, true)
+	})
+	return nil
+}
+
+func (sb *SrcBuilder) DispatchStartStringWithoutPass(a *ast.StartStringWithoutPass) error {
+	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
+		return err
+	}
+	sb.appendGens(func() error {
+		return sb.gen.HeadString(a.Value, false, false)
 	})
 	return nil
 }

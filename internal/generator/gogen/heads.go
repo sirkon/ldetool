@@ -73,7 +73,7 @@ func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj
 	)
 }
 
-func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) error {
+func (g *Generator) checkStringPrefix(anchor string, offset int, ignore, pass bool) error {
 	var unquoted string
 	if err := json.Unmarshal([]byte(anchor), &unquoted); err != nil {
 		return fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err)
@@ -82,10 +82,19 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) er
 	body := g.body
 	body.Append(srcobj.Raw("\n"))
 	if offset > 0 {
-		body.Append(
-			srcobj.Comment(fmt.Sprintf("Checks if rest[%d:] starts with `%s` and pass it", offset, anchor)))
+		if pass {
+			body.Append(
+				srcobj.Comment(fmt.Sprintf("Checks if rest[%d:] starts with `%s` and pass it", offset, anchor)))
+		} else {
+			body.Append(
+				srcobj.Comment(fmt.Sprintf("Checks if rest[%d:] starts with `%s`", offset, anchor)))
+		}
 	} else {
-		body.Append(srcobj.Comment(fmt.Sprintf("Checks if the rest starts with `%s` and pass it", anchor)))
+		if pass {
+			body.Append(srcobj.Comment(fmt.Sprintf("Checks if the rest starts with `%s` and pass it", anchor)))
+		} else {
+			body.Append(srcobj.Comment(fmt.Sprintf("Checks if the rest starts with `%s`", anchor)))
+		}
 	}
 
 	var rest = g.rest()
@@ -132,23 +141,30 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore bool) er
 		}
 	}
 
-	body.Append(srcobj.If{
-		Expr: code,
-		Then: srcobj.LineAssign{
-			Receiver: g.curRestVar(),
-			Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), shift),
-		},
-		Else: failure,
-	})
+	if pass {
+		body.Append(srcobj.If{
+			Expr: code,
+			Then: srcobj.LineAssign{
+				Receiver: g.curRestVar(),
+				Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), shift),
+			},
+			Else: failure,
+		})
+	} else {
+		body.Append(srcobj.If{
+			Expr: srcobj.OperatorNot(code),
+			Then: failure,
+		})
+	}
 	return nil
 }
 
 // HeadString checks if the rest starts with the given string and passes it
-func (g *Generator) HeadString(anchor string, ignore bool) error {
-	return g.checkStringPrefix(anchor, 0, ignore)
+func (g *Generator) HeadString(anchor string, ignore, pass bool) error {
+	return g.checkStringPrefix(anchor, 0, ignore, pass)
 }
 
-func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) error {
+func (g *Generator) checkCharPrefix(char string, offset int, ignore, pass bool) error {
 	if err := g.regRightVar(g.curRestVar()); err != nil {
 		return err
 	}
@@ -171,10 +187,17 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) error 
 
 	body := srcobj.NewBody(srcobj.Raw("\n"))
 	if offset > 0 {
-		body.Append(
-			srcobj.Comment(fmt.Sprintf("Checks if rest[%d:] starts with %s and pass it", offset, char)))
+		if pass {
+			body.Append(srcobj.Comment(fmt.Sprintf("Checks if rest[%d:] starts with %s and pass it", offset, char)))
+		} else {
+			body.Append(srcobj.Comment(fmt.Sprintf("Checks if rest[%d:] starts with %s", offset, char)))
+		}
 	} else {
-		body.Append(srcobj.Comment(fmt.Sprintf("Checks if the rest starts with %s and pass it", char)))
+		if pass {
+			body.Append(srcobj.Comment(fmt.Sprintf("Checks if the rest starts with %s and pass it", char)))
+		} else {
+			body.Append(srcobj.Comment(fmt.Sprintf("Checks if the rest starts with %ss", char)))
+		}
 	}
 
 	var cond srcobj.Source
@@ -203,19 +226,27 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore bool) error 
 		),
 	)
 
-	body.Append(srcobj.If{
-		Expr: cond,
-		Then: srcobj.LineAssign{
-			Receiver: g.curRestVar(),
-			Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), shift),
-		},
-		Else: failure,
-	})
+	if pass {
+		body.Append(srcobj.If{
+			Expr: cond,
+			Then: srcobj.LineAssign{
+				Receiver: g.curRestVar(),
+				Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), shift),
+			},
+			Else: failure,
+		})
+	} else {
+		body.Append(srcobj.If{
+			Expr: srcobj.OperatorNot(cond),
+			Then: failure,
+		})
+
+	}
 	g.body.Append(body)
 	return nil
 }
 
 // HeadChar checks if rest starts with the given char
-func (g *Generator) HeadChar(char string, ignore bool) error {
-	return g.checkCharPrefix(char, 0, false)
+func (g *Generator) HeadChar(char string, ignore, pass bool) error {
+	return g.checkCharPrefix(char, 0, false, pass)
 }

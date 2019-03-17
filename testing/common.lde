@@ -4,3 +4,7 @@ Rule =
     ^' ' Unsigned(uint) ' '
     Str(str);
 
+
+BeforeLookup = .."abc" Data(string);
+
+CheckPrefix = @"abc" Data(string);

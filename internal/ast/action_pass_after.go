@@ -4,19 +4,19 @@ import (
 	"fmt"
 )
 
-var _ Action = &PassUntil{}
+var _ Action = &PassAfter{}
 
-// PassUntil ...
-type PassUntil struct {
+// PassAfter ...
+type PassAfter struct {
 	access
 	Limit *Target
 }
 
-func (pu *PassUntil) Accept(d ActionDispatcher) error {
-	return d.DispatchPassUntil(pu)
+func (pu *PassAfter) Accept(d ActionDispatcher) error {
+	return d.DispatchPassAfter(pu)
 }
 
-func (pu *PassUntil) String() string {
+func (pu *PassAfter) String() string {
 	if pu.Limit.Lower == pu.Limit.Upper && pu.Limit.Lower > 0 {
 		switch pu.Limit.Type {
 		case String:
@@ -38,9 +38,9 @@ func (pu *PassUntil) String() string {
 	return res
 }
 
-// PassUntilTarget ...
-func PassUntilTarget() *PassUntil {
-	return &PassUntil{
+// PassAfterTarget ...
+func PassAfterTarget() *PassAfter {
+	return &PassAfter{
 		Limit: NewTarget(),
 	}
 }
