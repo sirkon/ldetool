@@ -142,3 +142,31 @@ func (p *CheckPrefix) Extract(line string) (bool, error) {
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }
+
+// PassHeadingStringRegression ...
+type PassHeadingStringRegression struct {
+	Rest string
+	Data string
+}
+
+// Extract ...
+func (p *PassHeadingStringRegression) Extract(line string) (bool, error) {
+	p.Rest = line
+	var headPassCounter int
+	var headPassValue rune
+
+	// Pass all characters '#' at the rest start
+	for headPassCounter, headPassValue = range string(p.Rest) {
+		if headPassValue != '#' {
+			break
+		}
+	}
+	if headPassCounter > 0 {
+		p.Rest = p.Rest[headPassCounter:]
+	}
+
+	// Take the rest as Data(string)
+	p.Data = p.Rest
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}

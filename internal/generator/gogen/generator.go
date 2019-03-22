@@ -353,16 +353,24 @@ func (g *Generator) PassHeadCharacters(char string) error {
 	if err := g.regVar(counter, "int"); err != nil {
 		return err
 	}
-	if err := g.regVar(value, "byte"); err != nil {
+	itemType := "byte"
+	if g.useString {
+		itemType = "rune"
+	}
+	if err := g.regVar(value, itemType); err != nil {
 		return err
 	}
 	g.body.Append(srcobj.Literal("\n"))
 	g.body.Append(srcobj.Comment(fmt.Sprintf("Pass all characters %s at the rest start", char)))
+	rest := g.rest()
+	if g.useString {
+		rest = srcobj.NewCall("string", rest)
+	}
 	g.body.Append(
 		srcobj.For{
 			I:         counter,
 			Value:     value,
-			Container: g.rest(),
+			Container: rest,
 			Body: srcobj.If{
 				Expr: srcobj.OperatorNEq(srcobj.Raw(value), srcobj.Raw(char)),
 				Then: srcobj.Break,

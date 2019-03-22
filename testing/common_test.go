@@ -46,3 +46,16 @@ func TestCheckPrefix(t *testing.T) {
 	require.Equal(t, "abc123", e.Data)
 	require.Equal(t, "", e.Rest)
 }
+
+func TestPassHeadingStringRegression(t *testing.T) {
+	data := "#################################3 123"
+	var e PassHeadingStringRegression
+	if ok, err := e.Extract(data); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "3 123", e.Data)
+	require.Equal(t, "", e.Rest)
+}

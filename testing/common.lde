@@ -8,3 +8,5 @@ Rule =
 BeforeLookup = .."abc" Data(string);
 
 CheckPrefix = @"abc" Data(string);
+
+PassHeadingStringRegression = *'#' Data(string);
