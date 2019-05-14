@@ -362,6 +362,7 @@ func (g *Generator) PassHeadCharacters(char string) error {
 	}
 	g.body.Append(srcobj.Literal("\n"))
 	g.body.Append(srcobj.Comment(fmt.Sprintf("Pass all characters %s at the rest start", char)))
+	g.body.Append(srcobj.Literal(fmt.Sprintf("%s = 0\n", counter)))
 	rest := g.rest()
 	if g.useString {
 		rest = srcobj.NewCall("string", rest)

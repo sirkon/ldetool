@@ -219,7 +219,7 @@ RestLength = %15 %<16 %>14;
 
 Str = F1(str) ' ' F2(string);
 
-Star = *'a' F(int);
+Star = *'a' F(int) "|" *'a' B(int);
 
 JustToCompile = Head(hex16) '-'[4] Tail(hex16);
 
