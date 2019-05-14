@@ -59,6 +59,8 @@ type Generator struct {
 
 	curField     Name
 	curFieldType string
+
+	rulePassCounter int // how many passes there in current rule. To be reset on a new one.
 }
 
 // PlatformType holds an information what type of platform to generate code for:
@@ -203,6 +205,7 @@ func (g *Generator) UseRule(name string, t antlr.Token) error {
 	g.optgetters = srcobj.NewBody()
 	g.vargen = srcobj.NewVars()
 	g.body.Append(g.vargen)
+	g.rulePassCounter = 0
 	return nil
 }
 
@@ -362,7 +365,11 @@ func (g *Generator) PassHeadCharacters(char string) error {
 	}
 	g.body.Append(srcobj.Literal("\n"))
 	g.body.Append(srcobj.Comment(fmt.Sprintf("Pass all characters %s at the rest start", char)))
-	g.body.Append(srcobj.Literal(fmt.Sprintf("%s = 0\n", counter)))
+	if g.rulePassCounter > 0 {
+		g.body.Append(srcobj.Assign(counter, srcobj.Literal(0)))
+		g.body.Append(srcobj.Literal("\n"))
+	}
+	g.rulePassCounter++
 	rest := g.rest()
 	if g.useString {
 		rest = srcobj.NewCall("string", rest)
