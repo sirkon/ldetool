@@ -585,7 +585,7 @@ func TestStr(t *testing.T) {
 
 func TestStar(t *testing.T) {
 	var p Star
-	src := []byte("aaaaaaaaaaaaaaaa123")
+	src := []byte("aaaaaaaaaaaaaaaa123|aaaaaaaa321")
 	ok, err := p.Extract(src)
 	require.True(t, ok)
 	if err != nil {
@@ -594,7 +594,13 @@ func TestStar(t *testing.T) {
 	require.Equal(t, Star{
 		Rest: []byte{},
 		F:    123,
+		B:    321,
 	}, p)
+
+	// Check for panic
+	src = []byte("aaaaaaaaaaaaaaaa123|")
+	ok, err = p.Extract(src)
+	require.False(t, ok)
 }
 
 func TestJustToCompile(t *testing.T) {
