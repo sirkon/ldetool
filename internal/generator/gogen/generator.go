@@ -295,17 +295,29 @@ func (g *Generator) indent() *srcobj.Body {
 func (g *Generator) RestLengthCheck(operator string, length int) error {
 	var operatorAction func(srcobj.Source, srcobj.Source) srcobj.Source
 	var errorFormat string
+	var charsLit string
+	if length > 1 {
+		charsLit = "characters"
+	} else {
+		charsLit = "character"
+	}
+	var comment string
 	switch operator {
 	case "<":
 		operatorAction = srcobj.OperatorGE
 		errorFormat = "rest is longer than required (%d symbols)"
+		comment = fmt.Sprintf("checks if the rest is less than %d %s long", length, charsLit)
 	case "==":
 		operatorAction = srcobj.OperatorNEq
 		errorFormat = "rest is not %d symbols long"
+		comment = fmt.Sprintf("checks if the rest is exactly %d %s long", length, charsLit)
 	case ">":
 		operatorAction = srcobj.OperatorLE
 		errorFormat = "rest is shorter than required (%d symbols)"
+		comment = fmt.Sprintf("checks if the rest is more than %d %s long", length, charsLit)
 	}
+	g.body.Append(srcobj.Literal("\n"))
+	g.body.Append(srcobj.Comment(comment))
 	g.body.Append(
 		srcobj.If{
 			Expr: operatorAction(
