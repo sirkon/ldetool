@@ -1,11 +1,11 @@
 package gogen
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/sirkon/ldetool/internal/ast"
 	"strings"
 
-	"encoding/json"
+	"github.com/sirkon/ldetool/internal/ast"
 
 	"github.com/sirkon/ldetool/internal/generator"
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
@@ -575,7 +575,7 @@ func (g *Generator) TakeRest(name, fieldType string, meta ast.FieldMeta) error {
 	if fieldType == "string" {
 		body.Append(
 			srcobj.Assign(
-				g.varName(item.name),
+				"p."+item.name,
 				g.rest(),
 			),
 		)

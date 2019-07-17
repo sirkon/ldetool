@@ -2,8 +2,10 @@ package srcbuilder
 
 import (
 	"fmt"
-	"github.com/sirkon/ldetool/internal/ast"
+
 	"github.com/sirkon/message"
+
+	"github.com/sirkon/ldetool/internal/ast"
 )
 
 func (sb *SrcBuilder) DispatchAnonymousOption(a *ast.AnonymousOption) error {
@@ -419,8 +421,6 @@ func (sb *SrcBuilder) DispatchTakeRest(a *ast.TakeRest) error {
 	if err := sb.checkField(a.Field); err != nil {
 		return err
 	}
-	sb.prefixTie(a.Field.Name)
-	defer sb.prefixUntie()
 	if err := sb.gen.RegGravity(sb.prefixCur()); err != nil {
 		return err
 	}

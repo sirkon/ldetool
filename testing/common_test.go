@@ -59,3 +59,29 @@ func TestPassHeadingStringRegression(t *testing.T) {
 	require.Equal(t, "3 123", e.Data)
 	require.Equal(t, "", e.Rest)
 }
+
+func TestRegressionCheck1(t *testing.T) {
+	var rc RegressionCheck1
+
+	if ok, err := rc.Extract("17.965 Pump 10 State change LOCKED_PSTATE to CALLING_PSTATE [31]"); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "17.965", rc.Time)
+	require.Equal(t, int8(10), rc.Pump)
+	require.Equal(t, "CALLING_PSTATE ", rc.GetPStateState())
+	require.Equal(t, "", rc.GetIStateState())
+
+	if ok, err := rc.Extract("19.996 Pump 10 change internal state AUTHORISE_ISTATE to IDLE_ISTATE"); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "19.996", rc.Time)
+	require.Equal(t, int8(10), rc.Pump)
+	require.Equal(t, "", rc.GetPStateState())
+	require.Equal(t, "IDLE_ISTATE", rc.GetIStateState())
+}

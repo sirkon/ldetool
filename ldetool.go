@@ -1,6 +1,5 @@
 package main
 
-
 import (
 	"go/parser"
 	"go/token"
@@ -20,6 +19,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Usage = "Text data extraction Go source code generator"
+	app.Version = ldetoolVersion
 	app.Commands = []cli.Command{
 		{
 			Name:  "generate",

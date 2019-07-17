@@ -28,6 +28,7 @@ func (g *Generator) OpenOptionalScope(name string, t antlr.Token) error {
 // CloseOptionalScope ...
 func (g *Generator) CloseOptionalScope() error {
 	if !g.anonymous() {
+		g.body.Append(srcobj.Literal("\n"))
 		g.body.Append(
 			srcobj.LineAssign{
 				Receiver: g.valid(),

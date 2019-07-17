@@ -1790,6 +1790,7 @@ func (p *DecoderOptionals) Extract(line []byte) (bool, error) {
 		p.Head.Valid = false
 		goto decoderoptionalsHeadLabel
 	}
+
 	p.Head.Valid = true
 	p.Rest = rest1
 decoderoptionalsHeadLabel:
@@ -1862,6 +1863,7 @@ func (p *DecoderOptionalsStress) Extract(line []byte) (bool, error) {
 		p.Head.Valid = false
 		goto decoderoptionalsstressHeadLabel
 	}
+
 	p.Head.Valid = true
 	p.Rest = rest1
 decoderoptionalsstressHeadLabel:
@@ -1919,6 +1921,7 @@ func (p *DecoderBranching) Extract(line []byte) (bool, error) {
 		p.Head.Data = rest1
 		rest1 = rest1[len(rest1):]
 	}
+
 	p.Head.Valid = true
 	p.Rest = rest1
 
@@ -1968,6 +1971,7 @@ func (p *DecoderBranchingStress) Extract(line []byte) (bool, error) {
 		p.Head.Data = rest1
 		rest1 = rest1[len(rest1):]
 	}
+
 	p.Head.Valid = true
 	p.Rest = rest1
 
@@ -2019,6 +2023,7 @@ func (p *DoubleOpts) Extract(line []byte) (bool, error) {
 		p.Head.Data = rest1
 		rest1 = rest1[len(rest1):]
 	}
+
 	p.Head.Valid = true
 	p.Rest = rest1
 doubleoptsHeadLabel:
@@ -2041,6 +2046,7 @@ doubleoptsHeadLabel:
 		p.Rest1.Data = rest1
 		rest1 = rest1[len(rest1):]
 	}
+
 	p.Rest1.Valid = true
 	p.Rest = rest1
 doubleoptsRest1Label:
@@ -2667,6 +2673,7 @@ func (p *URL) Extract(line []byte) (bool, error) {
 		p.UserPass.Valid = false
 		goto urlUserPassLabel
 	}
+
 	p.UserPass.Valid = true
 	p.Rest = rest1
 urlUserPassLabel:
@@ -2685,6 +2692,7 @@ urlUserPassLabel:
 		p.User.Valid = false
 		goto urlUserLabel
 	}
+
 	p.User.Valid = true
 	p.Rest = rest1
 urlUserLabel:

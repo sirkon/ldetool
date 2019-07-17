@@ -10,3 +10,9 @@ BeforeLookup = .."abc" Data(string);
 CheckPrefix = @"abc" Data(string);
 
 PassHeadingStringRegression = *'#' Data(string);
+
+RegressionCheck1 =
+    Time(string) " Pump "
+    Pump(int8) ~' '
+    ?PState( ^"State change " _ " to " State(string) ~"[" )
+    ?IState( ^"change internal state " _ " to " State(string) );
