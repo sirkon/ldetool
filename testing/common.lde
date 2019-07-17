@@ -16,3 +16,5 @@ RegressionCheck1 =
     Pump(int8) ~' '
     ?PState( ^"State change " _ " to " State(string) ~"[" )
     ?IState( ^"change internal state " _ " to " State(string) );
+
+RegressionCheck2 = (^"ï»¿")  ^"*** Time: " Time(string);

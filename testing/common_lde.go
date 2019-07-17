@@ -20,7 +20,9 @@ var changeSpaceInternalSpaceStateSpace = "change internal state "
 var lsbrck = "["
 var spacePumpSpace = " Pump "
 var spaceToSpace = " to "
+var starsSpaceTimeColonSpace = "*** Time: "
 var stateSpaceChangeSpace = "State change "
+var unrecognizedSequence = "ï»¿"
 
 // Rule ...
 type Rule struct {
@@ -302,4 +304,34 @@ func (p *RegressionCheck1) GetIStateState() (res string) {
 		res = p.IState.State
 	}
 	return
+}
+
+// RegressionCheck2 ...
+type RegressionCheck2 struct {
+	Rest string
+	Time string
+}
+
+// Extract ...
+func (p *RegressionCheck2) Extract(line string) (bool, error) {
+	p.Rest = line
+
+	// Checks if the rest starts with `"ï»¿"` and pass it
+	if strings.HasPrefix(p.Rest, unrecognizedSequence) {
+		p.Rest = p.Rest[len(unrecognizedSequence):]
+	} else {
+		return false, nil
+	}
+
+	// Checks if the rest starts with `"*** Time: "` and pass it
+	if strings.HasPrefix(p.Rest, starsSpaceTimeColonSpace) {
+		p.Rest = p.Rest[len(starsSpaceTimeColonSpace):]
+	} else {
+		return false, nil
+	}
+
+	// Take the rest as Time(string)
+	p.Time = p.Rest
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
 }

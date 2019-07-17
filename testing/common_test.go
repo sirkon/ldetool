@@ -85,3 +85,14 @@ func TestRegressionCheck1(t *testing.T) {
 	require.Equal(t, "", rc.GetPStateState())
 	require.Equal(t, "IDLE_ISTATE", rc.GetIStateState())
 }
+
+func TestRegressionCheck2(t *testing.T) {
+	var rc RegressionCheck2
+	if ok, err := rc.Extract("ï»¿*** Time: 2/1/2019 12:10:17"); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "2/1/2019 12:10:17", rc.Time)
+}
