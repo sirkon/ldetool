@@ -7,6 +7,7 @@
 go get -u github.com/sirkon/ldetool
 ```
 
+1. [Contributors](CONTRIBUTORS.md)
 1. [Rationale](RATIONALE.md)
 2. [Typical operations and formal set of rules](TOOL_RULES.md)
 3. [Performance comparison against regexp and Ragel](PERFORMANCE.md)
