@@ -2,6 +2,7 @@ package ldetesting
 
 import (
 	"net"
+	"strconv"
 	"time"
 )
 
@@ -11,4 +12,8 @@ func (p *Custom) unmarshalTime(s string) (time.Time, error) {
 
 func (p *Custom) unmarshalAddrIP(s string) (net.IP, error) {
 	return net.ParseIP(s), nil
+}
+
+func (p *CustomBuiltin) unmarshalField(s string) (int, error) {
+	return strconv.Atoi(s)
 }

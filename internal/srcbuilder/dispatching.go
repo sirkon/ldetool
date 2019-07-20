@@ -36,7 +36,10 @@ func (sb *SrcBuilder) DispatchAtEnd(a ast.AtEnd) error {
 }
 
 func (sb *SrcBuilder) DispatchErrorMismatch(a ast.ErrorOnMismatch) error {
-	sb.appendGens(sb.gen.Stress)
+	sb.appendGens(func() error {
+		sb.gen.Stress()
+		return nil
+	})
 	return nil
 }
 

@@ -115,8 +115,19 @@ Capturing as numeric type can cause number parsing errors and these are always t
     
     Remember, type `string` is treated as `[]byte` by default for the sake of performance and switches to 
     `string` with flag `--go-string`. You may use `str` to have exactly `string`.
+    You may also use custom unmarshaler for these types BTW, just use `$int` instead of `int`, etc:
     
-    There is support for hexadecimal and octal values extraction:
+    ```perl
+    Rule = Field($int);
+    ```
+    
+    User should write its own
+    
+    ```go
+    func (p *Rule) unmarshalField(value []byte) (int, error) {
+       …
+    }
+    ``` 
     
     ##### Hexadecimal and octal types
     |LDE type|hex|hex8|hex16|hex32|hex64|oct|oct8|oct16|oct32|oct64|

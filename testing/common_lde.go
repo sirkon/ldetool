@@ -248,6 +248,25 @@ func (p *Custom) GetAddrIP() (res ip.IP) {
 	return
 }
 
+// CustomBuiltin ...
+type CustomBuiltin struct {
+	Rest  string
+	Field int
+}
+
+// Extract ...
+func (p *CustomBuiltin) Extract(line string) (bool, error) {
+	p.Rest = line
+	var err error
+
+	// Take the rest as Field($int)
+	if p.Field, err = p.unmarshalField(p.Rest); err != nil {
+		return false, fmt.Errorf("cannot parse `%s` into field Field($int): %s", p.Rest, err)
+	}
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
+
 // RegressionCheck1 ...
 type RegressionCheck1 struct {
 	Rest   string

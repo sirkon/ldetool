@@ -72,9 +72,8 @@ type Generator struct {
 //    2. Big endian
 //    3. Crossplatform
 // There's a difference for fast short (up to 8 bytes) prefix checks in strings.
-func (g *Generator) PlatformType(t generator.PlatformType) error {
+func (g *Generator) PlatformType(t generator.PlatformType) {
 	g.platformType = t
-	return nil
 }
 
 // ErrorToken message
@@ -228,8 +227,23 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 		field = types.Builtin(name, fieldType)
 	} else {
 		extType, ok := g.lookForExternal(fieldType)
+		var err error
 		if !ok {
-			typeAvailablePrep := types.Builtins()
+			ok, err = types.NeedCustomUnmarshaler(fieldType)
+			if ok {
+				extType = types.LocalType{
+					Name: fieldType[1:],
+				}
+				g.externalTypes[fieldType] = extType
+			}
+			if err != nil {
+				return g.ErrorToken(t, "%s", err)
+			}
+		}
+		if !ok {
+			// Last chance, it can a request for custom unmarshaler
+
+			typeAvailablePrep := types.Declarables()
 			var typeAvailable []string
 			for _, typeName := range typeAvailablePrep {
 				switch typeName {
@@ -404,15 +418,13 @@ func (g *Generator) PassHeadCharacters(char string) error {
 }
 
 // Stress mismatches should be treated as critical errors
-func (g *Generator) Stress() error {
+func (g *Generator) Stress() {
 	g.critical = true
-	return nil
 }
 
 // Relax ...
-func (g *Generator) Relax() error {
+func (g *Generator) Relax() {
 	g.critical = false
-	return nil
 }
 
 // Generate writes into io.Writer
@@ -434,10 +446,7 @@ func (g *Generator) Push() error {
 	g.body.Append(srcobj.ReturnOK)
 	g.file.Append(g.optgetters)
 
-	if err := g.Relax(); err != nil {
-		return err
-	}
-	g.critical = false
+	g.Relax()
 	g.vars = map[string]string{}
 	g.fields = map[string]Name{}
 	g.scopeAbandoned = map[string]bool{}

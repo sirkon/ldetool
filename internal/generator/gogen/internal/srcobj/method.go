@@ -24,7 +24,7 @@ func Go2ResultType(extTypes map[string]types.TypeRegistration, useString bool, g
 	} else {
 		if types.IsBuiltin(goType) {
 			fieldType := types.Builtin("", goType)
-			return hardToAccessResultType(fieldType.Native()), nil
+			return hardToAccessResultType(fieldType.GoName()), nil
 		}
 		ext, ok := extTypes[goType]
 		if !ok {
