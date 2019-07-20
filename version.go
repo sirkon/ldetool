@@ -1,3 +1,3 @@
 package main
 
-const ldetoolVersion = "v0.0.7"
+const ldetoolVersion = "v0.1.0"
