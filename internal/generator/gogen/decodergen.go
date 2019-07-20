@@ -37,6 +37,20 @@ func (g *Generator) prepFloat() {
 }
 
 func (g *Generator) returnError(srcName srcobj.Source) srcobj.Source {
+	if g.silenceDepth > 0 {
+		g.abandon()
+		var pre srcobj.Source
+		if g.anonymous() {
+			pre = srcobj.Raw("")
+		} else {
+			pre = srcobj.Assign(g.valid(), srcobj.False)
+		}
+		return srcobj.NewBody(
+			pre,
+			srcobj.Semicolon,
+			srcobj.Goto(g.label()),
+		)
+	}
 	return srcobj.ReturnError("parsing into `%s` into field "+g.curField.name+"("+strings.TrimLeft(g.curFieldType, "$")+"): %s",
 		srcName,
 		srcobj.Raw("err"),

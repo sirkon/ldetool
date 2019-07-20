@@ -61,6 +61,43 @@ func TestPassHeadingStringRegression(t *testing.T) {
 	require.Equal(t, "", e.Rest)
 }
 
+func TestRegressionCheck1(t *testing.T) {
+	var rc RegressionCheck1
+
+	if ok, err := rc.Extract("17.965 Pump 10 State change LOCKED_PSTATE to CALLING_PSTATE [31]"); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "17.965", rc.Time)
+	require.Equal(t, int8(10), rc.Pump)
+	require.Equal(t, "CALLING_PSTATE ", rc.GetPStateState())
+	require.Equal(t, "", rc.GetIStateState())
+
+	if ok, err := rc.Extract("19.996 Pump 10 change internal state AUTHORISE_ISTATE to IDLE_ISTATE"); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "19.996", rc.Time)
+	require.Equal(t, int8(10), rc.Pump)
+	require.Equal(t, "", rc.GetPStateState())
+	require.Equal(t, "IDLE_ISTATE", rc.GetIStateState())
+}
+
+func TestRegressionCheck2(t *testing.T) {
+	var rc RegressionCheck2
+	if ok, err := rc.Extract("ï»¿*** Time: 2/1/2019 12:10:17"); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, "2/1/2019 12:10:17", rc.Time)
+}
+
 func TestCustom(t *testing.T) {
 	loc, err := time.LoadLocation("Europe/Moscow")
 	if err != nil {
@@ -166,39 +203,111 @@ func TestBoolean_Extract(t *testing.T) {
 	}
 }
 
-func TestRegressionCheck1(t *testing.T) {
-	var rc RegressionCheck1
-
-	if ok, err := rc.Extract("17.965 Pump 10 State change LOCKED_PSTATE to CALLING_PSTATE [31]"); !ok {
-		if err != nil {
-			t.Fatal(err)
+func TestSilentAreas_Extract(t *testing.T) {
+	type fields struct {
+		Rest string
+		Alt1 struct {
+			Valid  bool
+			Amount int
 		}
-		require.True(t, ok)
-	}
-	require.Equal(t, "17.965", rc.Time)
-	require.Equal(t, int8(10), rc.Pump)
-	require.Equal(t, "CALLING_PSTATE ", rc.GetPStateState())
-	require.Equal(t, "", rc.GetIStateState())
-
-	if ok, err := rc.Extract("19.996 Pump 10 change internal state AUTHORISE_ISTATE to IDLE_ISTATE"); !ok {
-		if err != nil {
-			t.Fatal(err)
+		Alt2 struct {
+			Valid  bool
+			Amount string
 		}
-		require.True(t, ok)
 	}
-	require.Equal(t, "19.996", rc.Time)
-	require.Equal(t, int8(10), rc.Pump)
-	require.Equal(t, "", rc.GetPStateState())
-	require.Equal(t, "IDLE_ISTATE", rc.GetIStateState())
-}
+	tests := []struct {
+		name    string
+		fields  fields
+		line    string
+		wantOK  bool
+		wantErr bool
+	}{
+		{
+			name: "alt1",
+			fields: fields{
+				Rest: "",
+				Alt1: struct {
+					Valid  bool
+					Amount int
+				}{
+					Valid:  true,
+					Amount: 123,
+				},
+				Alt2: struct {
+					Valid  bool
+					Amount string
+				}{
+					Valid:  false,
+					Amount: "",
+				},
+			},
+			line:    "Amount: 123",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name: "alt2",
+			fields: fields{
+				Rest: "",
+				Alt1: struct {
+					Valid  bool
+					Amount int
+				}{
+					Valid:  false,
+					Amount: 0,
+				},
+				Alt2: struct {
+					Valid  bool
+					Amount string
+				}{
+					Valid:  true,
+					Amount: "123USD",
+				},
+			},
+			line:    "Amount: 123USD",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name: "no-alt",
+			fields: fields{
+				Rest: "Amount:Nothing",
+				Alt1: struct {
+					Valid  bool
+					Amount int
+				}{
+					Valid:  false,
+					Amount: 0,
+				},
+				Alt2: struct {
+					Valid  bool
+					Amount string
+				}{
+					Valid:  false,
+					Amount: "",
+				},
+			},
+			line:    "Amount:Nothing",
+			wantOK:  true,
+			wantErr: false,
+		},
+	}
 
-func TestRegressionCheck2(t *testing.T) {
-	var rc RegressionCheck2
-	if ok, err := rc.Extract("ï»¿*** Time: 2/1/2019 12:10:17"); !ok {
-		if err != nil {
-			t.Fatal(err)
-		}
-		require.True(t, ok)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &SilentAreas{
+				Rest: tt.fields.Rest,
+				Alt1: tt.fields.Alt1,
+				Alt2: tt.fields.Alt2,
+			}
+			got, err := p.Extract(tt.line)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("SilentAreas.Extract() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.wantOK {
+				t.Errorf("SilentAreas.Extract() = %v, wantOK %v", got, tt.wantOK)
+			}
+		})
 	}
-	require.Equal(t, "2/1/2019 12:10:17", rc.Time)
 }

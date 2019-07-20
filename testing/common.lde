@@ -8,6 +8,15 @@ Rule =
     Str(str);
 
 
+RegressionCheck1 =
+    Time(string) " Pump "
+    Pump(int8) ~' '
+    ?PState( ^"State change " _ " to " State(string) ~"[" )
+    ?IState( ^"change internal state " _ " to " State(string) );
+
+RegressionCheck2 = (^"ï»¿")  ^"*** Time: " Time(string);
+
+
 BeforeLookup = .."abc" Data(string);
 
 CheckPrefix = @"abc" Data(string);
@@ -20,10 +29,6 @@ CustomBuiltin = Field($int);
 
 Boolean = Check(bool);
 
-RegressionCheck1 =
-    Time(string) " Pump "
-    Pump(int8) ~' '
-    ?PState( ^"State change " _ " to " State(string) ~"[" )
-    ?IState( ^"change internal state " _ " to " State(string) );
-
-RegressionCheck2 = (^"ï»¿")  ^"*** Time: " Time(string);
+SilentAreas =
+    ??Alt1 (^"Amount:" Amount(int) $)
+    ??Alt2 (^"Amount:" Amount(string) $);

@@ -38,8 +38,9 @@ type Generator struct {
 
 	namespaces []string // Stack of namespaces (each item is a name of optional area)
 
-	critical bool           // Treat mismatch errors as critical
-	goish    *gotify.Gotify // identifier gotification service
+	critical     bool           // Treat mismatch errors as critical
+	silenceDepth int            // When silenceDepth > 0 even decoding errors are ignored
+	goish        *gotify.Gotify // identifier gotification service
 
 	platformType generator.PlatformType
 
@@ -462,6 +463,7 @@ func (g *Generator) RegGravity(name string) error {
 
 // AtEnd checks if the rest is empty
 func (g *Generator) AtEnd() error {
+	g.body.Append(srcobj.Raw("\n"))
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorNEq(

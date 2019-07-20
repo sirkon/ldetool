@@ -19,6 +19,7 @@ import (
 
 var constAbc = "abc"
 var constAddrColonSpace = "addr: "
+var constAmountColon = "Amount:"
 var constChangeSpaceInternalSpaceStateSpace = "change internal state "
 var constLsbrck = "["
 var constSpacePumpSpace = " Pump "
@@ -103,6 +104,164 @@ func (p *Rule) Extract(line string) (bool, error) {
 
 	// Take the rest as Str(str)
 	p.Str = p.Rest
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
+
+// RegressionCheck1 ...
+type RegressionCheck1 struct {
+	Rest   string
+	Time   string
+	Pump   int8
+	PState struct {
+		Valid bool
+		State string
+	}
+	IState struct {
+		Valid bool
+		State string
+	}
+}
+
+// Extract ...
+func (p *RegressionCheck1) Extract(line string) (bool, error) {
+	p.Rest = line
+	var err error
+	var pos int
+	var rest1 string
+	var tmp string
+	var tmpInt int64
+
+	// Take until " Pump " as Time(string)
+	pos = strings.Index(p.Rest, constSpacePumpSpace)
+	if pos >= 0 {
+		p.Time = p.Rest[:pos]
+		p.Rest = p.Rest[pos+len(constSpacePumpSpace):]
+	} else {
+		return false, nil
+	}
+
+	// Take until ' ' as Pump(int8)
+	pos = -1
+	for i, char := range p.Rest {
+		if char == ' ' {
+			pos = i
+			break
+		}
+	}
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if tmpInt, err = strconv.ParseInt(tmp, 10, 8); err != nil {
+		return false, fmt.Errorf("parsing into `%s` into field Pump(int8): %s", tmp, err)
+	}
+	p.Pump = int8(tmpInt)
+	rest1 = p.Rest
+
+	// Checks if the rest starts with `"State change "` and pass it
+	if strings.HasPrefix(rest1, constStateSpaceChangeSpace) {
+		rest1 = rest1[len(constStateSpaceChangeSpace):]
+	} else {
+		p.PState.Valid = false
+		goto regressioncheck1PStateLabel
+	}
+
+	// Looking for " to " and then pass it
+	pos = strings.Index(rest1, constSpaceToSpace)
+	if pos >= 0 {
+		rest1 = rest1[pos+len(constSpaceToSpace):]
+	} else {
+		p.PState.Valid = false
+		goto regressioncheck1PStateLabel
+	}
+
+	// Take until "[" as State(string)
+	pos = strings.Index(rest1, constLsbrck)
+	if pos >= 0 {
+		p.PState.State = rest1[:pos]
+		rest1 = rest1[pos+len(constLsbrck):]
+	} else {
+		p.PState.Valid = false
+		goto regressioncheck1PStateLabel
+	}
+
+	p.PState.Valid = true
+	p.Rest = rest1
+regressioncheck1PStateLabel:
+	rest1 = p.Rest
+
+	// Checks if the rest starts with `"change internal state "` and pass it
+	if strings.HasPrefix(rest1, constChangeSpaceInternalSpaceStateSpace) {
+		rest1 = rest1[len(constChangeSpaceInternalSpaceStateSpace):]
+	} else {
+		p.IState.Valid = false
+		goto regressioncheck1IStateLabel
+	}
+
+	// Looking for " to " and then pass it
+	pos = strings.Index(rest1, constSpaceToSpace)
+	if pos >= 0 {
+		rest1 = rest1[pos+len(constSpaceToSpace):]
+	} else {
+		p.IState.Valid = false
+		goto regressioncheck1IStateLabel
+	}
+
+	// Take the rest as State(string)
+	p.IState.State = rest1
+	rest1 = rest1[len(rest1):]
+	p.IState.Valid = true
+	p.Rest = rest1
+regressioncheck1IStateLabel:
+
+	return true, nil
+}
+
+// GetPStateState ...
+func (p *RegressionCheck1) GetPStateState() (res string) {
+	if p.PState.Valid {
+		res = p.PState.State
+	}
+	return
+}
+
+// GetIStateState ...
+func (p *RegressionCheck1) GetIStateState() (res string) {
+	if p.IState.Valid {
+		res = p.IState.State
+	}
+	return
+}
+
+// RegressionCheck2 ...
+type RegressionCheck2 struct {
+	Rest string
+	Time string
+}
+
+// Extract ...
+func (p *RegressionCheck2) Extract(line string) (bool, error) {
+	p.Rest = line
+
+	// Checks if the rest starts with `"ï»¿"` and pass it
+	if strings.HasPrefix(p.Rest, constUnrecognizedSequence) {
+		p.Rest = p.Rest[len(constUnrecognizedSequence):]
+	} else {
+		return false, nil
+	}
+
+	// Checks if the rest starts with `"*** Time: "` and pass it
+	if strings.HasPrefix(p.Rest, constStarsSpaceTimeColonSpace) {
+		p.Rest = p.Rest[len(constStarsSpaceTimeColonSpace):]
+	} else {
+		return false, nil
+	}
+
+	// Take the rest as Time(string)
+	p.Time = p.Rest
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }
@@ -286,160 +445,87 @@ func (p *Boolean) Extract(line string) (bool, error) {
 	return true, nil
 }
 
-// RegressionCheck1 ...
-type RegressionCheck1 struct {
-	Rest   string
-	Time   string
-	Pump   int8
-	PState struct {
-		Valid bool
-		State string
+// SilentAreas ...
+type SilentAreas struct {
+	Rest string
+	Alt1 struct {
+		Valid  bool
+		Amount int
 	}
-	IState struct {
-		Valid bool
-		State string
+	Alt2 struct {
+		Valid  bool
+		Amount string
 	}
 }
 
 // Extract ...
-func (p *RegressionCheck1) Extract(line string) (bool, error) {
+func (p *SilentAreas) Extract(line string) (bool, error) {
 	p.Rest = line
 	var err error
-	var pos int
 	var rest1 string
-	var tmp string
 	var tmpInt int64
-
-	// Take until " Pump " as Time(string)
-	pos = strings.Index(p.Rest, constSpacePumpSpace)
-	if pos >= 0 {
-		p.Time = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpacePumpSpace):]
-	} else {
-		return false, nil
-	}
-
-	// Take until ' ' as Pump(int8)
-	pos = -1
-	for i, char := range p.Rest {
-		if char == ' ' {
-			pos = i
-			break
-		}
-	}
-	if pos >= 0 {
-		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+1:]
-	} else {
-		return false, nil
-	}
-	if tmpInt, err = strconv.ParseInt(tmp, 10, 8); err != nil {
-		return false, fmt.Errorf("parsing into `%s` into field Pump(int8): %s", tmp, err)
-	}
-	p.Pump = int8(tmpInt)
 	rest1 = p.Rest
 
-	// Checks if the rest starts with `"State change "` and pass it
-	if strings.HasPrefix(rest1, constStateSpaceChangeSpace) {
-		rest1 = rest1[len(constStateSpaceChangeSpace):]
+	// Checks if the rest starts with `"Amount:"` and pass it
+	if strings.HasPrefix(rest1, constAmountColon) {
+		rest1 = rest1[len(constAmountColon):]
 	} else {
-		p.PState.Valid = false
-		goto regressioncheck1PStateLabel
+		p.Alt1.Valid = false
+		goto silentareasAlt1Label
 	}
 
-	// Looking for " to " and then pass it
-	pos = strings.Index(rest1, constSpaceToSpace)
-	if pos >= 0 {
-		rest1 = rest1[pos+len(constSpaceToSpace):]
-	} else {
-		p.PState.Valid = false
-		goto regressioncheck1PStateLabel
+	// Take the rest as Amount(int)
+	if tmpInt, err = strconv.ParseInt(rest1, 10, 64); err != nil {
+		p.Alt1.Valid = false
+		goto silentareasAlt1Label
 	}
-
-	// Take until "[" as State(string)
-	pos = strings.Index(rest1, constLsbrck)
-	if pos >= 0 {
-		p.PState.State = rest1[:pos]
-		rest1 = rest1[pos+len(constLsbrck):]
-	} else {
-		p.PState.Valid = false
-		goto regressioncheck1PStateLabel
-	}
-
-	p.PState.Valid = true
-	p.Rest = rest1
-regressioncheck1PStateLabel:
-	rest1 = p.Rest
-
-	// Checks if the rest starts with `"change internal state "` and pass it
-	if strings.HasPrefix(rest1, constChangeSpaceInternalSpaceStateSpace) {
-		rest1 = rest1[len(constChangeSpaceInternalSpaceStateSpace):]
-	} else {
-		p.IState.Valid = false
-		goto regressioncheck1IStateLabel
-	}
-
-	// Looking for " to " and then pass it
-	pos = strings.Index(rest1, constSpaceToSpace)
-	if pos >= 0 {
-		rest1 = rest1[pos+len(constSpaceToSpace):]
-	} else {
-		p.IState.Valid = false
-		goto regressioncheck1IStateLabel
-	}
-
-	// Take the rest as State(string)
-	p.IState.State = rest1
+	p.Alt1.Amount = int(tmpInt)
 	rest1 = rest1[len(rest1):]
-	p.IState.Valid = true
+	if len(rest1) != 0 {
+		p.Alt1.Valid = false
+		goto silentareasAlt1Label
+	}
+
+	p.Alt1.Valid = true
 	p.Rest = rest1
-regressioncheck1IStateLabel:
+silentareasAlt1Label:
+	rest1 = p.Rest
+
+	// Checks if the rest starts with `"Amount:"` and pass it
+	if strings.HasPrefix(rest1, constAmountColon) {
+		rest1 = rest1[len(constAmountColon):]
+	} else {
+		p.Alt2.Valid = false
+		goto silentareasAlt2Label
+	}
+
+	// Take the rest as Amount(string)
+	p.Alt2.Amount = rest1
+	rest1 = rest1[len(rest1):]
+	if len(rest1) != 0 {
+		p.Alt2.Valid = false
+		goto silentareasAlt2Label
+	}
+
+	p.Alt2.Valid = true
+	p.Rest = rest1
+silentareasAlt2Label:
 
 	return true, nil
 }
 
-// GetPStateState ...
-func (p *RegressionCheck1) GetPStateState() (res string) {
-	if p.PState.Valid {
-		res = p.PState.State
+// GetAlt1Amount ...
+func (p *SilentAreas) GetAlt1Amount() (res int) {
+	if p.Alt1.Valid {
+		res = p.Alt1.Amount
 	}
 	return
 }
 
-// GetIStateState ...
-func (p *RegressionCheck1) GetIStateState() (res string) {
-	if p.IState.Valid {
-		res = p.IState.State
+// GetAlt2Amount ...
+func (p *SilentAreas) GetAlt2Amount() (res string) {
+	if p.Alt2.Valid {
+		res = p.Alt2.Amount
 	}
 	return
-}
-
-// RegressionCheck2 ...
-type RegressionCheck2 struct {
-	Rest string
-	Time string
-}
-
-// Extract ...
-func (p *RegressionCheck2) Extract(line string) (bool, error) {
-	p.Rest = line
-
-	// Checks if the rest starts with `"ï»¿"` and pass it
-	if strings.HasPrefix(p.Rest, constUnrecognizedSequence) {
-		p.Rest = p.Rest[len(constUnrecognizedSequence):]
-	} else {
-		return false, nil
-	}
-
-	// Checks if the rest starts with `"*** Time: "` and pass it
-	if strings.HasPrefix(p.Rest, constStarsSpaceTimeColonSpace) {
-		p.Rest = p.Rest[len(constStarsSpaceTimeColonSpace):]
-	} else {
-		return false, nil
-	}
-
-	// Take the rest as Time(string)
-	p.Time = p.Rest
-	p.Rest = p.Rest[len(p.Rest):]
-	return true, nil
 }

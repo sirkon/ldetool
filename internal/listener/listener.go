@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/sirkon/message"
 
 	"github.com/sirkon/ldetool/internal/ast"
 	"github.com/sirkon/ldetool/internal/parser"
@@ -104,11 +105,11 @@ func (l *Listener) VisitErrorNode(node antlr.ErrorNode) {
 func (l *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {
 	if l.expectEnd {
 		token := ctx.GetStart()
-		panic(fmt.Sprintf(
+		message.Warningf(
 			"%d:%d previous action consumed the rest of the string, the remaining ops will do nothing",
 			token.GetLine(),
 			token.GetColumn()+1,
-		))
+		)
 	}
 }
 
@@ -374,6 +375,18 @@ func (l *Listener) EnterOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) 
 
 // ExitOptionalNamedArea is called when production optionalNamedArea is exited.
 func (l *Listener) ExitOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
+	l.actions = l.actions[:len(l.actions)-1]
+}
+
+func (l *Listener) EnterOptionalNamedSilentArea(ctx *parser.OptionalNamedSilentAreaContext) {
+	checkReserved(ctx.Identifier().GetSymbol())
+
+	a := ast.OptionSilent(ctx.Identifier().GetSymbol())
+	l.seq().Append(a)
+	l.actions = append(l.actions, a)
+}
+
+func (l *Listener) ExitOptionalNamedSilentArea(ctx *parser.OptionalNamedSilentAreaContext) {
 	l.actions = l.actions[:len(l.actions)-1]
 }
 

@@ -36,6 +36,7 @@ atomicAction
     | takeUntilIncludingOrRest
     | takeUntilRest
     | optionalNamedArea
+    | optionalNamedSilentArea
     | optionalArea
     | restCheck
     | atEnd;
@@ -90,6 +91,9 @@ takeUntilRest
 
 optionalNamedArea
     : '?' Identifier '(' baseAction ')';
+
+optionalNamedSilentArea
+    : '??' Identifier '(' baseAction ')';
 
 optionalArea
     : '?' '(' baseAction ')';

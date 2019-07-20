@@ -45,6 +45,8 @@ type Generator interface {
 	// Optionals
 	OpenOptionalScope(name string, t antlr.Token) error
 	CloseOptionalScope() error
+	OpenSilentOptionalScope(name string, t antlr.Token) error
+	CloseSilentOptionalScope() error
 
 	// Stress set mismatch treatment as critical error
 	Stress()

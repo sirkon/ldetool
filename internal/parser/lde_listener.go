@@ -68,6 +68,9 @@ type LDEListener interface {
 	// EnterOptionalNamedArea is called when entering the optionalNamedArea production.
 	EnterOptionalNamedArea(c *OptionalNamedAreaContext)
 
+	// EnterOptionalNamedSilentArea is called when entering the optionalNamedSilentArea production.
+	EnterOptionalNamedSilentArea(c *OptionalNamedSilentAreaContext)
+
 	// EnterOptionalArea is called when entering the optionalArea production.
 	EnterOptionalArea(c *OptionalAreaContext)
 
@@ -157,6 +160,9 @@ type LDEListener interface {
 
 	// ExitOptionalNamedArea is called when exiting the optionalNamedArea production.
 	ExitOptionalNamedArea(c *OptionalNamedAreaContext)
+
+	// ExitOptionalNamedSilentArea is called when exiting the optionalNamedSilentArea production.
+	ExitOptionalNamedSilentArea(c *OptionalNamedSilentAreaContext)
 
 	// ExitOptionalArea is called when exiting the optionalArea production.
 	ExitOptionalArea(c *OptionalAreaContext)

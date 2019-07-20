@@ -84,7 +84,7 @@ func (sb *SrcBuilder) DispatchOptional(a *ast.Optional) error {
 	gotifiedName := sb.gotify.Public(a.Name)
 	if gotifiedName != a.Name {
 		sb.errToken = a.NameToken
-		return fmt.Errorf("Wrong option identifier %s, must be %s", a.Name, gotifiedName)
+		return fmt.Errorf("Wrong named option identifier %s, must be %s", a.Name, gotifiedName)
 	}
 	sb.appendGens(func() error {
 		return sb.gen.OpenOptionalScope(a.Name, a.NameToken)
@@ -94,8 +94,34 @@ func (sb *SrcBuilder) DispatchOptional(a *ast.Optional) error {
 	if err := sb.composeRule(a.Actions); err != nil {
 		return err
 	}
-	message.Infof("End of option \033[1m%s\033[0m", a.Name)
+	message.Infof("End of named option \033[1m%s\033[0m", a.Name)
 	sb.appendGens(sb.gen.CloseOptionalScope)
+	return nil
+}
+
+func (sb *SrcBuilder) DispatchOptionalSilent(a *ast.OptionalSilent) error {
+	if sb.anonDepth > 0 {
+		return fmt.Errorf(
+			"%d:%d: cannot create named silent optional area in anonymous one",
+			a.NameToken.GetLine(),
+			a.NameToken.GetColumn()+2,
+		)
+	}
+	gotifiedName := sb.gotify.Public(a.Name)
+	if gotifiedName != a.Name {
+		sb.errToken = a.NameToken
+		return fmt.Errorf("Wrong silent named option identifier %s, must be %s", a.Name, gotifiedName)
+	}
+	sb.appendGens(func() error {
+		return sb.gen.OpenSilentOptionalScope(a.Name, a.NameToken)
+	})
+	sb.prefixTie(a.Name)
+	defer sb.prefixUntie()
+	if err := sb.composeRule(a.Actions); err != nil {
+		return err
+	}
+	message.Infof("End of silent named option \033[1m%s\033[0m", a.Name)
+	sb.appendGens(sb.gen.CloseSilentOptionalScope)
 	return nil
 }
 

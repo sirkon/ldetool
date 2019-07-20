@@ -141,6 +141,12 @@ func (s *BaseLDEListener) EnterOptionalNamedArea(ctx *OptionalNamedAreaContext) 
 // ExitOptionalNamedArea is called when production optionalNamedArea is exited.
 func (s *BaseLDEListener) ExitOptionalNamedArea(ctx *OptionalNamedAreaContext) {}
 
+// EnterOptionalNamedSilentArea is called when production optionalNamedSilentArea is entered.
+func (s *BaseLDEListener) EnterOptionalNamedSilentArea(ctx *OptionalNamedSilentAreaContext) {}
+
+// ExitOptionalNamedSilentArea is called when production optionalNamedSilentArea is exited.
+func (s *BaseLDEListener) ExitOptionalNamedSilentArea(ctx *OptionalNamedSilentAreaContext) {}
+
 // EnterOptionalArea is called when production optionalArea is entered.
 func (s *BaseLDEListener) EnterOptionalArea(ctx *OptionalAreaContext) {}
 

@@ -22,7 +22,7 @@ func (o *Optional) Accept(d ActionDispatcher) error {
 }
 
 func (o *Optional) String() string {
-	return fmt.Sprintf("Option \033[1m%s\033[0m", o.Name)
+	return fmt.Sprintf("Named option \033[1m%s\033[0m", o.Name)
 }
 
 // Option ...
