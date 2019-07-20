@@ -6,4 +6,9 @@ test:
 		go generate github.com/sirkon/ldetool/testing
 		which ldetool
 		go test -test.v github.com/sirkon/ldetool/testing
+
+
+push:
 		git tag --list | tail -1 | xargs printf 'package main\n\nconst ldetoolVersion = "%s"\n' > version.go
+		git push --tags
+		git push

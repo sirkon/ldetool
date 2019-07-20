@@ -1,3 +1,6 @@
+type time.Time from "time";
+type ip.IP from "net";
+
 Rule =
     ^'[' Data(string) ']'
     ^' ' Signed(int) ' '
@@ -10,6 +13,8 @@ BeforeLookup = .."abc" Data(string);
 CheckPrefix = @"abc" Data(string);
 
 PassHeadingStringRegression = *'#' Data(string);
+
+Custom = Time(time.Time) ' ' ?Addr(^"addr: " IP(ip.IP) ' ');
 
 RegressionCheck1 =
     Time(string) " Pump "

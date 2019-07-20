@@ -1,4 +1,4 @@
-// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
+// Code generated from LDE.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // LDE
 
@@ -26,6 +26,12 @@ func (s *BaseLDEListener) EnterRules(ctx *RulesContext) {}
 
 // ExitRules is called when production rules is exited.
 func (s *BaseLDEListener) ExitRules(ctx *RulesContext) {}
+
+// EnterTypeDeclaration is called when production typeDeclaration is entered.
+func (s *BaseLDEListener) EnterTypeDeclaration(ctx *TypeDeclarationContext) {}
+
+// ExitTypeDeclaration is called when production typeDeclaration is exited.
+func (s *BaseLDEListener) ExitTypeDeclaration(ctx *TypeDeclarationContext) {}
 
 // EnterAtomicRule is called when production atomicRule is entered.
 func (s *BaseLDEListener) EnterAtomicRule(ctx *AtomicRuleContext) {}

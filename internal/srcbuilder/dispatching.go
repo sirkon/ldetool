@@ -536,3 +536,8 @@ func (sb *SrcBuilder) DispatchRule(a *ast.Rule) error {
 	}
 	return nil
 }
+
+func (sb *SrcBuilder) DispatchTypeRegistration(a ast.TypeRegistration) error {
+	sb.registeredTypes = a.Types()
+	return nil
+}

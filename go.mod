@@ -1,6 +1,7 @@
 module github.com/sirkon/ldetool
 
 require (
+	github.com/alexflint/go-arg v1.0.0
 	github.com/antlr/antlr4 v0.0.0-20190313170020-28fc84874d7f
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/sanity-io/litter v1.1.0

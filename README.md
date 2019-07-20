@@ -133,3 +133,44 @@ for scanner.Scan() {
     …
 }
 ```
+
+#### custom types
+
+> Special thanks to Matt Hook (github.com/hookenz) who proposed this feature
+
+It is possible to use custom types in generated structure. You should declare them first via
+
+```perl
+type pkg.Type from "pkgpath";
+```
+
+for external types and 
+
+```perl
+type typeName;
+```
+
+for local types before all rules definitions and you can use them as field types. The parsing to be done via
+
+```go
+p.unmarshal<FieldName>([]byte) (Type, error)
+``` 
+
+function.
+
+Example:
+
+```perl
+type time.Time from "time";
+type net.IP from "net";
+
+Custom = Time(time.Time) ' ' ?Addr(^"addr: " IP(ip.IP) ' ');
+```
+
+Now, two parsing functions will be needed to parse this:
+
+```go
+func (p *Custom) unmarshalTime(s string) (time.Time, error) { … }
+
+func (p *Custom) unmarshalAddrIP(s string) (net.IP, error) { … }
+```

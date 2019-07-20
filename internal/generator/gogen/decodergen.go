@@ -15,8 +15,8 @@ p.{{Dest}} = int8(tmpInt)
 */
 
 func (g *Generator) prepNumeric() {
-	g.regImport("", "strconv")
-	g.regImport("", "fmt")
+	g.RegImport("", "strconv")
+	g.RegImport("", "fmt")
 	g.regVar("err", "error")
 }
 
@@ -53,7 +53,7 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 		// src = srcobj.Raw("tmpChar")
 		p = []srcobj.Source{src}
 	} else {
-		g.regImport("", "unsafe")
+		g.RegImport("", "unsafe")
 		p = []srcobj.Source{
 			srcobj.Deref(
 				srcobj.NewCall(
@@ -89,6 +89,30 @@ func (g *Generator) decode(src srcobj.Source, tmp, gotype, dest, decoder string,
 		Receiver: dest,
 		Expr:     srcobj.NewCall(gotype, srcobj.Raw(tmp)),
 	})
+}
+
+func (g *Generator) decodeDirect(src srcobj.Source, dest, decoder string, params ...srcobj.Source) {
+	if err := g.regErr(); err != nil {
+		panic("duplicate err declaration")
+	}
+	var p []srcobj.Source
+	p = append(p, src)
+	p = append(p, params...)
+	g.body.Append(
+		srcobj.If{
+			Expr: srcobj.OperatorSemicolon(
+				srcobj.OperatorAssign(
+					srcobj.OperatorComma(srcobj.Raw(dest), srcobj.Raw("err")),
+					srcobj.NewCall(
+						decoder, // func name, strconv.ParseInt, for instance
+						p...,
+					),
+				),
+				srcobj.OperatorNEq(srcobj.Raw("err"), srcobj.Raw("nil")),
+			),
+			Then: g.returnError(p[0]),
+		},
+	)
 }
 
 func (g *Generator) decodeInt(src srcobj.Source, dest string) {
@@ -193,12 +217,12 @@ func (g *Generator) decodeOct64(src srcobj.Source, dest string) {
 
 func (g *Generator) prepDec() {
 	g.regVar("err", "error")
-	g.regImport("", "fmt")
-	g.regImport("", "github.com/sirkon/decconv")
+	g.RegImport("", "fmt")
+	g.RegImport("", "github.com/sirkon/decconv")
 }
 
 func (g *Generator) decodeSmallDecimal(src srcobj.Source, dest, decoder string, precision, scale int) {
-	g.regImport("", "fmt")
+	g.RegImport("", "fmt")
 	p := []srcobj.Source{
 		srcobj.Literal(precision),
 		srcobj.Literal(scale),
@@ -312,4 +336,8 @@ func (g *Generator) decodeStr(src srcobj.Source, dest string) {
 			Expr:     srcobj.NewCall("string", src),
 		})
 	}
+}
+
+func (g *Generator) decodeCustomType(src srcobj.Source, dest string, decName string) {
+	g.decodeDirect(src, dest, "p."+g.goish.Private("unmarshal"+decName))
 }

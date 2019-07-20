@@ -1,4 +1,4 @@
-// Code generated from LDE.g4 by ANTLR 4.7.1. DO NOT EDIT.
+// Code generated from LDE.g4 by ANTLR 4.7.2. DO NOT EDIT.
 
 package parser // LDE
 
@@ -10,6 +10,9 @@ type LDEListener interface {
 
 	// EnterRules is called when entering the rules production.
 	EnterRules(c *RulesContext)
+
+	// EnterTypeDeclaration is called when entering the typeDeclaration production.
+	EnterTypeDeclaration(c *TypeDeclarationContext)
 
 	// EnterAtomicRule is called when entering the atomicRule production.
 	EnterAtomicRule(c *AtomicRuleContext)
@@ -97,6 +100,9 @@ type LDEListener interface {
 
 	// ExitRules is called when exiting the rules production.
 	ExitRules(c *RulesContext)
+
+	// ExitTypeDeclaration is called when exiting the typeDeclaration production.
+	ExitTypeDeclaration(c *TypeDeclarationContext)
 
 	// ExitAtomicRule is called when exiting the atomicRule production.
 	ExitAtomicRule(c *AtomicRuleContext)

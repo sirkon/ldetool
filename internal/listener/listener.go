@@ -3,13 +3,14 @@
 package listener // LDE
 
 import (
+	"fmt"
 	"strconv"
 
-	"fmt"
-
 	"github.com/antlr/antlr4/runtime/Go/antlr"
+
 	"github.com/sirkon/ldetool/internal/ast"
 	"github.com/sirkon/ldetool/internal/parser"
+	"github.com/sirkon/ldetool/internal/types"
 )
 
 var _ parser.LDEListener = &Listener{}
@@ -29,7 +30,7 @@ func checkReserved(token antlr.Token) {
 		return
 	}
 	panic(
-		fmt.Sprintf("%d:%d: \033[1m%s\033[0m is reserved identifier",
+		fmt.Sprintf("%d:%d \033[1m%s\033[0m is reserved identifier",
 			token.GetLine(),
 			token.GetColumn()+1,
 			token.GetText(),
@@ -42,6 +43,7 @@ type Listener struct {
 	rules   []*ast.Rule
 	actions []appender
 	target  *ast.Target
+	types   map[string]types.TypeRegistration
 
 	prefixJump int
 
@@ -53,12 +55,42 @@ type Listener struct {
 	mustNotBeExact bool
 }
 
+func (l *Listener) EnterTypeDeclaration(c *parser.TypeDeclarationContext) {
+	var name string
+	var item types.TypeRegistration
+	if c.TypeName() != nil {
+		item = types.ImportedType{
+			Name:       c.TypeName().GetText(),
+			ImportPath: c.StringLit().GetText(),
+		}
+		name = c.TypeName().GetText()
+	} else {
+		item = types.LocalType{
+			Name: c.IdentifierMayStar().GetText(),
+		}
+		name = c.IdentifierMayStar().GetText()
+	}
+	if _, ok := l.types[name]; ok {
+		panic(fmt.Sprintf("%d:%d duplicate type %s registration", c.GetStart().GetLine(), c.GetStart().GetColumn(), name))
+	}
+	if l.types == nil {
+		l.types = map[string]types.TypeRegistration{}
+	}
+	l.types[name] = item
+}
+
+func (l *Listener) ExitTypeDeclaration(c *parser.TypeDeclarationContext) {}
+
 func New() *Listener {
 	return &Listener{}
 }
 
 func (l *Listener) Rules() []*ast.Rule {
 	return l.rules
+}
+
+func (l *Listener) Types() ast.TypeRegistration {
+	return ast.NewTypeRegistration(l.types)
 }
 
 // VisitTerminal is called when a terminal node is visited.
@@ -73,7 +105,7 @@ func (l *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {
 	if l.expectEnd {
 		token := ctx.GetStart()
 		panic(fmt.Sprintf(
-			"%d:%d: previous action consumed the rest of the string, the remaining ops will do nothing",
+			"%d:%d previous action consumed the rest of the string, the remaining ops will do nothing",
 			token.GetLine(),
 			token.GetColumn()+1,
 		))
@@ -175,7 +207,7 @@ func (l *Listener) EnterPassChars(ctx *parser.PassCharsContext) {
 	var err error
 	a, err := ast.PassFirst(ctx.IntLit().GetSymbol())
 	if err != nil {
-		panic(fmt.Sprintf("%d:%d: positive integer expected, got %s", ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()+1, ctx.IntLit().GetSymbol()))
+		panic(fmt.Sprintf("%d:%d positive integer expected, got %s", ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()+1, ctx.IntLit().GetSymbol()))
 	}
 	l.seq().Append(a)
 }
@@ -196,7 +228,7 @@ func (l *Listener) ExitPassUntil(ctx *parser.PassUntilContext) {
 	l.lookup = false
 	if l.mustNotBeExact {
 		panic(fmt.Sprintf(
-			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			"%d:%d use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
 			ctx.GetStart().GetLine(),
 			ctx.GetStart().GetColumn()+1,
 		))
@@ -214,7 +246,7 @@ func (l *Listener) ExitGoUntil(ctx *parser.GoUntilContext) {
 	l.lookup = false
 	if l.mustNotBeExact {
 		panic(fmt.Sprintf(
-			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			"%d:%d use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
 			ctx.GetStart().GetLine(),
 			ctx.GetStart().GetColumn()+1,
 		))
@@ -234,7 +266,7 @@ func (l *Listener) ExitMayPassUntil(ctx *parser.MayPassUntilContext) {
 	l.lookup = false
 	if l.mustNotBeExact {
 		panic(fmt.Sprintf(
-			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			"%d:%d use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
 			ctx.GetStart().GetLine(),
 			ctx.GetStart().GetColumn()+1,
 		))
@@ -252,7 +284,7 @@ func (l *Listener) ExitMayGoUntil(ctx *parser.MayGoUntilContext) {
 	l.lookup = false
 	if l.mustNotBeExact {
 		panic(fmt.Sprintf(
-			"%d:%d: use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
+			"%d:%d use prefix operator (\033[1m^\033[0m) instead of \033[1m_\033[0m",
 			ctx.GetStart().GetLine(),
 			ctx.GetStart().GetColumn()+1,
 		))
@@ -267,7 +299,7 @@ func (l *Listener) EnterRestCheck(c *parser.RestCheckContext) {
 	lengthLit := c.IntLit().GetText()
 	length, err := strconv.Atoi(lengthLit)
 	if err != nil {
-		panic(fmt.Sprintf("%d:%d: %s", c.GetStart().GetLine(), c.GetStart().GetColumn(), err))
+		panic(fmt.Sprintf("%d:%d %s", c.GetStart().GetLine(), c.GetStart().GetColumn(), err))
 	}
 	a := ast.RestCheck(operator, length)
 	l.seq().Append(a)
@@ -437,11 +469,11 @@ func (l *Listener) ExitTargetLit(ctx *parser.TargetLitContext) {}
 
 // EnterBound is called when production bound is entered.
 func (l *Listener) EnterBound(ctx *parser.BoundContext) {
-	//if l.target.Close {
-	//	panic(fmt.Sprintf(
-	//		"%d:%d: short lookup does not make a sense on bounded areas",
-	//		ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
-	//}
+	// if l.target.Close {
+	// 	panic(fmt.Sprintf(
+	// 		"%d:%d short lookup does not make a sense on bounded areas",
+	// 		ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
+	// }
 	lower, _ := strconv.Atoi(ctx.IntLit(0).GetText())
 	upper, _ := strconv.Atoi(ctx.IntLit(1).GetText())
 	if lower == 0 {
@@ -450,7 +482,7 @@ func (l *Listener) EnterBound(ctx *parser.BoundContext) {
 	}
 	if upper < lower {
 		token := ctx.IntLit(1).GetSymbol()
-		panic(fmt.Sprintf("%d:%d: upper bound must be greater than lower",
+		panic(fmt.Sprintf("%d:%d upper bound must be greater than lower",
 			token.GetLine(), token.GetColumn()+1))
 	}
 	l.target.SetBound(lower, upper)
@@ -461,11 +493,11 @@ func (l *Listener) ExitBound(ctx *parser.BoundContext) {}
 
 // EnterLimit is called when production limit is entered.
 func (l *Listener) EnterLimit(ctx *parser.LimitContext) {
-	//if l.target.Close {
-	//	panic(fmt.Sprintf(
-	//		"%d:%d: short lookup does not make a sense on limited areas",
-	//		ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
-	//}
+	// if l.target.Close {
+	// 	panic(fmt.Sprintf(
+	// 		"%d:%d short lookup does not make a sense on limited areas",
+	// 		ctx.GetStart().GetLine(), ctx.GetStart().GetColumn()))
+	// }
 	upper, _ := strconv.Atoi(ctx.IntLit().GetText())
 	if upper == 0 {
 		token := ctx.IntLit().GetSymbol()

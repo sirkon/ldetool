@@ -9,6 +9,7 @@ import (
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/internal/ast"
+	"github.com/sirkon/ldetool/internal/types"
 
 	"github.com/sirkon/ldetool/internal/generator"
 )
@@ -17,13 +18,14 @@ var _ ast.ActionDispatcher = &SrcBuilder{}
 
 // SrcBuilder creates target sources using Generator object
 type SrcBuilder struct {
-	pkgName      string
-	gen          generator.Generator
-	dest         io.Writer
-	recoverPanic bool
-	gotify       *gotify.Gotify
-	generators   []func() error
-	prefixList   []string
+	pkgName         string
+	gen             generator.Generator
+	dest            io.Writer
+	recoverPanic    bool
+	gotify          *gotify.Gotify
+	generators      []func() error
+	prefixList      []string
+	registeredTypes map[string]types.TypeRegistration
 
 	anonDepth int
 
@@ -60,6 +62,7 @@ func (sb *SrcBuilder) DontRecover() {
 
 // BuildRule builds code from the data
 func (sb *SrcBuilder) BuildRule(rule *ast.Rule) (err error) {
+	// fill register types
 	if err := rule.Accept(sb); err != nil {
 		return err
 	}

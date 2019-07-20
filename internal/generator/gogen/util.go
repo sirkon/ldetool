@@ -23,7 +23,7 @@ func (g *Generator) constNameFromContent(value string) string {
 	} else if err != nil {
 		panic(err)
 	}
-	res = g.goish.Private(res)
+	res = g.goish.Private("const_" + g.goish.Private(res))
 	newRes := res
 	i := 2
 	for {
@@ -37,6 +37,10 @@ func (g *Generator) constNameFromContent(value string) string {
 	g.consts[res] = value
 	g.file.AddConst(res, value)
 	return res
+}
+
+func (g *Generator) regErr() error {
+	return g.regVar("err", "error")
 }
 
 // regVar registers variable of the given type
@@ -68,7 +72,7 @@ func (g *Generator) regVar(name, varType string) error {
 	return nil
 }
 
-func (g *Generator) regImport(importAs, path string) error {
+func (g *Generator) RegImport(importAs, path string) error {
 	if len(importAs) > 0 {
 		if ok, err := regexp.MatchString(`^[a-zA-Z_][a-zA-Z0-9_]*$`, importAs); !ok {
 			return fmt.Errorf("Wrong import name `\033[1m%s\033[0m`", importAs)
@@ -136,8 +140,8 @@ func (g *Generator) addField(namespace []string, name string, t antlr.Token) str
 	if ppp, ok := g.fields[g.fullName(name)]; ok {
 		panic(fmt.Sprintf(
 			"%d:%d: Field `\033[1m%s\033[0m` redefiniton, previously declared at (%d, %d)",
-			t.GetLine(), t.GetColumn(),
-			name, ppp.token.GetLine(), ppp.token.GetColumn()))
+			t.GetLine(), t.GetColumn()+1,
+			name, ppp.token.GetLine(), ppp.token.GetColumn()+1))
 	}
 	g.fields[g.fullName(name)] = Name{
 		name:  namespaced,

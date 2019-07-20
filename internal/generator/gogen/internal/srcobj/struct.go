@@ -4,16 +4,20 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"strings"
+
+	"github.com/sirkon/ldetool/internal/generator"
+	"github.com/sirkon/ldetool/internal/types"
 )
 
-/////////////////// special hard to access type ///////////////////
+// ///////////////// special hard to access type ///////////////////
 type hardToAccessNameYouShouldNotUse string
 
 func (h hardToAccessNameYouShouldNotUse) TypeString() string {
 	return string(h)
 }
 
-///////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////
 
 // FieldType represents LDE generated struct's field
 type FieldType interface {
@@ -30,12 +34,14 @@ type FieldDef struct {
 type Strct struct {
 	useString bool
 	fields    []FieldDef
+	gen       generator.Generator
 }
 
 // Struct creates Strct for external consumption
-func Struct(useString bool) *Strct {
+func Struct(useString bool, g generator.Generator) *Strct {
 	return &Strct{
 		useString: useString,
+		gen:       g,
 	}
 }
 
@@ -114,7 +120,7 @@ func (s *Strct) AddUint64(name string) {
 
 // AddDec128 adds a couple of two elements in a structure emulating uint128 type
 func (s *Strct) AddDec128(name string) {
-	res := Struct(s.useString)
+	res := Struct(s.useString, s.gen)
 	res.addPrimitive("Lo", "uint64")
 	res.addPrimitive("Hi", "uint64")
 	s.fields = append(s.fields, FieldDef{
@@ -145,13 +151,26 @@ func (s *Strct) AddStr(name string) {
 
 // AddSubstruct add substruct and returns it
 func (s *Strct) AddSubstruct(name string) *Strct {
-	res := Struct(s.useString)
+	res := Struct(s.useString, s.gen)
 	res.addPrimitive("Valid", "bool")
 	s.fields = append(s.fields, FieldDef{
 		Name: name,
 		Type: res,
 	})
 	return res
+}
+
+// AddCustomType add custom type
+func (s *Strct) AddCustomType(name string, fieldType types.TypeRegistration) {
+	switch v := fieldType.(type) {
+	case types.ImportedType:
+		s.addPrimitive(name, v.Name)
+		if err := s.gen.RegImport(strings.Split(strings.TrimLeft(v.Name, "*"), ".")[0], strings.Trim(v.ImportPath, `"`)); err != nil {
+			panic(err)
+		}
+	case types.LocalType:
+		s.addPrimitive(name, v.Name)
+	}
 }
 
 // structType ...

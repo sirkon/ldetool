@@ -11,18 +11,21 @@ package ldetesting
 
 import (
 	"fmt"
+	ip "net"
 	"strconv"
 	"strings"
+	time "time"
 )
 
-var abc = "abc"
-var changeSpaceInternalSpaceStateSpace = "change internal state "
-var lsbrck = "["
-var spacePumpSpace = " Pump "
-var spaceToSpace = " to "
-var starsSpaceTimeColonSpace = "*** Time: "
-var stateSpaceChangeSpace = "State change "
-var unrecognizedSequence = "ï»¿"
+var constAbc = "abc"
+var constAddrColonSpace = "addr: "
+var constChangeSpaceInternalSpaceStateSpace = "change internal state "
+var constLsbrck = "["
+var constSpacePumpSpace = " Pump "
+var constSpaceToSpace = " to "
+var constStarsSpaceTimeColonSpace = "*** Time: "
+var constStateSpaceChangeSpace = "State change "
+var constUnrecognizedSequence = "ï»¿"
 
 // Rule ...
 type Rule struct {
@@ -116,7 +119,7 @@ func (p *BeforeLookup) Extract(line string) (bool, error) {
 	var pos int
 
 	// Looking for "abc" and then pass it
-	pos = strings.Index(p.Rest, abc)
+	pos = strings.Index(p.Rest, constAbc)
 	if pos >= 0 {
 		p.Rest = p.Rest[pos:]
 	} else {
@@ -140,7 +143,7 @@ func (p *CheckPrefix) Extract(line string) (bool, error) {
 	p.Rest = line
 
 	// Checks if the rest starts with `"abc"`
-	if !strings.HasPrefix(p.Rest, abc) {
+	if !strings.HasPrefix(p.Rest, constAbc) {
 		return false, nil
 	}
 
@@ -178,6 +181,73 @@ func (p *PassHeadingStringRegression) Extract(line string) (bool, error) {
 	return true, nil
 }
 
+// Custom ...
+type Custom struct {
+	Rest string
+	Time time.Time
+	Addr struct {
+		Valid bool
+		IP    ip.IP
+	}
+}
+
+// Extract ...
+func (p *Custom) Extract(line string) (bool, error) {
+	p.Rest = line
+	var err error
+	var pos int
+	var rest1 string
+	var tmp string
+
+	// Take until ' ' as Time(time.Time)
+	pos = strings.IndexByte(p.Rest, ' ')
+	if pos >= 0 {
+		tmp = p.Rest[:pos]
+		p.Rest = p.Rest[pos+1:]
+	} else {
+		return false, nil
+	}
+	if p.Time, err = p.unmarshalTime(tmp); err != nil {
+		return false, fmt.Errorf("cannot parse `%s` into field Time(time.Time): %s", tmp, err)
+	}
+	rest1 = p.Rest
+
+	// Checks if the rest starts with `"addr: "` and pass it
+	if strings.HasPrefix(rest1, constAddrColonSpace) {
+		rest1 = rest1[len(constAddrColonSpace):]
+	} else {
+		p.Addr.Valid = false
+		goto customAddrLabel
+	}
+
+	// Take until ' ' as IP(ip.IP)
+	pos = strings.IndexByte(rest1, ' ')
+	if pos >= 0 {
+		tmp = rest1[:pos]
+		rest1 = rest1[pos+1:]
+	} else {
+		p.Addr.Valid = false
+		goto customAddrLabel
+	}
+	if p.Addr.IP, err = p.unmarshalAddrIP(tmp); err != nil {
+		return false, fmt.Errorf("cannot parse `%s` into field Addr.IP(ip.IP): %s", tmp, err)
+	}
+
+	p.Addr.Valid = true
+	p.Rest = rest1
+customAddrLabel:
+
+	return true, nil
+}
+
+// GetAddrIP ...
+func (p *Custom) GetAddrIP() (res ip.IP) {
+	if p.Addr.Valid {
+		res = p.Addr.IP
+	}
+	return
+}
+
 // RegressionCheck1 ...
 type RegressionCheck1 struct {
 	Rest   string
@@ -203,10 +273,10 @@ func (p *RegressionCheck1) Extract(line string) (bool, error) {
 	var tmpInt int64
 
 	// Take until " Pump " as Time(string)
-	pos = strings.Index(p.Rest, spacePumpSpace)
+	pos = strings.Index(p.Rest, constSpacePumpSpace)
 	if pos >= 0 {
 		p.Time = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(spacePumpSpace):]
+		p.Rest = p.Rest[pos+len(constSpacePumpSpace):]
 	} else {
 		return false, nil
 	}
@@ -232,27 +302,27 @@ func (p *RegressionCheck1) Extract(line string) (bool, error) {
 	rest1 = p.Rest
 
 	// Checks if the rest starts with `"State change "` and pass it
-	if strings.HasPrefix(rest1, stateSpaceChangeSpace) {
-		rest1 = rest1[len(stateSpaceChangeSpace):]
+	if strings.HasPrefix(rest1, constStateSpaceChangeSpace) {
+		rest1 = rest1[len(constStateSpaceChangeSpace):]
 	} else {
 		p.PState.Valid = false
 		goto regressioncheck1PStateLabel
 	}
 
 	// Looking for " to " and then pass it
-	pos = strings.Index(rest1, spaceToSpace)
+	pos = strings.Index(rest1, constSpaceToSpace)
 	if pos >= 0 {
-		rest1 = rest1[pos+len(spaceToSpace):]
+		rest1 = rest1[pos+len(constSpaceToSpace):]
 	} else {
 		p.PState.Valid = false
 		goto regressioncheck1PStateLabel
 	}
 
 	// Take until "[" as State(string)
-	pos = strings.Index(rest1, lsbrck)
+	pos = strings.Index(rest1, constLsbrck)
 	if pos >= 0 {
 		p.PState.State = rest1[:pos]
-		rest1 = rest1[pos+len(lsbrck):]
+		rest1 = rest1[pos+len(constLsbrck):]
 	} else {
 		p.PState.Valid = false
 		goto regressioncheck1PStateLabel
@@ -264,17 +334,17 @@ regressioncheck1PStateLabel:
 	rest1 = p.Rest
 
 	// Checks if the rest starts with `"change internal state "` and pass it
-	if strings.HasPrefix(rest1, changeSpaceInternalSpaceStateSpace) {
-		rest1 = rest1[len(changeSpaceInternalSpaceStateSpace):]
+	if strings.HasPrefix(rest1, constChangeSpaceInternalSpaceStateSpace) {
+		rest1 = rest1[len(constChangeSpaceInternalSpaceStateSpace):]
 	} else {
 		p.IState.Valid = false
 		goto regressioncheck1IStateLabel
 	}
 
 	// Looking for " to " and then pass it
-	pos = strings.Index(rest1, spaceToSpace)
+	pos = strings.Index(rest1, constSpaceToSpace)
 	if pos >= 0 {
-		rest1 = rest1[pos+len(spaceToSpace):]
+		rest1 = rest1[pos+len(constSpaceToSpace):]
 	} else {
 		p.IState.Valid = false
 		goto regressioncheck1IStateLabel
@@ -317,15 +387,15 @@ func (p *RegressionCheck2) Extract(line string) (bool, error) {
 	p.Rest = line
 
 	// Checks if the rest starts with `"ï»¿"` and pass it
-	if strings.HasPrefix(p.Rest, unrecognizedSequence) {
-		p.Rest = p.Rest[len(unrecognizedSequence):]
+	if strings.HasPrefix(p.Rest, constUnrecognizedSequence) {
+		p.Rest = p.Rest[len(constUnrecognizedSequence):]
 	} else {
 		return false, nil
 	}
 
 	// Checks if the rest starts with `"*** Time: "` and pass it
-	if strings.HasPrefix(p.Rest, starsSpaceTimeColonSpace) {
-		p.Rest = p.Rest[len(starsSpaceTimeColonSpace):]
+	if strings.HasPrefix(p.Rest, constStarsSpaceTimeColonSpace) {
+		p.Rest = p.Rest[len(constStarsSpaceTimeColonSpace):]
 	} else {
 		return false, nil
 	}

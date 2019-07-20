@@ -3,54 +3,35 @@ package srcobj
 import (
 	"fmt"
 	"io"
+
+	"github.com/sirkon/ldetool/internal/types"
 )
 
-/////////////////// special hard to access type ///////////////////
+// ///////////////// special hard to access type ///////////////////
 type hardToAccessResultType string
 
 func (h hardToAccessResultType) ResultType() string {
 	return fmt.Sprintf("(res %s)", string(h))
 }
 
-var go2resultType = map[string]hardToAccessResultType{
-	"int":     hardToAccessResultType("int"),
-	"int8":    hardToAccessResultType("int8"),
-	"int16":   hardToAccessResultType("int16"),
-	"int32":   hardToAccessResultType("int32"),
-	"int64":   hardToAccessResultType("int64"),
-	"uint8":   hardToAccessResultType("uint8"),
-	"uint":    hardToAccessResultType("uint"),
-	"uint16":  hardToAccessResultType("uint16"),
-	"uint32":  hardToAccessResultType("uint32"),
-	"uint64":  hardToAccessResultType("uint64"),
-	"hex":     hardToAccessResultType("uint"),
-	"hex16":   hardToAccessResultType("uint16"),
-	"hex32":   hardToAccessResultType("uint32"),
-	"hex64":   hardToAccessResultType("uint64"),
-	"oct":     hardToAccessResultType("uint"),
-	"oct16":   hardToAccessResultType("uint16"),
-	"oct32":   hardToAccessResultType("uint32"),
-	"oct64":   hardToAccessResultType("uint64"),
-	"dec32":   hardToAccessResultType("uint32"),
-	"dec64":   hardToAccessResultType("uint64"),
-	"dec128":  hardToAccessResultType("struct{ Lo uint64;Hi uint64}"),
-	"float32": hardToAccessResultType("float32"),
-	"float64": hardToAccessResultType("float64"),
-	"string":  hardToAccessResultType("[]byte"),
-}
-
-func Go2ResultType(useString bool, goType string) (hardToAccessResultType, error) {
+func Go2ResultType(extTypes map[string]types.TypeRegistration, useString bool, goType string) (hardToAccessResultType, error) {
 	var res hardToAccessResultType
-	var ok bool
-	if useString && goType == "string" {
-		res = hardToAccessResultType("string")
+	if goType == "string" {
+		if useString {
+			return hardToAccessResultType("string"), nil
+		}
+		return hardToAccessResultType("[]byte"), nil
 	} else {
-		res, ok = go2resultType[goType]
+		if types.IsBuiltin(goType) {
+			fieldType := types.Builtin("", goType)
+			return hardToAccessResultType(fieldType.Native()), nil
+		}
+		ext, ok := extTypes[goType]
 		if !ok {
 			return res, fmt.Errorf("unsupported type `\033[1m%s\033[0m`", goType)
 		}
+		return hardToAccessResultType(ext.String()), nil
 	}
-	return res, nil
 }
 
 // ExtractorResult
@@ -60,7 +41,7 @@ func (e ExtractorResult) ResultType() string {
 	return "(bool, error)"
 }
 
-///////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////
 
 type ResultType interface {
 	ResultType() string

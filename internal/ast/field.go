@@ -28,13 +28,21 @@ func NewField(name antlr.Token, typeToken antlr.Token) Field {
 	var meta FieldMeta
 
 	typeName := typeToken.GetText()
-	ok, err := de.Extract(typeName)
-	if err != nil {
-		// type name starts with dec, thus it must be decX_Y with constraints X≥Y, 1≤X≤38
+	switch typeName {
+	case "dec32", "dec64", "dec128":
 		panic(&ErrorListener{
 			Line: typeToken.GetLine(),
 			Col:  typeToken.GetColumn(),
-			Msg:  fmt.Sprintf("error decimal type, must be decX_Y with integer X and Y"),
+			Msg:  fmt.Sprintf("decimal types should be used as decX.Y with precision X and scale Y"),
+		})
+	}
+	ok, err := de.Extract(typeName)
+	if err != nil {
+		// type name starts with dec, thus it must be decX.Y with these constraints X≥Y, 1≤X≤38
+		panic(&ErrorListener{
+			Line: typeToken.GetLine(),
+			Col:  typeToken.GetColumn(),
+			Msg:  fmt.Sprintf("error decimal type, must be decX.Y with integer X and Y"),
 		})
 	}
 	if ok {
@@ -42,14 +50,14 @@ func NewField(name antlr.Token, typeToken antlr.Token) Field {
 			panic(&ErrorListener{
 				Line: typeToken.GetLine(),
 				Col:  typeToken.GetColumn(),
-				Msg:  fmt.Sprintf("error decimal type, must be decX_Y, where integer Y ≤ X"),
+				Msg:  fmt.Sprintf("error decimal type, must be decX.Y, where integer Y ≤ X"),
 			})
 		}
 		if de.Precision == 0 || de.Precision > 38 {
 			panic(&ErrorListener{
 				Line: typeToken.GetLine(),
 				Col:  typeToken.GetColumn(),
-				Msg:  fmt.Sprintf("error decimal type, must be decX_Y, where 1 ≤ X ≤ 38"),
+				Msg:  fmt.Sprintf("error decimal type, must be decX.Y, where 1 ≤ X ≤ 38"),
 			})
 		}
 		meta.Precision = int(de.Precision)

@@ -43,7 +43,7 @@ func generateAction(c *cli.Context) (err error) {
 		if r := recover(); r != nil {
 			switch v := r.(type) {
 			case *ast.ErrorListener:
-				err = fmt.Errorf("%d:%d: %s", v.Line, v.Col, v.Msg)
+				err = fmt.Errorf("%d:%d: %s", v.Line, v.Col+1, v.Msg)
 			case string:
 				err = errors.New(v)
 			default:
@@ -94,7 +94,7 @@ func generateAction(c *cli.Context) (err error) {
 
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)
-	gen := gogen.NewGenerator(c.Bool("go-string"), gfy)
+	gen := gogen.NewGenerator(c.Bool("go-string"), gfy, l.Types().Types())
 	if c.Bool("little-endian") {
 		gen.PlatformType(generator.LittleEndian)
 	} else if c.Bool("big-endian") {
@@ -102,6 +102,9 @@ func generateAction(c *cli.Context) (err error) {
 	}
 	b := srcbuilder.New(c.String("package"), gen, tmpDest, gfy)
 	b.DontRecover()
+	if err := b.DispatchTypeRegistration(l.Types()); err != nil {
+		return err
+	}
 	for _, rule := range rules {
 		if gfy.Public(rule.Name) != rule.Name {
 			errorToken = rule.NameToken

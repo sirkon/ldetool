@@ -12,7 +12,7 @@ import (
 
 func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {
 	if !g.useString {
-		g.regImport("", "unsafe")
+		g.RegImport("", "unsafe")
 	}
 	var mask uint64
 	var byteMask = make([]byte, 8)

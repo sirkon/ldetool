@@ -28,7 +28,7 @@ func (g *Generator) getterGen(name, fieldType string) error {
 		return nil
 	}
 
-	arg, err := srcobj.Go2ResultType(g.useString, fieldType)
+	arg, err := srcobj.Go2ResultType(g.externalTypes, g.useString, fieldType)
 	if err != nil {
 		return err
 	}
@@ -318,6 +318,9 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, meta ast.Fi
 		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
 			decoder(srcobj.Raw("tmp"), "p."+item.name, meta.Precision, meta.Scale)
 		}
+		if _, ok := g.lookForExternal(fieldType); ok {
+			g.decodeCustomType(srcobj.Raw("tmp"), "p."+item.name, g.goish.Public(item.name))
+		}
 	}
 	return nil
 }
@@ -555,6 +558,9 @@ func (g *Generator) TakeBeforeChar(name, fieldType, char string, meta ast.FieldM
 		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
 			decoder(srcobj.Raw("tmp"), "p."+item.name, meta.Precision, meta.Scale)
 		}
+		if _, ok := g.lookForExternal(fieldType); ok {
+			g.decodeCustomType(srcobj.Raw("tmp"), "p."+item.name, g.goish.Public(item.name))
+		}
 	}
 	return nil
 }
@@ -598,6 +604,9 @@ func (g *Generator) TakeRest(name, fieldType string, meta ast.FieldMeta) error {
 		}
 		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
 			decoder(g.rest(), "p."+item.name, meta.Precision, meta.Scale)
+		}
+		if _, ok := g.lookForExternal(fieldType); ok {
+			g.decodeCustomType(g.rest(), "p."+item.name, g.goish.Public(item.name))
 		}
 		body.Append(
 			srcobj.Assign(

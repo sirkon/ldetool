@@ -7,6 +7,8 @@ import (
 	"sort"
 
 	"github.com/sirkon/gosrcfmt"
+
+	"github.com/sirkon/ldetool/internal/generator"
 )
 
 // File represents LDE generated Go source file
@@ -64,10 +66,10 @@ func (f *File) AddNamedImport(access, path string) error {
 }
 
 // AddExtractor adds new extractor struct type definition and returns struct body
-func (f *File) AddExtractor(typeName string) *Strct {
+func (f *File) AddExtractor(typeName string, g generator.Generator) *Strct {
 	st := structType{
 		name: typeName,
-		s:    Struct(f.useString),
+		s:    Struct(f.useString, g),
 	}
 	f.body.Append(st)
 	return st.s

@@ -12,7 +12,7 @@ func (g *Generator) regRightPkg() error {
 	} else {
 		pkgName = "bytes"
 	}
-	return g.regImport("", pkgName)
+	return g.RegImport("", pkgName)
 }
 
 func (g *Generator) regRightVar(name string) error {

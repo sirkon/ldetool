@@ -123,7 +123,7 @@ func (m *Maker) WriteRune(r rune) (n int, err error) {
 	return len(rr), nil
 }
 
-// String ...
+// TypeName ...
 func (m *Maker) String() string {
 	_ = m.Flush()
 	res := m.buf.String()

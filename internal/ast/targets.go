@@ -25,7 +25,7 @@ func (t *Target) SetChar(text string) {
 	t.Value = text
 }
 
-// SetString sets target into String
+// SetString sets target into TypeName
 func (t *Target) SetString(text string) {
 	t.Type = String
 	t.Value = text

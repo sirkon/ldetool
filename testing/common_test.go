@@ -2,6 +2,7 @@ package ldetesting
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/require"
 )
@@ -58,6 +59,29 @@ func TestPassHeadingStringRegression(t *testing.T) {
 	}
 	require.Equal(t, "3 123", e.Data)
 	require.Equal(t, "", e.Rest)
+}
+
+func TestCustom(t *testing.T) {
+	loc, err := time.LoadLocation("Europe/Moscow")
+	if err != nil {
+		t.Fatal(err)
+	}
+	sampleTime := time.Date(2019, 7, 20, 14, 41, 04, 0, loc)
+	line := sampleTime.Format(time.RFC3339) + " addr: 10.20.30.40 ze rest"
+
+	var e Custom
+	if ok, err := e.Extract(line); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+
+	require.Equal(t, "ze rest", e.Rest)
+	if !sampleTime.Equal(e.Time) {
+		t.Errorf("%s != %s", sampleTime.Format(time.RFC3339), e.Time.Format(time.RFC3339))
+	}
+	require.Equal(t, "10.20.30.40", e.GetAddrIP().String())
 }
 
 func TestRegressionCheck1(t *testing.T) {

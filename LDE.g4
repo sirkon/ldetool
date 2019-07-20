@@ -1,7 +1,12 @@
 grammar LDE;
 
 rules
-    : atomicRule* EOF
+    : typeDeclaration* atomicRule* EOF
+    ;
+
+typeDeclaration
+    : 'type' TypeName 'from' StringLit ';'
+    | 'type' IdentifierMayStar ';'
     ;
 
 atomicRule
@@ -128,6 +133,7 @@ exact
 fieldType
     : IdentifierWithFraction
     | Identifier
+    | TypeName
     ;
 
 ComparisonOperator
@@ -136,6 +142,14 @@ ComparisonOperator
 
 Identifier
     : [a-zA-Z_] ([a-zA-Z0-9_]*)
+    ;
+
+TypeName
+    : '*'* [a-zA-Z_] ([a-zA-Z0-9_]*) '.' [a-zA-Z_] ([a-zA-Z0-9_]*)
+    ;
+
+IdentifierMayStar
+    :  '*'* [a-zA-Z_] ([a-zA-Z0-9_]*)
     ;
 
 IdentifierWithFraction
@@ -147,8 +161,8 @@ IntLit
     ;
 
 fragment EscapedQuote : '\\"';
-StringLit :   '"' ( EscapedQuote | ~('\n'|'\r'|'\t') )*? '"'
-    ;
+StringLit :   '"' ( EscapedQuote | ~('\n'|'\r'|'\t') ) ( EscapedQuote | ~('\n'|'\r'|'\t') )*? '"'
+    ; // remember this is actually not empty string, as empty strings has no sense in this task
 
 fragment EscapedApo : '\\\'';
 

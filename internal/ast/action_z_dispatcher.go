@@ -29,4 +29,5 @@ type ActionDispatcher interface {
 	DispatchTakeUntilOrRest(a *TakeUntilOrRest) error
 	DispatchTakeUntilIncludingOrRest(a *TakeUntilIncludingOrRest) error
 	DispatchRule(a *Rule) error
+	DispatchTypeRegistration(a TypeRegistration) error
 }

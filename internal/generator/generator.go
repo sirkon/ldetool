@@ -1,8 +1,9 @@
 package generator
 
 import (
-	"github.com/sirkon/ldetool/internal/ast"
 	"io"
+
+	"github.com/sirkon/ldetool/internal/ast"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
@@ -63,4 +64,7 @@ type Generator interface {
 
 	// PlatformType to generate code for
 	PlatformType(t PlatformType) error
+
+	// RegImport go-specific thing for import registration
+	RegImport(importAs, path string) error
 }

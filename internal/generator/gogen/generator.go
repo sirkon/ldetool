@@ -3,6 +3,7 @@ package gogen
 import (
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/sirkon/ldetool/internal/generator"
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
+	"github.com/sirkon/ldetool/internal/types"
 )
 
 // Name provides a link between token and string
@@ -61,6 +63,8 @@ type Generator struct {
 	curFieldType string
 
 	rulePassCounter int // how many passes there in current rule. To be reset on a new one.
+
+	externalTypes map[string]types.TypeRegistration
 }
 
 // PlatformType holds an information what type of platform to generate code for:
@@ -78,13 +82,13 @@ func (g *Generator) ErrorToken(token antlr.Token, format string, params ...inter
 	return fmt.Errorf(
 		"%d:%d: %s",
 		token.GetLine(),
-		token.GetColumn(),
+		token.GetColumn()+1,
 		fmt.Sprintf(format, params...),
 	)
 }
 
 // NewGenerator constructor
-func NewGenerator(useString bool, goish *gotify.Gotify) *Generator {
+func NewGenerator(useString bool, goish *gotify.Gotify, externalTypes map[string]types.TypeRegistration) *Generator {
 	res := &Generator{
 		useString: useString,
 		rules:     map[string]antlr.Token{},
@@ -99,7 +103,8 @@ func NewGenerator(useString bool, goish *gotify.Gotify) *Generator {
 		file:     srcobj.NewFile(useString),
 		ruleName: "",
 
-		platformType: generator.Universal,
+		platformType:  generator.Universal,
+		externalTypes: externalTypes,
 	}
 
 	res.decoderMap = map[string]func(src srcobj.Source, dest string){
@@ -195,7 +200,7 @@ func (g *Generator) UseRule(name string, t antlr.Token) error {
 	g.vars = map[string]string{}
 	g.namespaces = nil
 	g.ruleName = name
-	g.obj = []*srcobj.Strct{g.file.AddExtractor(name)}
+	g.obj = []*srcobj.Strct{g.file.AddExtractor(name, g)}
 	g.curObj().AddString("Rest")
 	g.body = g.file.AddExtract(name).Body()
 	g.body.Append(srcobj.LineAssign{
@@ -209,54 +214,47 @@ func (g *Generator) UseRule(name string, t antlr.Token) error {
 	return nil
 }
 
+func (g *Generator) lookForExternal(fieldType string) (types.TypeRegistration, bool) {
+	res, ok := g.externalTypes[strings.TrimLeft(fieldType, "*")]
+	return res, ok
+}
+
 // AddField ...
 func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error {
 	g.addField(g.namespaces, name, t)
-	s := g.curObj()
-	fieldGen, ok := map[string]func(name string){
-		"int":     s.AddInt,
-		"int8":    s.AddInt8,
-		"int16":   s.AddInt16,
-		"int32":   s.AddInt32,
-		"int64":   s.AddInt64,
-		"uint":    s.AddUint,
-		"uint8":   s.AddUint8,
-		"uint16":  s.AddUint16,
-		"uint32":  s.AddUint32,
-		"uint64":  s.AddUint64,
-		"hex":     s.AddUint,
-		"hex8":    s.AddUint8,
-		"hex16":   s.AddUint16,
-		"hex32":   s.AddUint32,
-		"hex64":   s.AddUint64,
-		"oct":     s.AddUint,
-		"oct8":    s.AddUint8,
-		"oct16":   s.AddUint16,
-		"oct32":   s.AddUint32,
-		"oct64":   s.AddUint64,
-		"dec32":   s.AddInt32,
-		"dec64":   s.AddInt64,
-		"dec128":  s.AddDec128,
-		"float32": s.AddFloat32,
-		"float64": s.AddFloat64,
-		"string":  s.AddString,
-		"str":     s.AddStr,
-	}[fieldType]
-	if !ok {
-		fieldNames := []string{
-			"int8", "int16", "int32", "int64",
-			"uint8", "uint16", "uint32", "uint64",
-			"decX.Y",
-			"float32", "float64",
-			"string", "str",
+	reg := g.curObj()
+	var field types.Field
+	if types.IsBuiltin(fieldType) {
+		field = types.Builtin(name, fieldType)
+	} else {
+		extType, ok := g.lookForExternal(fieldType)
+		if !ok {
+			typeAvailablePrep := types.Builtins()
+			var typeAvailable []string
+			for _, typeName := range typeAvailablePrep {
+				switch typeName {
+				case "dec32", "dec64", "dec128":
+				default:
+					typeAvailable = append(typeAvailable, typeName)
+				}
+			}
+			typeAvailable = append(typeAvailable, "decX.Y")
+			for typeName := range g.externalTypes {
+				typeAvailable = append(typeAvailable, typeName)
+			}
+			sort.Strings(typeAvailable)
+			for i, typeName := range typeAvailable {
+				typeAvailable[i] = fmt.Sprintf("\033[1m%s\033[0m", typeName)
+			}
+			return g.ErrorToken(t, "unsupported type `\033[1m%s\033[0m`, must be one of %s",
+				fieldType, strings.Join(typeAvailable, ", "))
 		}
-		for i, fieldName := range fieldNames {
-			fieldNames[i] = fmt.Sprintf("\033[1m%s\033[0m", fieldName)
+		field = types.FieldCustom{
+			FieldName: name,
+			Type:      extType,
 		}
-		return g.ErrorToken(t, "unsupported type `\033[1m%s\033[0m`, must be one of %s",
-			fieldType, strings.Join(fieldNames, ", "))
 	}
-	fieldGen(name)
+	field.Register(reg)
 	return nil
 }
 
@@ -275,7 +273,7 @@ func (g *Generator) failure(format string, params ...srcobj.Source) (res srcobj.
 			srcobj.Goto(g.label()),
 		)
 	} else if g.critical {
-		g.regImport("", "fmt")
+		g.RegImport("", "fmt")
 		res = srcobj.ReturnError(format, params...)
 	} else {
 		res = srcobj.ReturnFail

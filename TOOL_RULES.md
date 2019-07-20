@@ -106,8 +106,10 @@ be the same.
 
 ## Capturing rules
 1. There's currently only Go code generator, so I will base the further description on Go-specific syntax. Capturing rules are all named and these names are mapped into Go struct field names.
-2. Capturing can be limited and unlimited. Limited capture takes all symbols right to the start of some boundary (text or character) or all symbols to the rest. Captured value can be stored in one of the following type. Capturing as numeric type can cause number parsing errors and these are always treated as "serious" ones.
+2. Capturing can be limited and unlimited. Limited capture takes all symbols right to the start of some boundary (text or character) or all symbols to the rest. Captured value can be stored in one of the following type. 
+Capturing as numeric type can cause number parsing errors and these are always treated as "serious" ones.
 
+    ##### Direct types
     |int|int8|int16|int32|int64|uint|uint8|uint16|uint32|uint64|float32|float64|string|str|
     |---|----|-----|-----|-----|----|-----|------|------|------|-------|-------|------|---|
     
@@ -116,11 +118,19 @@ be the same.
     
     There is support for hexadecimal and octal values extraction:
     
+    ##### Hexadecimal and octal types
     |LDE type|hex|hex8|hex16|hex32|hex64|oct|oct8|oct16|oct32|oct64|
     |--------|---|----|-----|-----|-----|---|----|-----|-----|-----|
     |Go type|uint|uint8|uint16|uint32|uint64|uint|uint8|uint16|uint32|uint64|
-
-    Also, there's support for "decimal" types in the following form:
+    
+    ##### UUID
+    [Google UUID library](https://github.com/google/uuid) is used to back it:
+    
+    ```perl
+    Rule = Data(uuid);
+    ```
+    
+    ###### Decimal
     
     ```perl
     Rule = Data(dec4.3);
@@ -138,6 +148,20 @@ be the same.
     |19…38|`(uint64, uint64)`|
     
     `decX.Y` mirrors [`Decimal`](https://clickhouse.yandex/docs/en/data_types/decimal/) type in Clickhouse
+
+    ###### Custom types    
+    You also can use custom types which you should declare first in the head of the file:
+    
+    * `type pkg.Type from "<pkg path>";` for external types
+    * `type typeName;` for Go types declared in current package
+    
+    their parsing is up to user though.
+    
+    ```perl
+    type time.Time from "time";
+    
+    Rule = Time(time.Time);
+    ```
     
 
 3. As I mentioned, capture can be limited with char or text. The rules are absolutely the same as with character or string unconditional lookup, just replace ``_`` symbol with named capture description ``FieldName(type)``. There's a difference though in ``?....`` treatment. `?` for capturing will mean try to limit a capture area and if no boundary was found take everything to the rest.
