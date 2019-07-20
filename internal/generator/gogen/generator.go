@@ -232,7 +232,7 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 			ok, err = types.NeedCustomUnmarshaler(fieldType)
 			if ok {
 				extType = types.LocalType{
-					Name: fieldType[1:],
+					Name: strings.TrimLeft(fieldType, "$"),
 				}
 				g.externalTypes[fieldType] = extType
 			}

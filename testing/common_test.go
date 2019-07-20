@@ -105,6 +105,67 @@ func TestCustomBuiltin(t *testing.T) {
 	}
 }
 
+func TestBoolean_Extract(t *testing.T) {
+	type fields struct {
+		Rest  string
+		Check bool
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		line    string
+		wantOK  bool
+		wantErr bool
+	}{
+		{
+			name: "ok-true",
+			fields: fields{
+				Rest:  "",
+				Check: true,
+			},
+			line:    "1",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name: "ok-false",
+			fields: fields{
+				Rest:  "",
+				Check: false,
+			},
+			line:    "0",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name: "error",
+			fields: fields{
+				Rest:  "abc",
+				Check: false,
+			},
+			line:    "abc",
+			wantOK:  false,
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &Boolean{
+				Rest:  tt.fields.Rest,
+				Check: tt.fields.Check,
+			}
+			got, err := p.Extract(tt.line)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Boolean.Extract() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.wantOK {
+				t.Errorf("Boolean.Extract() = %v, wantOK %v", got, tt.wantOK)
+			}
+		})
+	}
+}
+
 func TestRegressionCheck1(t *testing.T) {
 	var rc RegressionCheck1
 

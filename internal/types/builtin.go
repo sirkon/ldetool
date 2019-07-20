@@ -41,6 +41,10 @@ func IsNative(typeName string) bool {
 
 // IsBuiltin checks if given name is builtin
 func IsBuiltin(typeName string) bool {
+	switch typeName {
+	case "bool", "$bool":
+		return false
+	}
 	_, ok := builtins[typeName]
 	return ok
 }
@@ -66,6 +70,12 @@ func Builtin(fieldName, typeName string) Field {
 // NeedCustomUnmarshaler checks if given typeName is a native type which needs custom unmarshaler, e.g. $int, $float64,
 // etc
 func NeedCustomUnmarshaler(typeName string) (ok bool, err error) {
+	if typeName == "bool" {
+		return true, nil
+	}
+	if typeName == "$bool" {
+		return false, fmt.Errorf("use `bool` instead, this type already required custom unmarshaler")
+	}
 	if !strings.HasPrefix(typeName, "$") {
 		return false, nil
 	}

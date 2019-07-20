@@ -77,7 +77,7 @@ func (p *Rule) Extract(line string) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field Signed(int): %s", tmp, err)
+		return false, fmt.Errorf("parsing into `%s` into field Signed(int): %s", tmp, err)
 	}
 	p.Signed = int(tmpInt)
 
@@ -97,7 +97,7 @@ func (p *Rule) Extract(line string) (bool, error) {
 		return false, nil
 	}
 	if tmpUint, err = strconv.ParseUint(tmp, 10, 64); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field Unsigned(uint): %s", tmp, err)
+		return false, fmt.Errorf("parsing into `%s` into field Unsigned(uint): %s", tmp, err)
 	}
 	p.Unsigned = uint(tmpUint)
 
@@ -208,7 +208,7 @@ func (p *Custom) Extract(line string) (bool, error) {
 		return false, nil
 	}
 	if p.Time, err = p.unmarshalTime(tmp); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field Time(time.Time): %s", tmp, err)
+		return false, fmt.Errorf("parsing into `%s` into field Time(time.Time): %s", tmp, err)
 	}
 	rest1 = p.Rest
 
@@ -230,7 +230,7 @@ func (p *Custom) Extract(line string) (bool, error) {
 		goto customAddrLabel
 	}
 	if p.Addr.IP, err = p.unmarshalAddrIP(tmp); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field Addr.IP(ip.IP): %s", tmp, err)
+		return false, fmt.Errorf("parsing into `%s` into field Addr.IP(ip.IP): %s", tmp, err)
 	}
 
 	p.Addr.Valid = true
@@ -261,7 +261,26 @@ func (p *CustomBuiltin) Extract(line string) (bool, error) {
 
 	// Take the rest as Field($int)
 	if p.Field, err = p.unmarshalField(p.Rest); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field Field($int): %s", p.Rest, err)
+		return false, fmt.Errorf("parsing into `%s` into field Field(int): %s", p.Rest, err)
+	}
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
+
+// Boolean ...
+type Boolean struct {
+	Rest  string
+	Check bool
+}
+
+// Extract ...
+func (p *Boolean) Extract(line string) (bool, error) {
+	p.Rest = line
+	var err error
+
+	// Take the rest as Check(bool)
+	if p.Check, err = p.unmarshalCheck(p.Rest); err != nil {
+		return false, fmt.Errorf("parsing into `%s` into field Check(bool): %s", p.Rest, err)
 	}
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
@@ -315,7 +334,7 @@ func (p *RegressionCheck1) Extract(line string) (bool, error) {
 		return false, nil
 	}
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 8); err != nil {
-		return false, fmt.Errorf("cannot parse `%s` into field Pump(int8): %s", tmp, err)
+		return false, fmt.Errorf("parsing into `%s` into field Pump(int8): %s", tmp, err)
 	}
 	p.Pump = int8(tmpInt)
 	rest1 = p.Rest

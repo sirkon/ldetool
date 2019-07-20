@@ -127,7 +127,23 @@ Capturing as numeric type can cause number parsing errors and these are always t
     func (p *Rule) unmarshalField(value []byte) (int, error) {
        …
     }
-    ``` 
+    ```
+    
+    ##### Boolean
+    
+    Boolean type is somewhat expected too. Always asks for custom unmarshaler though.
+    
+    ```go
+    Rule = Check(bool);
+    ```
+    
+    Will need to write
+    ```go
+    func (p *Rule) unmarshalCheck(value []byte) (bool, error) {
+       …
+    }
+    ```
+    after
     
     ##### Hexadecimal and octal types
     |LDE type|hex|hex8|hex16|hex32|hex64|oct|oct8|oct16|oct32|oct64|

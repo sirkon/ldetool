@@ -18,6 +18,8 @@ Custom = Time(time.Time) ' ' ?Addr(^"addr: " IP(ip.IP) ' ');
 
 CustomBuiltin = Field($int);
 
+Boolean = Check(bool);
+
 RegressionCheck1 =
     Time(string) " Pump "
     Pump(int8) ~' '
