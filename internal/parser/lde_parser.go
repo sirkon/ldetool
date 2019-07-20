@@ -61,7 +61,7 @@ var parserATN = []uint16{
 	2, 2, 2, 73, 74, 3, 2, 2, 2, 74, 76, 3, 2, 2, 2, 75, 73, 3, 2, 2, 2, 76,
 	77, 7, 2, 2, 3, 77, 3, 3, 2, 2, 2, 78, 79, 7, 3, 2, 2, 79, 80, 7, 25, 2,
 	2, 80, 81, 7, 4, 2, 2, 81, 82, 7, 29, 2, 2, 82, 87, 7, 5, 2, 2, 83, 84,
-	7, 3, 2, 2, 84, 85, 7, 26, 2, 2, 85, 87, 7, 5, 2, 2, 86, 78, 3, 2, 2, 2,
+	7, 3, 2, 2, 84, 85, 7, 24, 2, 2, 85, 87, 7, 5, 2, 2, 86, 78, 3, 2, 2, 2,
 	86, 83, 3, 2, 2, 2, 87, 5, 3, 2, 2, 2, 88, 89, 7, 24, 2, 2, 89, 90, 7,
 	6, 2, 2, 90, 91, 5, 8, 5, 2, 91, 92, 7, 5, 2, 2, 92, 7, 3, 2, 2, 2, 93,
 	94, 7, 33, 2, 2, 94, 109, 5, 8, 5, 2, 95, 96, 7, 7, 2, 2, 96, 97, 5, 8,
@@ -467,8 +467,8 @@ func (s *TypeDeclarationContext) StringLit() antlr.TerminalNode {
 	return s.GetToken(LDEParserStringLit, 0)
 }
 
-func (s *TypeDeclarationContext) IdentifierMayStar() antlr.TerminalNode {
-	return s.GetToken(LDEParserIdentifierMayStar, 0)
+func (s *TypeDeclarationContext) Identifier() antlr.TerminalNode {
+	return s.GetToken(LDEParserIdentifier, 0)
 }
 
 func (s *TypeDeclarationContext) GetRuleContext() antlr.RuleContext {
@@ -545,7 +545,7 @@ func (p *LDEParser) TypeDeclaration() (localctx ITypeDeclarationContext) {
 		}
 		{
 			p.SetState(82)
-			p.Match(LDEParserIdentifierMayStar)
+			p.Match(LDEParserIdentifier)
 		}
 		{
 			p.SetState(83)

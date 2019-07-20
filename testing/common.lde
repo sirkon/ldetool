@@ -1,5 +1,6 @@
 type time.Time from "time";
 type ip.IP from "net";
+type forFun;
 
 Rule =
     ^'[' Data(string) ']'

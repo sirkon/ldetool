@@ -67,9 +67,9 @@ func (l *Listener) EnterTypeDeclaration(c *parser.TypeDeclarationContext) {
 		name = c.TypeName().GetText()
 	} else {
 		item = types.LocalType{
-			Name: c.IdentifierMayStar().GetText(),
+			Name: c.Identifier().GetText(),
 		}
-		name = c.IdentifierMayStar().GetText()
+		name = c.Identifier().GetText()
 	}
 	if _, ok := l.types[name]; ok {
 		panic(fmt.Sprintf("%d:%d duplicate type %s registration", c.GetStart().GetLine(), c.GetStart().GetColumn(), name))

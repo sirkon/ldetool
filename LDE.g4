@@ -6,7 +6,7 @@ rules
 
 typeDeclaration
     : 'type' TypeName 'from' StringLit ';'
-    | 'type' IdentifierMayStar ';'
+    | 'type' Identifier ';'
     ;
 
 atomicRule
