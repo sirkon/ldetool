@@ -84,6 +84,27 @@ func TestCustom(t *testing.T) {
 	require.Equal(t, "10.20.30.40", e.GetAddrIP().String())
 }
 
+func TestCustomBuiltin(t *testing.T) {
+	var e CustomBuiltin
+
+	if ok, err := e.Extract("12"); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.True(t, ok)
+	}
+	require.Equal(t, CustomBuiltin{
+		Rest:  "",
+		Field: 12,
+	}, e)
+
+	if ok, err := e.Extract("12ab"); ok {
+		t.Errorf("should not be here")
+	} else {
+		require.Error(t, err)
+	}
+}
+
 func TestRegressionCheck1(t *testing.T) {
 	var rc RegressionCheck1
 

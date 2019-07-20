@@ -34,5 +34,5 @@ type Field interface {
 	Name() string
 	TypeName() string
 	Register(registrator FieldRegistrator)
-	Native() string
+	GoName() string
 }

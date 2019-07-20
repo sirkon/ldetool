@@ -16,6 +16,8 @@ PassHeadingStringRegression = *'#' Data(string);
 
 Custom = Time(time.Time) ' ' ?Addr(^"addr: " IP(ip.IP) ' ');
 
+CustomBuiltin = Field($int);
+
 RegressionCheck1 =
     Time(string) " Pump "
     Pump(int8) ~' '

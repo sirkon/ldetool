@@ -47,10 +47,10 @@ type Generator interface {
 	CloseOptionalScope() error
 
 	// Stress set mismatch treatment as critical error
-	Stress() error
+	Stress()
 
 	// Relax set mismatch error as not critical
-	Relax() error
+	Relax()
 
 	// UseRule ...
 	UseRule(name string, t antlr.Token) error
@@ -63,7 +63,7 @@ type Generator interface {
 	ErrorToken(token antlr.Token, format string, params ...interface{}) error
 
 	// PlatformType to generate code for
-	PlatformType(t PlatformType) error
+	PlatformType(t PlatformType)
 
 	// RegImport go-specific thing for import registration
 	RegImport(importAs, path string) error

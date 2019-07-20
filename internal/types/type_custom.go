@@ -23,7 +23,7 @@ func (f FieldCustom) Register(registrator FieldRegistrator) {
 	registrator.AddCustomType(f.FieldName, f.Type)
 }
 
-// Native name of registered type
-func (f FieldCustom) Native() string {
+// GoName name of registered type
+func (f FieldCustom) GoName() string {
 	return f.Type.String()
 }
