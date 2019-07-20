@@ -28,3 +28,4 @@ package types
 //go:generate  gen-builtin --declarable --native --type Float64 --name float64
 //go:generate  gen-builtin --declarable --native --type String --name string
 //go:generate  gen-builtin --declarable --native --type Str --name str
+//go:generate  gen-builtin --declarable --go-name bool --type Bool --name bool

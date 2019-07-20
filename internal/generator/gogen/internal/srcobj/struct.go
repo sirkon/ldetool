@@ -149,6 +149,11 @@ func (s *Strct) AddStr(name string) {
 	s.addPrimitive(name, "string")
 }
 
+// AddBool adds bool field
+func (s *Strct) AddBool(name string) {
+	s.addPrimitive(name, "bool")
+}
+
 // AddSubstruct add substruct and returns it
 func (s *Strct) AddSubstruct(name string) *Strct {
 	res := Struct(s.useString, s.gen)

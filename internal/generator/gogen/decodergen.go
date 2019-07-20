@@ -2,6 +2,7 @@ package gogen
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
@@ -36,7 +37,7 @@ func (g *Generator) prepFloat() {
 }
 
 func (g *Generator) returnError(srcName srcobj.Source) srcobj.Source {
-	return srcobj.ReturnError("cannot parse `%s` into field "+g.curField.name+"("+g.curFieldType+"): %s",
+	return srcobj.ReturnError("parsing into `%s` into field "+g.curField.name+"("+strings.TrimLeft(g.curFieldType, "$")+"): %s",
 		srcName,
 		srcobj.Raw("err"),
 	)

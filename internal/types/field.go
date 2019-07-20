@@ -21,6 +21,7 @@ type FieldRegistrator interface {
 	AddFloat64(name string)
 	AddString(name string)
 	AddStr(name string)
+	AddBool(name string)
 	AddCustomType(name string, info TypeRegistration)
 }
 
