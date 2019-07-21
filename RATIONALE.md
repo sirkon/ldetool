@@ -19,9 +19,4 @@ it or take everything before it and put into variable, it also has his share of 
 Still, the major advantage is:
 1. It can be fast
 
-We had severe shortage of resources at my last job, we couldn't just buy some more power, so we had no choice and were writing all this manually.
-It turned out most of things to retrieve data are repetitive and we are writing nearly the same things again and again and it would be perfect to automate the process.
-
-So, we wrote a code generator for this purpose. The code turned to be even faster than one we used to write, since we actually
-were trying to reduce amount of code introducing helper abstractions what have some cost while the generator just puts raw code.
-
+In my previous job we had lack of funding for hardware while the data was constantly growing. We moved from Python into Go to deal with it. And a prototype of this tool was created to simplify our tasks, as we were writing line data decomposers manually. In the end our parsing scripts became even faster than they were before, as the code generator is not afraid of making even the most boring yet speedy things again and again.
