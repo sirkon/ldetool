@@ -51,7 +51,10 @@ func (g *Generator) returnError(srcName srcobj.Source) srcobj.Source {
 			srcobj.Goto(g.label()),
 		)
 	}
-	return srcobj.ReturnError("parsing into `%s` into field "+g.curField.name+"("+strings.TrimLeft(g.curFieldType, "$")+"): %s",
+	if !g.useString {
+		srcName = srcobj.NewCall("string", srcName)
+	}
+	return srcobj.ReturnError("parsing `%s` into field "+g.curField.name+"("+strings.TrimLeft(g.curFieldType, "$")+"): %s",
 		srcName,
 		srcobj.Raw("err"),
 	)

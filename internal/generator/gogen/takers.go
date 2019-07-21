@@ -142,7 +142,7 @@ func (g *Generator) TakeBeforeString(name, fieldType, anchor string, meta ast.Fi
 		}
 		var cond srcobj.Source
 		if len(unquoted) <= 8 && g.platformType != generator.Universal && !g.useString {
-			cond = g.shortPrefixCheck(unquoted, anchor, lower)
+			cond = g.shortPrefixCheck(unquoted, anchor, lower, true)
 		} else {
 			g.regRightPkg()
 			cond = srcobj.OperatorAnd(

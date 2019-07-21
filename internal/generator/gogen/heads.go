@@ -1,16 +1,15 @@
 package gogen
 
 import (
+	"encoding/binary"
 	"encoding/json"
 	"fmt"
-
-	"encoding/binary"
 
 	"github.com/sirkon/ldetool/internal/generator"
 	"github.com/sirkon/ldetool/internal/generator/gogen/internal/srcobj"
 )
 
-func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj.Source {
+func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int, pass bool) srcobj.Source {
 	if !g.useString {
 		g.RegImport("", "unsafe")
 	}
@@ -32,44 +31,51 @@ func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int) srcobj
 	} else {
 		prefix = binary.BigEndian.Uint64(tmp)
 	}
-	var lengthCheck srcobj.Source
+
+	var lengthValue srcobj.Source
 	if offset > 0 {
-		lengthCheck = srcobj.OperatorGE(
-			srcobj.OperatorSub(
-				srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
-				srcobj.Literal(offset),
-			),
-			srcobj.Literal(len(unquoted)),
+		lengthValue = srcobj.OperatorSub(
+			srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+			srcobj.Literal(offset),
 		)
 	} else {
-		lengthCheck = srcobj.OperatorGE(
-			srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
-			srcobj.Literal(len(unquoted)),
-		)
+		lengthValue = srcobj.NewCall("len", srcobj.Raw(g.curRestVar()))
 	}
 
-	return srcobj.OperatorAnd(
-		lengthCheck,
-		srcobj.OperatorEq(
-			srcobj.OperatorBitAnd(
-				srcobj.Deref(
-					srcobj.NewCall(
-						"(*uint64)",
-						srcobj.NewCall(
-							"unsafe.Pointer",
-							srcobj.Ref(
-								srcobj.Index{
-									Src:   g.rest(),
-									Index: srcobj.Literal(offset),
-								},
-							),
-						),
+	var lengthCheck srcobj.Source
+	literalToCheck := srcobj.Literal(len(unquoted))
+	if pass {
+		lengthCheck = srcobj.OperatorGE(lengthValue, literalToCheck)
+	} else {
+		lengthValue = srcobj.OperatorLT(lengthValue, literalToCheck)
+	}
+
+	bitComparison := srcobj.OperatorBitAnd(
+		srcobj.Deref(
+			srcobj.NewCall(
+				"(*uint64)",
+				srcobj.NewCall(
+					"unsafe.Pointer",
+					srcobj.Ref(
+						srcobj.Index{
+							Src:   g.rest(),
+							Index: srcobj.Literal(offset),
+						},
 					),
 				),
-				srcobj.HexU64(mask),
 			),
-			srcobj.HexU64(prefix),
 		),
+		srcobj.HexU64(mask),
+	)
+	if pass {
+		return srcobj.OperatorAnd(
+			lengthCheck,
+			srcobj.OperatorEq(bitComparison, srcobj.HexU64(prefix)),
+		)
+	}
+	return srcobj.OperatorOr(
+		lengthCheck,
+		srcobj.OperatorNEq(bitComparison, srcobj.HexU64(prefix)),
 	)
 }
 
@@ -115,7 +121,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore, pass bo
 	var code srcobj.Source
 
 	if len(unquoted) <= 8 && g.platformType != generator.Universal && !g.useString {
-		code = g.shortPrefixCheck(unquoted, anchor, offset)
+		code = g.shortPrefixCheck(unquoted, anchor, offset, pass)
 	} else {
 		g.regRightVar(g.curRestVar())
 		g.regRightPkg()
@@ -127,17 +133,35 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore, pass bo
 		}
 
 		code = srcobj.NewCall(srcobj.RightPkg(g.useString)+".HasPrefix", rest, srcobj.Raw(constName))
+		if !pass {
+			code = srcobj.OperatorNot(code)
+		}
+
 		if offset > 0 {
-			code = srcobj.OperatorAnd(
-				srcobj.OperatorGE(
-					srcobj.NewCall("len", rest),
-					srcobj.OperatorAdd(
-						srcobj.Literal(offset),
-						srcobj.NewCall("len", srcobj.Raw(constName)),
+			if pass {
+				code = srcobj.OperatorAnd(
+					srcobj.OperatorGE(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.OperatorAdd(
+							srcobj.Literal(offset),
+							srcobj.NewCall("len", srcobj.Raw(constName)),
+						),
 					),
-				),
-				code,
-			)
+					code,
+				)
+			} else {
+				code = srcobj.OperatorOr(
+					srcobj.OperatorLT(
+						srcobj.NewCall("len", g.rest()),
+						srcobj.OperatorAdd(
+							srcobj.Literal(offset),
+							srcobj.NewCall("len", srcobj.Raw(constName)),
+						),
+					),
+					code,
+				)
+
+			}
 		}
 	}
 
@@ -152,7 +176,7 @@ func (g *Generator) checkStringPrefix(anchor string, offset int, ignore, pass bo
 		})
 	} else {
 		body.Append(srcobj.If{
-			Expr: srcobj.OperatorNot(code),
+			Expr: code,
 			Then: failure,
 		})
 	}
@@ -202,29 +226,60 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore, pass bool) 
 
 	var cond srcobj.Source
 	if offset > 0 {
-		cond = srcobj.OperatorGE(
-			srcobj.NewCall("len", rest),
-			srcobj.OperatorAdd(
-				srcobj.Literal(offset),
+		if pass {
+			cond = srcobj.OperatorGE(
+				srcobj.NewCall("len", rest),
+				srcobj.OperatorAdd(
+					srcobj.Literal(offset),
+					srcobj.Literal(1),
+				),
+			)
+		} else {
+			cond = srcobj.OperatorLT(
+				srcobj.NewCall("len", rest),
+				srcobj.OperatorAdd(
+					srcobj.Literal(offset),
+					srcobj.Literal(1),
+				),
+			)
+		}
+	} else {
+		if pass {
+			cond = srcobj.OperatorGE(
+				srcobj.NewCall("len", rest),
 				srcobj.Literal(1),
+			)
+		} else {
+			cond = srcobj.OperatorLT(
+				srcobj.NewCall("len", rest),
+				srcobj.Literal(1),
+			)
+		}
+	}
+
+	if pass {
+		cond = srcobj.OperatorAnd(
+			cond,
+			srcobj.OperatorEq(
+				srcobj.Index{
+					Src:   rest,
+					Index: srcobj.Literal(offset),
+				},
+				srcobj.Raw(char),
 			),
 		)
 	} else {
-		cond = srcobj.OperatorGE(
-			srcobj.NewCall("len", rest),
-			srcobj.Literal(1),
+		cond = srcobj.OperatorOr(
+			cond,
+			srcobj.OperatorNEq(
+				srcobj.Index{
+					Src:   rest,
+					Index: srcobj.Literal(offset),
+				},
+				srcobj.Raw(char),
+			),
 		)
 	}
-	cond = srcobj.OperatorAnd(
-		cond,
-		srcobj.OperatorEq(
-			srcobj.Index{
-				Src:   rest,
-				Index: srcobj.Literal(offset),
-			},
-			srcobj.Raw(char),
-		),
-	)
 
 	if pass {
 		body.Append(srcobj.If{
@@ -237,7 +292,7 @@ func (g *Generator) checkCharPrefix(char string, offset int, ignore, pass bool) 
 		})
 	} else {
 		body.Append(srcobj.If{
-			Expr: srcobj.OperatorNot(cond),
+			Expr: cond,
 			Then: failure,
 		})
 

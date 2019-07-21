@@ -570,3 +570,14 @@ func (sb *SrcBuilder) DispatchTypeRegistration(a ast.TypeRegistration) error {
 	sb.registeredTypes = a.Types()
 	return nil
 }
+
+func (sb *SrcBuilder) DispatchCheckFixedWithoutPass(a *ast.CheckFixedWithoutPass) error {
+	switch a.Limit.Type {
+	case ast.String:
+		return sb.gen.LookupFixedString(a.Limit.Value, a.Limit.Lower, false, false)
+	case ast.Char:
+		return sb.gen.LookupFixedChar(a.Limit.Value, a.Limit.Lower, false, false)
+	default:
+		return fmt.Errorf("unsupported anchor type %s", a.Limit.Type)
+	}
+}

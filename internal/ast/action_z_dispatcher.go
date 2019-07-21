@@ -4,7 +4,7 @@ file has weird name with z just to be after all other action_*
 
 package ast
 
-// ActionDispatcher is to be used by various action to generate their arbitrary code
+// ActionDispatcher is to be used by various actions to generate their arbitrary code
 type ActionDispatcher interface {
 	DispatchAnonymousOption(a *AnonymousOption) error
 	DispatchAtEnd(a AtEnd) error
@@ -31,4 +31,5 @@ type ActionDispatcher interface {
 	DispatchTakeUntilIncludingOrRest(a *TakeUntilIncludingOrRest) error
 	DispatchRule(a *Rule) error
 	DispatchTypeRegistration(a TypeRegistration) error
+	DispatchCheckFixedWithoutPass(a *CheckFixedWithoutPass) error
 }
