@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/sirkon/message"
 
 	"github.com/sirkon/ldetool/internal/ast"
 	"github.com/sirkon/ldetool/internal/parser"
@@ -102,16 +101,7 @@ func (l *Listener) VisitErrorNode(node antlr.ErrorNode) {
 }
 
 // EnterEveryRule is called when any rule is entered.
-func (l *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {
-	if l.expectEnd {
-		token := ctx.GetStart()
-		message.Warningf(
-			"%d:%d previous action consumed the rest of the string, the remaining ops will do nothing",
-			token.GetLine(),
-			token.GetColumn()+1,
-		)
-	}
-}
+func (l *Listener) EnterEveryRule(ctx antlr.ParserRuleContext) {}
 
 // ExitEveryRule is called when any rule is exited.
 func (l *Listener) ExitEveryRule(ctx antlr.ParserRuleContext) {}
@@ -453,7 +443,18 @@ func (l *Listener) EnterTargetLit(ctx *parser.TargetLitContext) {
 			}
 			return
 		} else {
-			if l.optional {
+			if l.dontPass {
+				ll := ast.CheckFixedTargetWithoutPass()
+				a = ll
+				if ctx.CharLit() != nil {
+					ll.Limit.Type = ast.Char
+					ll.Limit.Value = ctx.CharLit().GetText()
+				} else {
+					ll.Limit.Type = ast.String
+					ll.Limit.Value = ctx.StringLit().GetText()
+				}
+				l.target = ll.Limit
+			} else if l.optional {
 				ll := ast.PassAfterTargetOrIgnore()
 				a = ll
 				l.target = ll.Limit

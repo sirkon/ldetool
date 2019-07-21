@@ -98,6 +98,72 @@ func TestRegressionCheck2(t *testing.T) {
 	require.Equal(t, "2/1/2019 12:10:17", rc.Time)
 }
 
+func TestRegressionCheck3_Extract(t *testing.T) {
+	type fields struct {
+		Rest string
+	}
+
+	tests := []struct {
+		name    string
+		fields  fields
+		line    string
+		wantOK  bool
+		wantErr bool
+	}{
+		{
+			name: "match-both",
+			fields: fields{
+				Rest: "ab:cd",
+			},
+			line:    "ab:cd",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name: "match-first-only",
+			fields: fields{
+				Rest: "ab:bd",
+			},
+			line:    "ab:bd",
+			wantOK:  false,
+			wantErr: false,
+		},
+		{
+			name: "match-last-only",
+			fields: fields{
+				Rest: "ac:cd",
+			},
+			line:    "ac:cd",
+			wantOK:  false,
+			wantErr: false,
+		},
+		{
+			name: "not-match-both",
+			fields: fields{
+				Rest: "1234",
+			},
+			line:    "1234",
+			wantOK:  false,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &RegressionCheck3{
+				Rest: tt.fields.Rest,
+			}
+			got, err := p.Extract(tt.line)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("RegressionCheck3.Extract() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.wantOK {
+				t.Errorf("RegressionCheck3.Extract() = %v, wantOK %v", got, tt.wantOK)
+			}
+		})
+	}
+}
+
 func TestCustom(t *testing.T) {
 	loc, err := time.LoadLocation("Europe/Moscow")
 	if err != nil {
@@ -307,6 +373,134 @@ func TestSilentAreas_Extract(t *testing.T) {
 			}
 			if got != tt.wantOK {
 				t.Errorf("SilentAreas.Extract() = %v, wantOK %v", got, tt.wantOK)
+			}
+		})
+	}
+}
+
+func TestTrickyDateParsing_Extract(t *testing.T) {
+	type fields struct {
+		Rest string
+		Full struct {
+			Valid     bool
+			Day       int
+			Month     int
+			Year      int
+			Hour      int
+			Minute    int
+			Second    int
+			Microsecs int
+		}
+		Hour struct {
+			Valid     bool
+			Hour      int
+			Minute    int
+			Second    int
+			Microsecs int
+		}
+		Seconds struct {
+			Valid     bool
+			Second    int
+			Microsecs int
+		}
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		line    string
+		wantOK  bool
+		wantErr bool
+	}{
+		{
+			name: "full-date",
+			fields: fields{
+				Rest: "",
+				Full: struct {
+					Valid     bool
+					Day       int
+					Month     int
+					Year      int
+					Hour      int
+					Minute    int
+					Second    int
+					Microsecs int
+				}{
+					Valid:     true,
+					Day:       15,
+					Month:     5,
+					Year:      2019,
+					Hour:      6,
+					Minute:    42,
+					Second:    22,
+					Microsecs: 841,
+				},
+			},
+			line:    "15/05/2019 06:42:22.841",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name: "hour",
+			fields: fields{
+				Rest: "",
+				Hour: struct {
+					Valid     bool
+					Hour      int
+					Minute    int
+					Second    int
+					Microsecs int
+				}{
+					Valid:     true,
+					Hour:      12,
+					Minute:    10,
+					Second:    17,
+					Microsecs: 0,
+				},
+			},
+			line:    "12:10:17.000",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name: "second",
+			fields: fields{
+				Rest: "",
+				Seconds: struct {
+					Valid     bool
+					Second    int
+					Microsecs int
+				}{
+					Valid:     true,
+					Second:    19,
+					Microsecs: 996,
+				},
+			},
+			line:    "19.996",
+			wantOK:  true,
+			wantErr: false,
+		},
+		{
+			name:    "fail",
+			line:    "19:19",
+			wantOK:  false,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &TrickyDateParsing{
+				Rest:    tt.fields.Rest,
+				Full:    tt.fields.Full,
+				Hour:    tt.fields.Hour,
+				Seconds: tt.fields.Seconds,
+			}
+			got, err := p.Extract(tt.line)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("TrickyDateParsing.Extract() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.wantOK {
+				t.Errorf("TrickyDateParsing.Extract() = %v, want %v", got, tt.wantOK)
 			}
 		})
 	}

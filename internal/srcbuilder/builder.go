@@ -98,7 +98,7 @@ func (sb *SrcBuilder) composeRule(actions []ast.Action) error {
 	for _, action := range actions {
 		message.Info(action)
 		if err := action.Accept(sb); err != nil {
-			return err
+			return fmt.Errorf("%s: %s", action, err)
 		}
 	}
 	return nil

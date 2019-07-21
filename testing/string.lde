@@ -17,6 +17,7 @@ RegressionCheck1 =
 
 RegressionCheck2 = (^"ï»¿")  ^"*** Time: " Time(string);
 
+RegressionCheck3 = @'b'[1] @":c"[2];
 
 BeforeLookup = .."abc" Data(string);
 
@@ -33,3 +34,9 @@ Boolean = Check(bool);
 SilentAreas =
     ??Alt1 (^"Amount:" Amount(int) $)
     ??Alt2 (^"Amount:" Amount(string) $);
+
+TrickyDateParsing =
+    ??Full (Day(int) '/'[2] Month(int) '/'[2] Year(int) ' '[4] Hour(int) ':'[2] Minute(int) ':'[2] Second(int) '.'[2] Microsecs(int))
+    ??Hour (Hour(int) ':'[2] Minute(int) ':'[2] Second(int) '.'[2] Microsecs(int))
+    ??Seconds (Second(int) '.'[2] Microsecs(int))
+    $;
