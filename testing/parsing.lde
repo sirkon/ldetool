@@ -161,6 +161,13 @@ Split = !
     ^ '|'[1]
     ^ '|'[1]
     Count(string) '|'[1];
+    
+SplitString = !
+    Name(string) ~"|"
+    ^ "|"[1]
+    ^ "|"[1]
+    ^ "|"[1]
+    Count(string) "|"[1];
 
 Shift1 = !
     B(string) "ba"[3:12];

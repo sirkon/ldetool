@@ -584,120 +584,83 @@ type TrickyDateParsing struct {
 func (p *TrickyDateParsing) Extract(line string) (bool, error) {
 	p.Rest = line
 	var err error
-	var pos int
 	var rest1 string
 	var tmp string
 	var tmpInt int64
 	rest1 = p.Rest
 
-	// Take until 3rd character if it is'/' as Day(int)
-	if len(rest1) >= 2+1 && rest1[2] == '/' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to '/' character as Day(int)
+	if len(rest1) < 2+1 || rest1[2] != '/' {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
 	p.Full.Day = int(tmpInt)
 
-	// Take until 3rd character if it is'/' as Month(int)
-	if len(rest1) >= 2+1 && rest1[2] == '/' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to '/' character as Month(int)
+	if len(rest1) < 2+1 || rest1[2] != '/' {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
 	p.Full.Month = int(tmpInt)
 
-	// Take until 5th character if it is' ' as Year(int)
-	if len(rest1) >= 4+1 && rest1[4] == ' ' {
-		pos = 4
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 5th character  if it is equal to ' ' character as Year(int)
+	if len(rest1) < 4+1 || rest1[4] != ' ' {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
+	tmp = rest1[:4]
+	rest1 = rest1[4+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
 	p.Full.Year = int(tmpInt)
 
-	// Take until 3rd character if it is':' as Hour(int)
-	if len(rest1) >= 2+1 && rest1[2] == ':' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to ':' character as Hour(int)
+	if len(rest1) < 2+1 || rest1[2] != ':' {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
 	p.Full.Hour = int(tmpInt)
 
-	// Take until 3rd character if it is':' as Minute(int)
-	if len(rest1) >= 2+1 && rest1[2] == ':' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to ':' character as Minute(int)
+	if len(rest1) < 2+1 || rest1[2] != ':' {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
 	p.Full.Minute = int(tmpInt)
 
-	// Take until 3rd character if it is'.' as Second(int)
-	if len(rest1) >= 2+1 && rest1[2] == '.' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to '.' character as Second(int)
+	if len(rest1) < 2+1 || rest1[2] != '.' {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Full.Valid = false
 		goto trickydateparsingFullLabel
@@ -716,57 +679,39 @@ func (p *TrickyDateParsing) Extract(line string) (bool, error) {
 trickydateparsingFullLabel:
 	rest1 = p.Rest
 
-	// Take until 3rd character if it is':' as Hour(int)
-	if len(rest1) >= 2+1 && rest1[2] == ':' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to ':' character as Hour(int)
+	if len(rest1) < 2+1 || rest1[2] != ':' {
 		p.Hour.Valid = false
 		goto trickydateparsingHourLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Hour.Valid = false
 		goto trickydateparsingHourLabel
 	}
 	p.Hour.Hour = int(tmpInt)
 
-	// Take until 3rd character if it is':' as Minute(int)
-	if len(rest1) >= 2+1 && rest1[2] == ':' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to ':' character as Minute(int)
+	if len(rest1) < 2+1 || rest1[2] != ':' {
 		p.Hour.Valid = false
 		goto trickydateparsingHourLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Hour.Valid = false
 		goto trickydateparsingHourLabel
 	}
 	p.Hour.Minute = int(tmpInt)
 
-	// Take until 3rd character if it is'.' as Second(int)
-	if len(rest1) >= 2+1 && rest1[2] == '.' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to '.' character as Second(int)
+	if len(rest1) < 2+1 || rest1[2] != '.' {
 		p.Hour.Valid = false
 		goto trickydateparsingHourLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Hour.Valid = false
 		goto trickydateparsingHourLabel
@@ -785,19 +730,13 @@ trickydateparsingFullLabel:
 trickydateparsingHourLabel:
 	rest1 = p.Rest
 
-	// Take until 3rd character if it is'.' as Second(int)
-	if len(rest1) >= 2+1 && rest1[2] == '.' {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = rest1[:pos]
-		rest1 = rest1[pos+1:]
-	} else {
+	// Take until 3rd character  if it is equal to '.' character as Second(int)
+	if len(rest1) < 2+1 || rest1[2] != '.' {
 		p.Seconds.Valid = false
 		goto trickydateparsingSecondsLabel
 	}
+	tmp = rest1[:2]
+	rest1 = rest1[2+1:]
 	if tmpInt, err = strconv.ParseInt(tmp, 10, 64); err != nil {
 		p.Seconds.Valid = false
 		goto trickydateparsingSecondsLabel

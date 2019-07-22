@@ -86,7 +86,205 @@ func (g *Generator) jumpTooLarge(lower int) srcobj.Source {
 	)
 }
 
-// TakeBeforeStringEx ...
+func stringLike(name string) bool {
+	return name == "string" || name == "str"
+}
+
+func (g *Generator) string2strConversion(item srcobj.Source) srcobj.Source {
+	if g.useString {
+		return srcobj.NewCall("string", item)
+	}
+	return item
+}
+
+// TakeBeforeStringOnExactPosition ...
+func (g *Generator) TakeBeforeStringOnExactPosition(name, fieldType, anchor string, meta ast.FieldMeta, off int, close, expand, include bool) error {
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
+
+	item := g.fields[g.fullName(name)]
+	if err := g.getterGen(name, fieldType); err != nil {
+		return err
+	}
+	g.curField = item
+	g.curFieldType = fieldType
+
+	constName := g.constNameFromContent(anchor)
+
+	rest := srcobj.Raw(g.curRestVar())
+
+	body := g.indent()
+	ccc := " "
+	if expand {
+		ccc = " (or all the rest if it is not) "
+	}
+	body.Append(srcobj.Comment(
+		fmt.Sprintf(
+			"Take until %s character %s if that part is started by %s substring%sas %s(%s)",
+			numerator(off), valueIfTrue(include, "including it"), anchor, ccc, name, fieldType)))
+
+	var unquoted string
+	if err := json.Unmarshal([]byte(anchor), &unquoted); err != nil {
+		return fmt.Errorf("cannot unqouote \033[1m%s\033[0m: %s", anchor, err)
+	}
+
+	var cond srcobj.Source
+	if len(unquoted) <= 8 && g.platformType != generator.Universal && !g.useString {
+		cond = g.shortPrefixCheck(unquoted, anchor, off, false)
+	} else {
+		g.regRightPkg()
+		cond = srcobj.OperatorOr(
+			srcobj.OperatorLT(
+				srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+				srcobj.OperatorAdd(
+					srcobj.NewCall("len", srcobj.Raw(constName)),
+					srcobj.Literal(off),
+				),
+			),
+			srcobj.OperatorNot(
+				srcobj.NewCall(
+					srcobj.RightPkg(g.useString)+".HasPrefix",
+					srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), srcobj.Literal(off)),
+					srcobj.Raw(constName)),
+			),
+		)
+	}
+
+	var offset srcobj.Source
+	offset = srcobj.OperatorAdd(
+		srcobj.Literal(off),
+		srcobj.NewCall("len", srcobj.Raw(constName)),
+	)
+
+	var variable srcobj.Source
+	if include {
+		variable = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.OperatorAdd(srcobj.Literal(off), srcobj.NewCall("len", srcobj.Raw(constName))))
+	} else {
+		variable = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(off))
+	}
+
+	var alternative srcobj.Source
+	var elseBranch srcobj.Source
+
+	tmpVar := srcobj.Raw("tmp")
+	if !expand {
+		alternative = g.failure(
+			"cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field "+name,
+			srcobj.Raw(constName),
+			srcobj.Stringify(rest),
+		)
+	} else {
+		if stringLike(fieldType) {
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: g.varName(item.name),
+					Expr:     g.string2strConversion(g.rest()),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+		} else {
+			if err := g.regRightVar("tmp"); err != nil {
+				return err
+			}
+
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.Raw(g.curRestVar()),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+			variable = tmpVar
+			elseBranch = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(off)),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceTo(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.OperatorAdd(srcobj.Literal(off), srcobj.NewCall("len", srcobj.Raw(constName))),
+					),
+				},
+			)
+		}
+	}
+
+	var stringMakeBody srcobj.Source
+	if stringLike(fieldType) {
+		stringMakeBody = srcobj.NewBody(
+			srcobj.LineAssign{
+				Receiver: "p." + item.name,
+				Expr:     g.string2strConversion(variable),
+			},
+			srcobj.LineAssign{
+				Receiver: g.curRestVar(),
+				Expr: srcobj.SliceFrom(
+					srcobj.Raw(g.curRestVar()),
+					offset,
+				),
+			},
+		)
+	}
+	if expand && stringLike(fieldType) {
+		elseBranch = stringMakeBody
+	}
+
+	g.body.Append(srcobj.If{
+		Expr: cond,
+		Then: alternative,
+		Else: elseBranch,
+	})
+
+	if !expand {
+		if !stringLike(fieldType) {
+			if err := g.regRightVar("tmp"); err != nil {
+				return err
+			}
+			g.body.Append(srcobj.LineAssign{
+				Receiver: "tmp",
+				Expr:     variable,
+			})
+			g.body.Append(srcobj.LineAssign{
+				Receiver: g.curRestVar(),
+				Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), offset),
+			})
+		} else {
+			g.body.Append(stringMakeBody)
+		}
+
+	}
+
+	if !stringLike(fieldType) {
+		if decoder, ok := g.decoderMap[fieldType]; ok {
+			decoder(tmpVar, "p."+item.name)
+		}
+		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
+			decoder(tmpVar, "p."+item.name, meta.Precision, meta.Scale)
+		}
+		if _, ok := g.lookForExternal(fieldType); ok {
+			g.decodeCustomType(tmpVar, "p."+item.name, g.goish.Public(item.name))
+		}
+	}
+
+	return nil
+}
+
+// TakeBeforeString ...
 func (g *Generator) TakeBeforeString(name, fieldType, anchor string, meta ast.FieldMeta, lower, upper int, close, expand, include bool) error {
 	if err := g.regVar("pos", "int"); err != nil {
 		return err
@@ -330,6 +528,183 @@ func valueIfTrue(flag bool, value string) string {
 		return value
 	}
 	return ""
+}
+
+// TakeBeforeCharOnExactPosition ...
+func (g *Generator) TakeBeforeCharOnExactPosition(name, fieldType, anchor string, meta ast.FieldMeta, off int, close, expand, include bool) error {
+	if err := g.regRightVar(g.curRestVar()); err != nil {
+		return err
+	}
+
+	item := g.fields[g.fullName(name)]
+	if err := g.getterGen(name, fieldType); err != nil {
+		return err
+	}
+	g.curField = item
+	g.curFieldType = fieldType
+
+	rest := srcobj.Raw(g.curRestVar())
+
+	body := g.indent()
+	ccc := " "
+	if expand {
+		ccc = " (or all the rest if it is not) "
+	}
+	body.Append(srcobj.Comment(
+		fmt.Sprintf(
+			"Take until %s character %s if it is equal to %s character%sas %s(%s)",
+			numerator(off), valueIfTrue(include, "including it"), anchor, ccc, name, fieldType)))
+
+	var cond srcobj.Source
+
+	cond = srcobj.OperatorOr(
+		srcobj.OperatorLT(
+			srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+			srcobj.OperatorAdd(
+				srcobj.Literal(off),
+				srcobj.Literal(1),
+			),
+		),
+		srcobj.OperatorNEq(
+			srcobj.Index{
+				Src:   srcobj.Raw(g.curRestVar()),
+				Index: srcobj.Literal(off),
+			},
+			srcobj.Literal(anchor),
+		),
+	)
+
+	var offset srcobj.Source
+	offset = srcobj.OperatorAdd(
+		srcobj.Literal(off),
+		srcobj.Literal(1),
+	)
+
+	var variable srcobj.Source
+	if include {
+		variable = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.OperatorAdd(srcobj.Literal(off), srcobj.Literal(1)))
+	} else {
+		variable = srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(off))
+	}
+
+	var alternative srcobj.Source
+	var elseBranch srcobj.Source
+
+	tmpVar := srcobj.Raw("tmp")
+	if !expand {
+		alternative = g.failure(
+			"%s element in the rest is not `\033[1m%c\033[0m` in `\033[1m%s\033[0m`, cannot bound data for field "+name,
+			srcobj.Raw(`"`+numerator(off)+`"`),
+			srcobj.Raw(anchor),
+			srcobj.Stringify(rest),
+		)
+	} else {
+		if stringLike(fieldType) {
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: g.varName(item.name),
+					Expr:     g.string2strConversion(g.rest()),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+		} else {
+			if err := g.regRightVar("tmp"); err != nil {
+				return err
+			}
+
+			alternative = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.Raw(g.curRestVar()),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceFrom(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.NewCall("len", srcobj.Raw(g.curRestVar())),
+					),
+				},
+			)
+			variable = tmpVar
+			elseBranch = srcobj.NewBody(
+				srcobj.LineAssign{
+					Receiver: "tmp",
+					Expr:     srcobj.SliceTo(srcobj.Raw(g.curRestVar()), srcobj.Literal(off)),
+				},
+				srcobj.LineAssign{
+					Receiver: g.curRestVar(),
+					Expr: srcobj.SliceTo(
+						srcobj.Raw(g.curRestVar()),
+						srcobj.OperatorAdd(srcobj.Literal(off), srcobj.Literal(1)),
+					),
+				},
+			)
+		}
+	}
+
+	var stringMakeBody srcobj.Source
+	if stringLike(fieldType) {
+		stringMakeBody = srcobj.NewBody(
+			srcobj.LineAssign{
+				Receiver: "p." + item.name,
+				Expr:     g.string2strConversion(variable),
+			},
+			srcobj.LineAssign{
+				Receiver: g.curRestVar(),
+				Expr: srcobj.SliceFrom(
+					srcobj.Raw(g.curRestVar()),
+					offset,
+				),
+			},
+		)
+	}
+	if expand && stringLike(fieldType) {
+		elseBranch = stringMakeBody
+	}
+
+	g.body.Append(srcobj.If{
+		Expr: cond,
+		Then: alternative,
+		Else: elseBranch,
+	})
+
+	if !expand {
+		if !stringLike(fieldType) {
+			if err := g.regRightVar("tmp"); err != nil {
+				return err
+			}
+			g.body.Append(srcobj.LineAssign{
+				Receiver: "tmp",
+				Expr:     variable,
+			})
+			g.body.Append(srcobj.LineAssign{
+				Receiver: g.curRestVar(),
+				Expr:     srcobj.SliceFrom(srcobj.Raw(g.curRestVar()), offset),
+			})
+		} else {
+			g.body.Append(stringMakeBody)
+		}
+	}
+
+	if !stringLike(fieldType) {
+		if decoder, ok := g.decoderMap[fieldType]; ok {
+			decoder(tmpVar, "p."+item.name)
+		}
+		if decoder, ok := g.decimalDecoderMap[fieldType]; ok {
+			decoder(tmpVar, "p."+item.name, meta.Precision, meta.Scale)
+		}
+		if _, ok := g.lookForExternal(fieldType); ok {
+			g.decodeCustomType(tmpVar, "p."+item.name, g.goish.Public(item.name))
+		}
+	}
+
+	return nil
 }
 
 // TakeBeforeChar ...
