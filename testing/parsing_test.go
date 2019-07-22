@@ -395,6 +395,20 @@ func TestSplit(t *testing.T) {
 	require.Equal(t, "4", string(p.Count))
 }
 
+func TestSplitString(t *testing.T) {
+	p := &SplitString{}
+	src := []byte("Name|1|2|3|4|5")
+	if ok, err := p.Extract(src); !ok {
+		if err != nil {
+			t.Fatal(err)
+		}
+		require.NotNil(t, err)
+	}
+
+	require.Equal(t, "Name", string(p.Name))
+	require.Equal(t, "4", string(p.Count))
+}
+
 func TestShift(t *testing.T) {
 	p := &Shift1{}
 	src := []byte("1233330000000000000000000000000000000000000000000000003")

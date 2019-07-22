@@ -2139,39 +2139,26 @@ type FixedLook struct {
 func (p *FixedLook) Extract(line []byte) (bool, error) {
 	p.Rest = line
 	var err error
-	var pos int
 	var tmp []byte
 	var tmpInt int64
 
-	// Take until 3rd  if it starts "123456789" substring as Data(int32)
-	if len(p.Rest) >= len(constConst123456789)+2 && bytes.HasPrefix(p.Rest[2:], constConst123456789) {
-		pos = 2
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constConst123456789):]
-	} else {
+	// Take until 3rd character  if that part is started by "123456789" substring as Data(int32)
+	if len(p.Rest) < len(constConst123456789)+2 || !bytes.HasPrefix(p.Rest[2:], constConst123456789) {
 		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Data", constConst123456789, string(p.Rest))
 	}
+	tmp = p.Rest[:2]
+	p.Rest = p.Rest[2+len(constConst123456789):]
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Data(int32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
 	}
 	p.Data = int32(tmpInt)
 
-	// Take until 4th  if it starts "34" substring as Rest1(int32)
-	if len(p.Rest)-3 >= 2 && *(*uint64)(unsafe.Pointer(&p.Rest[3]))&0xffff == 0x3433 {
-		pos = 3
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constConst34):]
-	} else {
+	// Take until 4th character  if that part is started by "34" substring as Rest1(int32)
+	if len(p.Rest)-3 < 2 || *(*uint64)(unsafe.Pointer(&p.Rest[3]))&0xffff != 0x3433 {
 		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Rest1", constConst34, string(p.Rest))
 	}
+	tmp = p.Rest[:3]
+	p.Rest = p.Rest[3+len(constConst34):]
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Rest1(int32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
 	}
@@ -2287,18 +2274,64 @@ func (p *Split) Extract(line []byte) (bool, error) {
 		return false, fmt.Errorf("`\033[1m%s\033[0m)` is expected to start with \033[1m%s\033[0m", string(p.Rest), "'|'")
 	}
 
-	// Take until 2nd character if it is'|' as Count(string)
-	if len(p.Rest) >= 1+1 && p.Rest[1] == '|' {
-		pos = 1
-	} else {
-		pos = -1
+	// Take until 2nd character  if it is equal to '|' character as Count(string)
+	if len(p.Rest) < 1+1 || p.Rest[1] != '|' {
+		return false, fmt.Errorf("%s element in the rest is not `\033[1m%c\033[0m` in `\033[1m%s\033[0m`, cannot bound data for field Count", "2nd", '|', string(p.Rest))
 	}
+	p.Count = p.Rest[:1]
+	p.Rest = p.Rest[1+1:]
+
+	return true, nil
+}
+
+// SplitString ...
+type SplitString struct {
+	Rest  []byte
+	Name  []byte
+	Count []byte
+}
+
+// Extract ...
+func (p *SplitString) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	var pos int
+
+	// Take until "|" as Name(string)
+	pos = bytes.Index(p.Rest, constBar)
 	if pos >= 0 {
-		p.Count = p.Rest[:pos]
-		p.Rest = p.Rest[pos+1:]
+		p.Name = p.Rest[:pos]
+		p.Rest = p.Rest[pos+len(constBar):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%c\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", '|', string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Name", constBar, string(p.Rest))
 	}
+
+	// Checks if rest[1:] starts with `"|"` and pass it
+	if len(p.Rest)-1 >= 1 && *(*uint64)(unsafe.Pointer(&p.Rest[1]))&0xff == 0x7c {
+		p.Rest = p.Rest[2:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.Rest[1:]), "|")
+	}
+
+	// Checks if rest[1:] starts with `"|"` and pass it
+	if len(p.Rest)-1 >= 1 && *(*uint64)(unsafe.Pointer(&p.Rest[1]))&0xff == 0x7c {
+		p.Rest = p.Rest[2:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.Rest[1:]), "|")
+	}
+
+	// Checks if rest[1:] starts with `"|"` and pass it
+	if len(p.Rest)-1 >= 1 && *(*uint64)(unsafe.Pointer(&p.Rest[1]))&0xff == 0x7c {
+		p.Rest = p.Rest[2:]
+	} else {
+		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.Rest[1:]), "|")
+	}
+
+	// Take until 2nd character  if that part is started by "|" substring as Count(string)
+	if len(p.Rest)-1 < 1 || *(*uint64)(unsafe.Pointer(&p.Rest[1]))&0xff != 0x7c {
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", constBar, string(p.Rest))
+	}
+	p.Count = p.Rest[:1]
+	p.Rest = p.Rest[1+len(constBar):]
 
 	return true, nil
 }
@@ -3168,22 +3201,15 @@ type JustToCompile struct {
 func (p *JustToCompile) Extract(line []byte) (bool, error) {
 	p.Rest = line
 	var err error
-	var pos int
 	var tmp []byte
 	var tmpUint uint64
 
-	// Take until 5th character if it is'-' as Head(hex16)
-	if len(p.Rest) >= 4+1 && p.Rest[4] == '-' {
-		pos = 4
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+1:]
-	} else {
+	// Take until 5th character  if it is equal to '-' character as Head(hex16)
+	if len(p.Rest) < 4+1 || p.Rest[4] != '-' {
 		return false, nil
 	}
+	tmp = p.Rest[:4]
+	p.Rest = p.Rest[4+1:]
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 16); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Head(hex16): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
 	}
@@ -3209,22 +3235,15 @@ type JustToCompileString struct {
 func (p *JustToCompileString) Extract(line []byte) (bool, error) {
 	p.Rest = line
 	var err error
-	var pos int
 	var tmp []byte
 	var tmpUint uint64
 
-	// Take until 5th  if it starts "abcd" substring as Head(hex16)
-	if len(p.Rest)-4 >= 4 && *(*uint64)(unsafe.Pointer(&p.Rest[4]))&0xffffffff == 0x64636261 {
-		pos = 4
-	} else {
-		pos = -1
-	}
-	if pos >= 0 {
-		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constAbcd):]
-	} else {
+	// Take until 5th character  if that part is started by "abcd" substring as Head(hex16)
+	if len(p.Rest)-4 < 4 || *(*uint64)(unsafe.Pointer(&p.Rest[4]))&0xffffffff != 0x64636261 {
 		return false, nil
 	}
+	tmp = p.Rest[:4]
+	p.Rest = p.Rest[4+len(constAbcd):]
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 16); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Head(hex16): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
 	}

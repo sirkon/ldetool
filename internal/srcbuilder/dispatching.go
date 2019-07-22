@@ -369,10 +369,18 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
-				a.Limit.Close, false, false); err != nil {
-				return err
+			if lower != upper || lower <= 0 {
+				if err := sb.gen.TakeBeforeString(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
+					a.Limit.Close, false, false); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeStringOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower,
+					a.Limit.Close, false, false); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -381,10 +389,19 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
-				a.Limit.Close, false, false); err != nil {
-				return err
+			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
+
+				if err := sb.gen.TakeBeforeChar(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
+					a.Limit.Close, false, false); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeCharOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Close,
+					false, false); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -416,10 +433,18 @@ func (sb *SrcBuilder) DispatchTakeIncluding(a *ast.TakeIncluding) error {
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
-				a.Limit.Close, false, true); err != nil {
-				return err
+			if lower != upper || lower <= 0 {
+				if err := sb.gen.TakeBeforeString(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
+					a.Limit.Close, false, true); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeStringOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower,
+					a.Limit.Close, false, true); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -428,10 +453,18 @@ func (sb *SrcBuilder) DispatchTakeIncluding(a *ast.TakeIncluding) error {
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, lower, upper,
-				a.Limit.Close, false, true); err != nil {
-				return err
+			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
+				if err := sb.gen.TakeBeforeChar(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
+					a.Limit.Close, false, true); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeCharOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Close,
+					false, true); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -487,10 +520,18 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
-				a.Limit.Close, true, false); err != nil {
-				return err
+			if a.Limit.Lower > 0 && a.Limit.Lower == a.Limit.Upper {
+				if err := sb.gen.TakeBeforeStringOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower,
+					a.Limit.Close, true, false); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeString(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
+					a.Limit.Close, true, false); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -499,10 +540,18 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
-				a.Limit.Close, true, false); err != nil {
-				return err
+			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
+				if err := sb.gen.TakeBeforeChar(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
+					a.Limit.Close, true, false); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeCharOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Close,
+					true, false); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -532,10 +581,18 @@ func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncluding
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeString(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
-				a.Limit.Close, true, true); err != nil {
-				return err
+			if a.Limit.Lower > 0 && a.Limit.Lower == a.Limit.Upper {
+				if err := sb.gen.TakeBeforeStringOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower,
+					a.Limit.Close, true, true); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeString(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
+					a.Limit.Close, true, true); err != nil {
+					return err
+				}
 			}
 			return nil
 		})
@@ -544,10 +601,18 @@ func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncluding
 			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
 				return err
 			}
-			if err := sb.gen.TakeBeforeChar(
-				a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
-				a.Limit.Close, true, true); err != nil {
-				return err
+			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
+				if err := sb.gen.TakeBeforeChar(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Upper,
+					a.Limit.Close, true, true); err != nil {
+					return err
+				}
+			} else {
+				if err := sb.gen.TakeBeforeCharOnExactPosition(
+					a.Field.Name, a.Field.Type, a.Limit.Value, a.Field.Meta, a.Limit.Lower, a.Limit.Close,
+					true, true); err != nil {
+					return err
+				}
 			}
 			return nil
 		})

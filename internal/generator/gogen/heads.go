@@ -47,7 +47,7 @@ func (g *Generator) shortPrefixCheck(unquoted, anchor string, offset int, pass b
 	if pass {
 		lengthCheck = srcobj.OperatorGE(lengthValue, literalToCheck)
 	} else {
-		lengthValue = srcobj.OperatorLT(lengthValue, literalToCheck)
+		lengthCheck = srcobj.OperatorLT(lengthValue, literalToCheck)
 	}
 
 	bitComparison := srcobj.OperatorBitAnd(
