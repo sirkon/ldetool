@@ -54,7 +54,7 @@ func main() {
 				},
 			},
 			UsageText: "ldetool generate [command options] <lde file path>",
-			Action:    generateAction,
+			Action:    generate,
 			Before: func(c *cli.Context) error {
 				if c.NArg() != 1 {
 					return cli.NewExitError("There must be one and only one lde rule file", 1)
