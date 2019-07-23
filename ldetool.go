@@ -1,14 +1,30 @@
 package main
 
 import (
+	"bytes"
+	"errors"
+	"fmt"
 	"go/parser"
 	"go/token"
+	"io"
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
+	"sort"
 	"strings"
 
+	"github.com/alexflint/go-arg"
+	"github.com/antlr/antlr4/runtime/Go/antlr"
+	"github.com/sirkon/gotify"
 	"github.com/urfave/cli"
+
+	"github.com/sirkon/ldetool/internal/ast"
+	"github.com/sirkon/ldetool/internal/generator"
+	"github.com/sirkon/ldetool/internal/generator/gogen"
+	"github.com/sirkon/ldetool/internal/listener"
+	parser2 "github.com/sirkon/ldetool/internal/parser"
+	"github.com/sirkon/ldetool/internal/srcbuilder"
 
 	// These are for testing reasons
 	_ "github.com/sirkon/ldetool/internal/parser"
@@ -16,72 +32,49 @@ import (
 	"github.com/sirkon/message"
 )
 
-func main() {
-	app := cli.NewApp()
-	app.Usage = "Text data extraction Go source code generator"
-	app.Version = ldetoolVersion
-	app.Commands = []cli.Command{
-		{
-			Name:  "generate",
-			Usage: "translate text data extraction rules into source code",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "yaml-dict",
-					Value: "",
-					Usage: "YAML-formatted gotifying dictionary",
-				},
-				cli.StringFlag{
-					Name:  "json-dict",
-					Value: "",
-					Usage: "JSON-formatted gotifying dictionary",
-				},
-				cli.StringFlag{
-					Name:  "package",
-					Value: "",
-					Usage: "Package name for generated files",
-				},
-				cli.BoolFlag{
-					Name:  "big-endian",
-					Usage: "Target architecture is big endian",
-				},
-				cli.BoolFlag{
-					Name:  "little-endian",
-					Usage: "Target architecture is little endian",
-				},
-				cli.BoolFlag{
-					Name:  "go-string",
-					Usage: "Treat strings as go strings",
-				},
-			},
-			UsageText: "ldetool generate [command options] <lde file path>",
-			Action:    generate,
-			Before: func(c *cli.Context) error {
-				if c.NArg() != 1 {
-					return cli.NewExitError("There must be one and only one lde rule file", 1)
-				}
-				c.Args().First()
-				if len(c.String("yaml-dict")) > 0 && len(c.String("json-dict")) > 0 {
-					return cli.NewExitError(
-						"Cannot use yaml and json formatting dictionaries at the same time, choose one of them", 1)
-				}
-				resolvePackageName(c)
-				if len(c.String("package")) == 0 {
-					return cli.NewExitError("Package name is required", 1)
-				}
-				if c.Bool("big-endian") && c.Bool("little-endian") {
-					return cli.NewExitError("Target architecture cannot be both little and big endian", 1)
-				}
-				return nil
-			},
-		},
-	}
-	if err := app.Run(os.Args); err != nil {
-		message.Critical(err)
-	}
+type runConfig struct {
+	YAMLDict     string `arg:"--yaml-dict" help:"YAML-formatted gotifying dictionary"`
+	JSONDict     string `arg:"--json-dict" help:"JSON-formatted gotifying dictionary"`
+	Package      string `arg:"--package" help:"package name for generated files"`
+	BigEndian    bool   `arg:"--big-endian" help:"target architecture is big endian"`
+	LittleEndian bool   `arg:"--little-endian" help:"target architecture is little endian"`
+	GoString     bool   `arg:"--go-string" help:"treat strings as go string"`
+
+	File []string `arg:"positional" help:"file to process"`
 }
 
-func resolvePackageName(c *cli.Context) {
-	outputFileName := getOutputFileName(c.Args().First())
+func main() {
+	var cfg runConfig
+	p := arg.MustParse(&cfg)
+
+	if len(cfg.JSONDict) > 0 && len(cfg.YAMLDict) > 0 {
+		p.Fail("--yaml-dict and --json-dict are mutually exclusive")
+	}
+	if cfg.BigEndian && cfg.LittleEndian {
+		p.Fail("--big-endian and --little-endian are mutually exclusive")
+	}
+	if len(cfg.File) >= 1 {
+		if cfg.File[0] == "generate" {
+			message.Warningf("subcommand `generate` of ldetool is considered abundant. It is deprecated, please remove it")
+			for i, item := range cfg.File[1:] {
+				cfg.File[i] = item
+			}
+			cfg.File = cfg.File[:len(cfg.File)-1]
+		}
+	}
+	switch len(cfg.File) {
+	case 0:
+		p.Fail("missing file name with LDE rules")
+	case 1:
+	default:
+		p.Fail(fmt.Sprintf("ldetool only take 1 file, got %d", len(cfg.File)))
+	}
+
+	resolvePackageName(p, &cfg)
+}
+
+func resolvePackageName(p *arg.Parser, c *runConfig) {
+	outputFileName := getOutputFileName(c.File[0])
 	dirPath, outFileBaseName := path.Split(outputFileName)
 	if len(dirPath) == 0 {
 		dirPath = "."
@@ -99,6 +92,9 @@ func resolvePackageName(c *cli.Context) {
 		}
 	}
 	if !packageDetected {
+		if len(c.Package) == 0 {
+			p.Fail("no existing Go files found in the directory, option --package must be set")
+		}
 		return
 	}
 
@@ -111,16 +107,141 @@ func resolvePackageName(c *cli.Context) {
 		message.Warningf("failed to parse one of Go source files, thus cannot resolve package name: %s", err)
 		return
 	}
-	if len(pkgs) > 1 {
-		message.Warningf("located %d packages in `%s`, thus cannot set up a package name", len(pkgs), dirPath)
+	var pkgNames []string
+	for pkgName := range pkgs {
+		pkgNames = append(pkgNames, pkgName)
+	}
+	sort.Strings(pkgNames)
+	if len(pkgs) >= 2 && pkgNames[1] != pkgNames[0]+"_test" {
+		message.Fatalf("located %d packages in `%s`, thus cannot set up a package name", len(pkgs), dirPath)
 	}
 	if len(pkgs) == 0 {
 		return
 	}
-	for pkgName := range pkgs {
-		if err := c.Set("package", pkgName); err != nil {
-			message.Warningf("failed to set up package name: %s", err)
+	if len(c.Package) == 0 {
+		c.Package = pkgNames[0]
+	}
+	for _, pkgName := range pkgNames {
+		if c.Package == pkgName || c.Package == pkgName+"_test" {
+			return
 		}
+	}
+	message.Fatalf("invalid package name `%s` set for code: there's package name `%s` in the directory", c.Package, pkgNames[0])
+}
+
+func getOutputFileName(ruleFile string) string {
+	dirPath, fname := filepath.Split(ruleFile)
+	if strings.HasSuffix(fname, ".lde") {
+		fname = fname[:len(fname)-4]
+	}
+	fname = fmt.Sprintf("%s_lde.go", strings.Replace(fname, ".", "_", -1))
+	return path.Join(dirPath, fname)
+}
+
+func generate(c *runConfig) (err error) {
+	et := NewErrorTranslator()
+
+	var errorToken antlr.Token
+	defer func() {
+		if r := recover(); r != nil {
+			switch v := r.(type) {
+			case *ast.ErrorListener:
+				err = fmt.Errorf("%d:%d: %s", v.Line, v.Col+1, v.Msg)
+			case string:
+				err = errors.New(v)
+			default:
+				panic(r)
+			}
+		}
+		if err != nil {
+			if errorToken != nil {
+				err = cli.NewExitError(
+					fmt.Sprintf(
+						"%s:%d:%d: %s",
+						c.File[0],
+						errorToken.GetLine(),
+						errorToken.GetColumn(),
+						err),
+					1,
+				)
+			} else {
+				err = et.Translate(err)
+				err = cli.NewExitError(fmt.Sprintf("%s:%s", c.File[0], err), 1)
+			}
+		}
+	}()
+
+	ruleFileName := c.File[0]
+	input, err := antlr.NewFileStream(ruleFileName)
+	if err != nil {
 		return
 	}
+	lexer := parser2.NewLDELexer(input)
+	stream := antlr.NewCommonTokenStream(lexer, 0)
+	p := parser2.NewLDEParser(stream)
+	p.RemoveErrorListeners()
+	el := &ast.ErrorListener{}
+	p.AddErrorListener(el)
+	tree := p.Rules()
+	walker := antlr.NewParseTreeWalker()
+	l := listener.New()
+
+	eh := antlr.NewBailErrorStrategy()
+	p.RemoveErrorListeners()
+	p.SetErrorHandler(eh)
+
+	walker.Walk(l, tree)
+
+	rules := l.Rules()
+	formatDict := getDict(c)
+
+	tmpDest := &bytes.Buffer{}
+	gfy := gotify.New(formatDict)
+	gen := gogen.NewGenerator(c.GoString, gfy, l.Types().Types())
+	if c.LittleEndian {
+		gen.PlatformType(generator.LittleEndian)
+	} else if c.BigEndian {
+		gen.PlatformType(generator.BigEndian)
+	}
+	b := srcbuilder.New(c.Package, gen, tmpDest, gfy)
+	b.DontRecover()
+	if err := b.DispatchTypeRegistration(l.Types()); err != nil {
+		return err
+	}
+	for _, rule := range rules {
+		if gfy.Public(rule.Name) != rule.Name {
+			errorToken = rule.NameToken
+			return fmt.Errorf("wrong rule name %s, must be %s", rule.Name, gfy.Public(rule.Name))
+		}
+		message.Infof("\nRule `\033[1m%s\033[0m`: processing", rule.Name)
+		err = b.BuildRule(rule)
+		if err != nil {
+			errorToken = b.ErrorToken()
+			return err
+		}
+		message.Infof("Rule `\033[1m%s\033[0m`: done", rule.Name)
+		gen.Relax()
+	}
+	if err = b.Build(); err != nil {
+		return
+	}
+
+	destFileName := getOutputFileName(ruleFileName)
+	dest, err := os.Create(destFileName)
+	if err != nil {
+		message.Fatal(err)
+	}
+	defer func() {
+		if nerr := dest.Close(); nerr != nil {
+			message.Error(nerr)
+		}
+		if err != nil {
+			if nerr := os.Remove(destFileName); nerr != nil {
+				message.Warning(nerr)
+			}
+		}
+	}()
+	io.Copy(dest, tmpDest)
+
+	return
 }
