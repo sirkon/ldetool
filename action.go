@@ -34,7 +34,7 @@ func getOutputFileName(ruleFile string) string {
 	return path.Join(dirPath, fname)
 }
 
-func generateAction(c *cli.Context) (err error) {
+func generate(c *cli.Context) (err error) {
 
 	et := NewErrorTranslator()
 

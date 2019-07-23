@@ -16,7 +16,7 @@ go get -u github.com/sirkon/ldetool
 
 ### How it works.
 1. First write extraction script, we usually name it `<something>.lde`
-2. Generate go code with `ldetool generate <something.lde> --package main`. Of course
+2. Generate go code with `ldetool <something.lde> --package main`. Of course
    you can use your own package name, not only `main`
 3. Use it via the generated extraction method `Parse(line []byte)`.
 
