@@ -6,7 +6,6 @@ import (
 
 	"github.com/go-yaml/yaml"
 	"github.com/sirkon/message"
-	"github.com/urfave/cli"
 )
 
 func yamlSource(path string) map[string]string {
@@ -33,9 +32,9 @@ func jsonSource(path string) map[string]string {
 	return res
 }
 
-func getDict(c *cli.Context) (res map[string]string) {
-	yamlDict := c.String("yaml-dict")
-	jsonDict := c.String("json-dict")
+func getDict(c *runConfig) (res map[string]string) {
+	yamlDict := c.YAMLDict
+	jsonDict := c.JSONDict
 	if len(yamlDict) > 0 {
 		res = yamlSource(yamlDict)
 	}
