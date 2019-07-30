@@ -71,6 +71,9 @@ func main() {
 	}
 
 	resolvePackageName(p, &cfg)
+	if err := generate(&cfg); err != nil {
+		message.Error(err)
+	}
 }
 
 func resolvePackageName(p *arg.Parser, c *runConfig) {
