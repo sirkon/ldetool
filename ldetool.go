@@ -25,6 +25,7 @@ import (
 	"github.com/sirkon/ldetool/internal/listener"
 	parser2 "github.com/sirkon/ldetool/internal/parser"
 	"github.com/sirkon/ldetool/internal/srcbuilder"
+	"github.com/sirkon/ldetool/internal/types"
 
 	// These are for testing reasons
 	_ "github.com/sirkon/ldetool/internal/parser"
@@ -200,7 +201,11 @@ func generate(c *runConfig) (err error) {
 
 	tmpDest := &bytes.Buffer{}
 	gfy := gotify.New(formatDict)
-	gen := gogen.NewGenerator(c.GoString, gfy, l.Types().Types())
+	externalTypes := l.Types().Types()
+	if externalTypes == nil {
+		externalTypes = map[string]types.TypeRegistration{}
+	}
+	gen := gogen.NewGenerator(c.GoString, gfy, externalTypes)
 	if c.LittleEndian {
 		gen.PlatformType(generator.LittleEndian)
 	} else if c.BigEndian {
