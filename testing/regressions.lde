@@ -1,0 +1,6 @@
+Regression1 =
+     Pid(int32) ' '
+     Comm(string) ' '
+     State($uint8) ' '[1]
+     Ppid(int32) ' '
+     ;
