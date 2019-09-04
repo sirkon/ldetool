@@ -1,0 +1,3 @@
+type time.Time from "time";
+
+ShouldBeImportWithCustomType = First(time.Time) ':' Second(time.Time);

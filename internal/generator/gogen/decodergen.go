@@ -54,6 +54,9 @@ func (g *Generator) returnError(srcName srcobj.Source) srcobj.Source {
 	if !g.useString {
 		srcName = srcobj.NewCall("string", srcName)
 	}
+	if err := g.RegImport("", "fmt"); err != nil {
+		panic("failed to register fmt import")
+	}
 	return srcobj.ReturnError("parsing `%s` into field "+g.curField.name+"("+strings.TrimLeft(g.curFieldType, "$")+"): %s",
 		srcName,
 		srcobj.Raw("err"),
