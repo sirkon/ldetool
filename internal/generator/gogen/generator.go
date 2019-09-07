@@ -464,6 +464,7 @@ func (g *Generator) RegGravity(name string) error {
 // AtEnd checks if the rest is empty
 func (g *Generator) AtEnd() error {
 	g.body.Append(srcobj.Raw("\n"))
+	g.body.Append(srcobj.Comment("Check is the rest is empty"))
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorNEq(

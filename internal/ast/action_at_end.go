@@ -12,5 +12,5 @@ func (a AtEnd) Accept(d ActionDispatcher) error {
 }
 
 func (AtEnd) String() string {
-	return "Must be the end here"
+	return "Check if we reached an end of data"
 }

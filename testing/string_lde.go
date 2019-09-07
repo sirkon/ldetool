@@ -504,6 +504,7 @@ func (p *SilentAreas) Extract(line string) (bool, error) {
 	}
 	p.Alt1.Amount = int(tmpInt)
 	rest1 = rest1[len(rest1):]
+	// Check is the rest is empty
 	if len(rest1) != 0 {
 		p.Alt1.Valid = false
 		goto silentareasAlt1Label
@@ -525,6 +526,7 @@ silentareasAlt1Label:
 	// Take the rest as Amount(string)
 	p.Alt2.Amount = rest1
 	rest1 = rest1[len(rest1):]
+	// Check is the rest is empty
 	if len(rest1) != 0 {
 		p.Alt2.Valid = false
 		goto silentareasAlt2Label
@@ -754,6 +756,7 @@ trickydateparsingHourLabel:
 	p.Rest = rest1
 trickydateparsingSecondsLabel:
 
+	// Check is the rest is empty
 	if len(p.Rest) != 0 {
 		return false, nil
 	}
