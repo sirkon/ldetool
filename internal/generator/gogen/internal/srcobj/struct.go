@@ -167,8 +167,9 @@ func (s *Strct) AddSubstruct(comment []string, name string) *Strct {
 	res := Struct(s.useString, s.gen)
 	res.addPrimitive(nil, "Valid", "bool")
 	s.fields = append(s.fields, FieldDef{
-		Name: name,
-		Type: res,
+		Comment: comment,
+		Name:    name,
+		Type:    res,
 	})
 	return res
 }
