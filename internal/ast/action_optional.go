@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
@@ -12,6 +13,7 @@ type Optional struct {
 	access
 
 	Name    string
+	Comment []string
 	Actions []Action
 
 	NameToken antlr.Token
@@ -26,9 +28,10 @@ func (o *Optional) String() string {
 }
 
 // Option ...
-func Option(opt antlr.Token) *Optional {
+func Option(comment []string, opt antlr.Token) *Optional {
 	res := &Optional{
 		Name:    opt.GetText(),
+		Comment: comment,
 		Actions: []Action{},
 
 		NameToken: opt,

@@ -24,8 +24,8 @@ func (i Oct) TypeName() string {
 }
 
 // Register registers a field
-func (i Oct) Register(registrator FieldRegistrator) {
-	registrator.AddUint(i.Name())
+func (i Oct) Register(comment []string, registrator FieldRegistrator) {
+	registrator.AddUint(comment, i.Name())
 }
 
 // GoName returns Go's representation of this field's type

@@ -1,5 +1,19 @@
 grammar LDE;
 
+@lexer::declarations {
+    comments map[int]map[int]string
+}
+
+@lexer::construction {
+    l.comments = map[int]map[int]string{}
+}
+
+@lexer::members {
+    func (l *LDELexer) Comments() map[int]map[int]string {
+        return l.comments
+    }
+}
+
 rules
     : typeDeclaration* atomicRule* EOF
     ;
@@ -184,8 +198,15 @@ WS
     ;
 
 LineComment
-    : '#' ~[\r\n]* -> skip
-    ;
+    : '#' ~[\r\n]* {
+        v, ok := l.comments[l.GetLine()]
+        if !ok {
+            v = map[int]string{}
+        }
+        v[l.GetCharPositionInLine()-len([]rune(l.GetText()))] = l.GetText()[1:]
+        l.comments[l.GetLine()] = v
+        l.Skip()
+    };
 
 Stress
     : '!'

@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
@@ -12,6 +13,7 @@ type OptionalSilent struct {
 	access
 
 	Name    string
+	Comment []string
 	Actions []Action
 
 	NameToken antlr.Token
@@ -26,9 +28,10 @@ func (o *OptionalSilent) String() string {
 }
 
 // OptionSilent ...
-func OptionSilent(opt antlr.Token) *OptionalSilent {
+func OptionSilent(comment []string, opt antlr.Token) *OptionalSilent {
 	res := &OptionalSilent{
 		Name:    opt.GetText(),
+		Comment: comment,
 		Actions: []Action{},
 
 		NameToken: opt,

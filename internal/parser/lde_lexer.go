@@ -115,9 +115,9 @@ var serializedLexerAtn = []uint16{
 	217, 64, 3, 2, 2, 2, 218, 222, 7, 37, 2, 2, 219, 221, 10, 8, 2, 2, 220,
 	219, 3, 2, 2, 2, 221, 224, 3, 2, 2, 2, 222, 220, 3, 2, 2, 2, 222, 223,
 	3, 2, 2, 2, 223, 225, 3, 2, 2, 2, 224, 222, 3, 2, 2, 2, 225, 226, 8, 33,
-	2, 2, 226, 66, 3, 2, 2, 2, 227, 228, 7, 35, 2, 2, 228, 68, 3, 2, 2, 2,
+	3, 2, 226, 66, 3, 2, 2, 2, 227, 228, 7, 35, 2, 2, 228, 68, 3, 2, 2, 2,
 	19, 2, 122, 129, 135, 142, 150, 156, 163, 170, 177, 182, 190, 194, 196,
-	207, 209, 222, 3, 8, 2, 2,
+	207, 209, 222, 4, 8, 2, 2, 3, 33, 2,
 }
 
 var lexerDeserializer = antlr.NewATNDeserializer(nil)
@@ -157,6 +157,8 @@ type LDELexer struct {
 	channelNames []string
 	modeNames    []string
 	// TODO: EOF string
+
+	comments map[int]map[int]string
 }
 
 var lexerDecisionToDFA = make([]*antlr.DFA, len(lexerAtn.DecisionToState))
@@ -181,6 +183,8 @@ func NewLDELexer(input antlr.CharStream) *LDELexer {
 	l.SymbolicNames = lexerSymbolicNames
 	l.GrammarFileName = "LDE.g4"
 	// TODO: l.EOF = antlr.TokenEOF
+
+	l.comments = map[int]map[int]string{}
 
 	return l
 }
@@ -219,3 +223,34 @@ const (
 	LDELexerLineComment            = 30
 	LDELexerStress                 = 31
 )
+
+func (l *LDELexer) Comments() map[int]map[int]string {
+	return l.comments
+}
+
+func (l *LDELexer) Action(localctx antlr.RuleContext, ruleIndex, actionIndex int) {
+	switch ruleIndex {
+	case 31:
+		l.LineComment_Action(localctx, actionIndex)
+
+	default:
+		panic("No registered action for: " + fmt.Sprint(ruleIndex))
+	}
+}
+
+func (l *LDELexer) LineComment_Action(localctx antlr.RuleContext, actionIndex int) {
+	switch actionIndex {
+	case 0:
+
+		v, ok := l.comments[l.GetLine()]
+		if !ok {
+			v = map[int]string{}
+		}
+		v[l.GetCharPositionInLine()-len([]rune(l.GetText()))] = l.GetText()[1:]
+		l.comments[l.GetLine()] = v
+		l.Skip()
+
+	default:
+		panic("No registered action for: " + fmt.Sprint(actionIndex))
+	}
+}

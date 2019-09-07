@@ -13,6 +13,7 @@ type Rule struct {
 	access
 
 	Name    string
+	Comment []string
 	Actions []Action
 
 	NameToken antlr.Token
@@ -34,10 +35,11 @@ func (r *Rule) String() string {
 }
 
 // NewRule constructor
-func NewRule(name antlr.Token) *Rule {
+func NewRule(comment []string, name antlr.Token) *Rule {
 	n := name.(antlr.Token)
 	res := &Rule{
 		Name:      string(n.GetText()),
+		Comment:   comment,
 		NameToken: n,
 	}
 	return res

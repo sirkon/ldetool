@@ -12,7 +12,7 @@ type (
 	// Generator describes methods needed of data lookup and extraction
 	Generator interface {
 		// Data handlers
-		AddField(name string, fieldType string, t antlr.Token) error
+		AddField(comment []string, name string, t antlr.Token, fieldType string) error
 		RegGravity(name string) error
 
 		// Pass
@@ -46,9 +46,9 @@ type (
 		RestLengthCheck(operator string, length int) error
 
 		// Optionals
-		OpenOptionalScope(name string, t antlr.Token) error
+		OpenOptionalScope(comment []string, name string, t antlr.Token) error
 		CloseOptionalScope() error
-		OpenSilentOptionalScope(name string, t antlr.Token) error
+		OpenSilentOptionalScope(comment []string, name string, t antlr.Token) error
 		CloseSilentOptionalScope() error
 
 		// Stress set mismatch treatment as critical error
@@ -58,7 +58,7 @@ type (
 		Relax()
 
 		// UseRule ...
-		UseRule(name string, t antlr.Token) error
+		UseRule(comment []string, t antlr.Token, name string) error
 
 		// Push is used to signal all the data for current parser was generated
 		Push() error

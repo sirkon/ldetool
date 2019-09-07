@@ -6,23 +6,23 @@ import (
 
 // FieldRegistrator abstration for field of given type adder
 type FieldRegistrator interface {
-	AddInt(name string)
-	AddInt8(name string)
-	AddInt16(name string)
-	AddInt32(name string)
-	AddInt64(name string)
-	AddUint(name string)
-	AddUint8(name string)
-	AddUint16(name string)
-	AddUint32(name string)
-	AddUint64(name string)
-	AddDec128(name string)
-	AddFloat32(name string)
-	AddFloat64(name string)
-	AddString(name string)
-	AddStr(name string)
-	AddBool(name string)
-	AddCustomType(name string, info TypeRegistration)
+	AddInt(comment []string, name string)
+	AddInt8(comment []string, name string)
+	AddInt16(comment []string, name string)
+	AddInt32(comment []string, name string)
+	AddInt64(comment []string, name string)
+	AddUint(comment []string, name string)
+	AddUint8(comment []string, name string)
+	AddUint16(comment []string, name string)
+	AddUint32(comment []string, name string)
+	AddUint64(comment []string, name string)
+	AddDec128(comment []string, name string)
+	AddFloat32(comment []string, name string)
+	AddFloat64(comment []string, name string)
+	AddString(comment []string, name string)
+	AddStr(comment []string, name string)
+	AddBool(comment []string, name string)
+	AddCustomType(comment []string, name string, info TypeRegistration)
 }
 
 // Source copy of srcobj.Source
@@ -34,6 +34,6 @@ type Source interface {
 type Field interface {
 	Name() string
 	TypeName() string
-	Register(registrator FieldRegistrator)
+	Register(comment []string, registrator FieldRegistrator)
 	GoName() string
 }

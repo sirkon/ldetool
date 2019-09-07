@@ -2,14 +2,16 @@ package ast
 
 import (
 	"fmt"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
 // Field ...
 type Field struct {
-	Name string
-	Type string
-	Meta FieldMeta
+	Name    string
+	Type    string
+	Meta    FieldMeta
+	Comment []string
 
 	NameToken antlr.Token
 	TypeToken antlr.Token
@@ -22,7 +24,7 @@ type FieldMeta struct {
 }
 
 // NewField constructor
-func NewField(name antlr.Token, typeToken antlr.Token) Field {
+func NewField(comment []string, name antlr.Token, typeToken antlr.Token) Field {
 	de := decimalExtractor{}
 
 	var meta FieldMeta
@@ -81,5 +83,6 @@ func NewField(name antlr.Token, typeToken antlr.Token) Field {
 		Meta:      meta,
 		NameToken: name,
 		TypeToken: typeToken,
+		Comment:   comment,
 	}
 }

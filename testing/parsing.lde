@@ -1,4 +1,5 @@
 # Check decoders for all types
+
 Decoders =
 	Int8(int8) ' '
 	Int16(int16) ' '

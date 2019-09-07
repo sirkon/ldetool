@@ -25,13 +25,15 @@ var _ generator.Generator = &Generator{}
 // Generator implementation of generator.Generator
 // for Go target
 type Generator struct {
-	useString      bool
-	rules          map[string]antlr.Token // Register rule names to check duplication
-	consts         map[string]string      // string constants for reuse
-	fields         map[string]Name        // Field names obviously should have different names
-	vars           map[string]string      // Function local variables
-	imports        map[string]string      // Set of import paths
-	scopeAbandoned map[string]bool        // Set check if the current scope was abandoned due to mismatch
+	useString bool
+	rules     map[string]antlr.Token // Register rule names to check duplication
+	comment   []string               // Set of comments in the current rule
+
+	consts         map[string]string // string constants for reuse
+	fields         map[string]Name   // Field names obviously should have different names
+	vars           map[string]string // Function local variables
+	imports        map[string]string // Set of import paths
+	scopeAbandoned map[string]bool   // Set check if the current scope was abandoned due to mismatch
 
 	labels    map[string]struct{} // Label name must be unique
 	labelName string              // Current label name, set on scope enter and add field actions
@@ -186,13 +188,14 @@ func (g *Generator) anonymous() bool {
 }
 
 // UseRule ...
-func (g *Generator) UseRule(name string, t antlr.Token) error {
+func (g *Generator) UseRule(comment []string, t antlr.Token, name string) error {
 	if len(g.ruleName) != 0 {
 		return fmt.Errorf("attempt to use rule `%s` while the previous one (%s) was not pushed", name, g.ruleName)
 	}
 	if prev, ok := g.rules[name]; ok {
 		return fmt.Errorf("%d: redeclaration of rule `%s` which has already been defined at line %d", t.GetLine(), name, prev)
 	}
+	g.comment = comment
 	g.rules[name] = t
 	g.fields = map[string]Name{}
 	g.scopeAbandoned = map[string]bool{}
@@ -200,8 +203,8 @@ func (g *Generator) UseRule(name string, t antlr.Token) error {
 	g.vars = map[string]string{}
 	g.namespaces = nil
 	g.ruleName = name
-	g.obj = []*srcobj.Strct{g.file.AddExtractor(name, g)}
-	g.curObj().AddString("Rest")
+	g.obj = []*srcobj.Strct{g.file.AddExtractor(g.comment, name, g)}
+	g.curObj().AddString(nil, "Rest")
 	g.body = g.file.AddExtract(name).Body()
 	g.body.Append(srcobj.LineAssign{
 		Receiver: "p.Rest",
@@ -220,8 +223,8 @@ func (g *Generator) lookForExternal(fieldType string) (types.TypeRegistration, b
 }
 
 // AddField ...
-func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error {
-	g.addField(g.namespaces, name, t)
+func (g *Generator) AddField(comment []string, name string, t antlr.Token, fieldType string) error {
+	g.addField(name, t)
 	reg := g.curObj()
 	var field types.Field
 	if types.IsBuiltin(fieldType) {
@@ -269,7 +272,7 @@ func (g *Generator) AddField(name string, fieldType string, t antlr.Token) error
 			Type:      extType,
 		}
 	}
-	field.Register(reg)
+	field.Register(comment, reg)
 	return nil
 }
 
@@ -464,7 +467,7 @@ func (g *Generator) RegGravity(name string) error {
 // AtEnd checks if the rest is empty
 func (g *Generator) AtEnd() error {
 	g.body.Append(srcobj.Raw("\n"))
-	g.body.Append(srcobj.Comment("Check is the rest is empty"))
+	g.body.Append(srcobj.Comment("Check if the rest is empty"))
 	g.body.Append(
 		srcobj.If{
 			Expr: srcobj.OperatorNEq(

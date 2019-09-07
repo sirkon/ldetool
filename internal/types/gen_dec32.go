@@ -24,8 +24,8 @@ func (i Dec32) TypeName() string {
 }
 
 // Register registers a field
-func (i Dec32) Register(registrator FieldRegistrator) {
-	registrator.AddInt32(i.Name())
+func (i Dec32) Register(comment []string, registrator FieldRegistrator) {
+	registrator.AddInt32(comment, i.Name())
 }
 
 // GoName returns Go's representation of this field's type

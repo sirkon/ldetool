@@ -11,6 +11,7 @@ type AnonymousOption struct {
 	access
 
 	Name    string
+	Comment []string
 	Actions []Action
 
 	StartToken antlr.Token
@@ -26,9 +27,10 @@ func (a *AnonymousOption) String() string {
 }
 
 // Anonymous ...
-func Anonymous(opt antlr.Token) *AnonymousOption {
+func Anonymous(comment []string, opt antlr.Token) *AnonymousOption {
 	res := &AnonymousOption{
 		Actions: []Action{},
+		Comment: comment,
 
 		StartToken: opt,
 	}

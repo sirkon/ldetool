@@ -66,10 +66,11 @@ func (f *File) AddNamedImport(access, path string) error {
 }
 
 // AddExtractor adds new extractor struct type definition and returns struct body
-func (f *File) AddExtractor(typeName string, g generator.Generator) *Strct {
+func (f *File) AddExtractor(comment []string, typeName string, g generator.Generator) *Strct {
 	st := structType{
-		name: typeName,
-		s:    Struct(f.useString, g),
+		comment: comment,
+		name:    typeName,
+		s:       Struct(f.useString, g),
 	}
 	f.body.Append(st)
 	return st.s

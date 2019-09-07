@@ -19,8 +19,8 @@ func (f FieldCustom) TypeName() string {
 }
 
 // Register registers custom type
-func (f FieldCustom) Register(registrator FieldRegistrator) {
-	registrator.AddCustomType(f.FieldName, f.Type)
+func (f FieldCustom) Register(comment []string, registrator FieldRegistrator) {
+	registrator.AddCustomType(comment, f.FieldName, f.Type)
 }
 
 // GoName name of registered type

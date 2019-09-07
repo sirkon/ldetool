@@ -24,8 +24,8 @@ func (i Hex) TypeName() string {
 }
 
 // Register registers a field
-func (i Hex) Register(registrator FieldRegistrator) {
-	registrator.AddUint(i.Name())
+func (i Hex) Register(comment []string, registrator FieldRegistrator) {
+	registrator.AddUint(comment, i.Name())
 }
 
 // GoName returns Go's representation of this field's type

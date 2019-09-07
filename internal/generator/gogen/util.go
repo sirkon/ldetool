@@ -134,12 +134,12 @@ func (g *Generator) tmpSuspectancy(inputType string) bool {
 	return suspected
 }
 
-func (g *Generator) addField(namespace []string, name string, t antlr.Token) string {
-	namespace = append(namespace, name)
+func (g *Generator) addField(name string, t antlr.Token) string {
+	namespace := append(g.namespaces, name)
 	namespaced := strings.Join(namespace, ".")
 	if ppp, ok := g.fields[g.fullName(name)]; ok {
 		panic(fmt.Sprintf(
-			"%d:%d: Field `\033[1m%s\033[0m` redefiniton, previously declared at (%d, %d)",
+			"%d:%d: Field `\033[1m%s\033[0m` redefinition, previously declared at (%d, %d)",
 			t.GetLine(), t.GetColumn()+1,
 			name, ppp.token.GetLine(), ppp.token.GetColumn()+1))
 	}

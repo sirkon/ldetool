@@ -27,8 +27,8 @@ func (t *Take) String() string {
 }
 
 // TakeUntilTarget ...
-func TakeUntilTarget(field, fieldType antlr.Token) *Take {
-	f := NewField(field, fieldType)
+func TakeUntilTarget(comment []string, field, fieldType antlr.Token) *Take {
+	f := NewField(comment, field, fieldType)
 	return &Take{
 		Field: f,
 		Limit: NewTarget(),

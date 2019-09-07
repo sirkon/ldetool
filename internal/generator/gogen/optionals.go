@@ -7,21 +7,21 @@ import (
 )
 
 // OpenOptionalScope ...
-func (g *Generator) OpenOptionalScope(name string, t antlr.Token) error {
+func (g *Generator) OpenOptionalScope(comment []string, name string, t antlr.Token) error {
 	if err := g.regRightVar(g.curRestVar()); err != nil {
 		return err
 	}
 	g.namespaces = append(g.namespaces, name)
 	g.regLabel()
 	if !g.anonymous() {
-		g.obj = append(g.obj, g.curObj().AddSubstruct(name))
+		g.obj = append(g.obj, g.curObj().AddSubstruct(comment, name))
 	}
 	g.body.Append(srcobj.LineAssign{
 		Receiver: g.curRestVar(),
 		Expr:     srcobj.Raw(g.prevRestVar()),
 	})
 	if len(name) > 0 {
-		g.addField(g.namespaces, "", t)
+		g.addField("", t)
 	}
 	return nil
 }
@@ -55,21 +55,21 @@ func (g *Generator) CloseOptionalScope() error {
 	return nil
 }
 
-func (g *Generator) OpenSilentOptionalScope(name string, t antlr.Token) error {
+func (g *Generator) OpenSilentOptionalScope(comment []string, name string, t antlr.Token) error {
 	if err := g.regRightVar(g.curRestVar()); err != nil {
 		return err
 	}
 	g.namespaces = append(g.namespaces, name)
 	g.regLabel()
 	if !g.anonymous() {
-		g.obj = append(g.obj, g.curObj().AddSubstruct(name))
+		g.obj = append(g.obj, g.curObj().AddSubstruct(comment, name))
 	}
 	g.body.Append(srcobj.LineAssign{
 		Receiver: g.curRestVar(),
 		Expr:     srcobj.Raw(g.prevRestVar()),
 	})
 	if len(name) > 0 {
-		g.addField(g.namespaces, "", t)
+		g.addField("", t)
 	}
 	g.silenceDepth++
 	return nil

@@ -24,8 +24,8 @@ func (i Uint) TypeName() string {
 }
 
 // Register registers a field
-func (i Uint) Register(registrator FieldRegistrator) {
-	registrator.AddUint(i.Name())
+func (i Uint) Register(comment []string, registrator FieldRegistrator) {
+	registrator.AddUint(comment, i.Name())
 }
 
 // GoName returns Go's representation of this field's type

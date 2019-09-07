@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
@@ -27,8 +28,8 @@ func (t *TakeUntilOrRest) String() string {
 }
 
 // TakeUntilTargetOrRest ...
-func TakeUntilTargetOrRest(field antlr.Token, fieldType antlr.Token) *TakeUntilOrRest {
-	f := NewField(field, fieldType)
+func TakeUntilTargetOrRest(comment []string, field antlr.Token, fieldType antlr.Token) *TakeUntilOrRest {
+	f := NewField(comment, field, fieldType)
 	return &TakeUntilOrRest{
 		Field: f,
 		Limit: NewTarget(),

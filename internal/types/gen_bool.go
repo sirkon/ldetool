@@ -24,8 +24,8 @@ func (i Bool) TypeName() string {
 }
 
 // Register registers a field
-func (i Bool) Register(registrator FieldRegistrator) {
-	registrator.AddBool(i.Name())
+func (i Bool) Register(comment []string, registrator FieldRegistrator) {
+	registrator.AddBool(comment, i.Name())
 }
 
 // GoName returns Go's representation of this field's type

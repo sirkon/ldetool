@@ -11,7 +11,7 @@ import (
 func (sb *SrcBuilder) DispatchAnonymousOption(a *ast.AnonymousOption) error {
 	sb.anonDepth++
 	sb.appendGens(func() error {
-		return sb.gen.OpenOptionalScope("", a.StartToken)
+		return sb.gen.OpenOptionalScope(a.Comment, "", a.StartToken)
 	})
 	if err := sb.composeRule(a.Actions); err != nil {
 		return err
@@ -87,7 +87,7 @@ func (sb *SrcBuilder) DispatchOptional(a *ast.Optional) error {
 		return fmt.Errorf("Wrong named option identifier %s, must be %s", a.Name, gotifiedName)
 	}
 	sb.appendGens(func() error {
-		return sb.gen.OpenOptionalScope(a.Name, a.NameToken)
+		return sb.gen.OpenOptionalScope(a.Comment, a.Name, a.NameToken)
 	})
 	sb.prefixTie(a.Name)
 	defer sb.prefixUntie()
@@ -113,7 +113,7 @@ func (sb *SrcBuilder) DispatchOptionalSilent(a *ast.OptionalSilent) error {
 		return fmt.Errorf("Wrong silent named option identifier %s, must be %s", a.Name, gotifiedName)
 	}
 	sb.appendGens(func() error {
-		return sb.gen.OpenSilentOptionalScope(a.Name, a.NameToken)
+		return sb.gen.OpenSilentOptionalScope(a.Comment, a.Name, a.NameToken)
 	})
 	sb.prefixTie(a.Name)
 	defer sb.prefixUntie()
@@ -366,7 +366,7 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 	switch a.Limit.Type {
 	case ast.String:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if lower != upper || lower <= 0 {
@@ -386,7 +386,7 @@ func (sb *SrcBuilder) DispatchTake(a *ast.Take) error {
 		})
 	case ast.Char:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
@@ -430,7 +430,7 @@ func (sb *SrcBuilder) DispatchTakeIncluding(a *ast.TakeIncluding) error {
 	switch a.Limit.Type {
 	case ast.String:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if lower != upper || lower <= 0 {
@@ -450,7 +450,7 @@ func (sb *SrcBuilder) DispatchTakeIncluding(a *ast.TakeIncluding) error {
 		})
 	case ast.Char:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
@@ -487,7 +487,7 @@ func (sb *SrcBuilder) DispatchTakeRest(a *ast.TakeRest) error {
 		return err
 	}
 	sb.appendGens(func() error {
-		if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+		if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 			return err
 		}
 		if err := sb.gen.TakeRest(a.Field.Name, a.Field.Type, a.Field.Meta); err != nil {
@@ -517,7 +517,7 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 	switch a.Limit.Type {
 	case ast.String:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if a.Limit.Lower > 0 && a.Limit.Lower == a.Limit.Upper {
@@ -537,7 +537,7 @@ func (sb *SrcBuilder) DispatchTakeUntilOrRest(a *ast.TakeUntilOrRest) error {
 		})
 	case ast.Char:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
@@ -578,7 +578,7 @@ func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncluding
 	switch a.Limit.Type {
 	case ast.String:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if a.Limit.Lower > 0 && a.Limit.Lower == a.Limit.Upper {
@@ -598,7 +598,7 @@ func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncluding
 		})
 	case ast.Char:
 		sb.appendGens(func() error {
-			if err := sb.gen.AddField(a.Field.Name, a.Field.Type, a.Field.NameToken); err != nil {
+			if err := sb.gen.AddField(a.Field.Comment, a.Field.Name, a.Field.NameToken, a.Field.Type); err != nil {
 				return err
 			}
 			if a.Limit.Lower <= 0 || a.Limit.Lower != a.Limit.Upper {
@@ -621,7 +621,7 @@ func (sb *SrcBuilder) DispatchTakeUntilIncludingOrRest(a *ast.TakeUntilIncluding
 }
 
 func (sb *SrcBuilder) DispatchRule(a *ast.Rule) error {
-	if err := sb.gen.UseRule(a.Name, a.NameToken); err != nil {
+	if err := sb.gen.UseRule(a.Comment, a.NameToken, a.Name); err != nil {
 		return err
 	}
 	sb.generators = nil

@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
@@ -27,8 +28,8 @@ func (t *TakeIncluding) Accept(d ActionDispatcher) error {
 }
 
 // TakeUntilTargetIncluding ...
-func TakeUntilTargetIncluding(field, fieldType antlr.Token) *TakeIncluding {
-	f := NewField(field, fieldType)
+func TakeUntilTargetIncluding(comment []string, field, fieldType antlr.Token) *TakeIncluding {
+	f := NewField(comment, field, fieldType)
 	return &TakeIncluding{
 		Field: f,
 		Limit: NewTarget(),

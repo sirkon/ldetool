@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 )
 
@@ -22,8 +23,8 @@ func (tr *TakeRest) String() string {
 }
 
 // TakeTheRest ...
-func TakeTheRest(field, fieldType antlr.Token) *TakeRest {
-	f := NewField(field, fieldType)
+func TakeTheRest(comment []string, field, fieldType antlr.Token) *TakeRest {
+	f := NewField(comment, field, fieldType)
 	res := &TakeRest{
 		Field: f,
 	}

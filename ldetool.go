@@ -188,7 +188,7 @@ func generate(c *runConfig) (err error) {
 	p.AddErrorListener(el)
 	tree := p.Rules()
 	walker := antlr.NewParseTreeWalker()
-	l := listener.New()
+	l := listener.New(lexer.Comments())
 
 	eh := antlr.NewBailErrorStrategy()
 	p.RemoveErrorListeners()

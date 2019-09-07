@@ -13,4 +13,4 @@ version:
 		git commit -a --amend
 
 grammar:
-		antlr4 -visitor -no-visitor -listener -o internal/parser -Dlanguage=Go LDE.g4
+		antlr4 -no-visitor -listener -o internal/parser -Dlanguage=Go LDE.g4
