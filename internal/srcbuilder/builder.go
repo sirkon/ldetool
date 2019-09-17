@@ -89,7 +89,7 @@ func (sb *SrcBuilder) Build() (err error) {
 func (sb *SrcBuilder) checkField(field ast.Field) error {
 	if sb.gotify.Public(field.Name) != field.Name {
 		sb.errToken = field.NameToken
-		return fmt.Errorf("Wrong taker identifier `%s`, must be %s", field.Name, sb.gotify.Public(field.Name))
+		return fmt.Errorf("wrong taker identifier `%s`, must be %s", field.Name, sb.gotify.Public(field.Name))
 	}
 	return nil
 }
@@ -108,7 +108,7 @@ func (sb *SrcBuilder) appendGens(gens ...func() error) {
 	sb.generators = append(sb.generators, gens...)
 }
 
-// errorToken returns token where error happened
+// ErrorToken returns a token caused an error
 func (sb *SrcBuilder) ErrorToken() antlr.Token {
 	return sb.errToken
 }

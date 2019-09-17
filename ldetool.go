@@ -249,7 +249,9 @@ func generate(c *runConfig) (err error) {
 			}
 		}
 	}()
-	io.Copy(dest, tmpDest)
+	if _, err := io.Copy(dest, tmpDest); err != nil {
+		message.Fatal("generation error: %s", err)
+	}
 
 	return
 }

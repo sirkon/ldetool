@@ -140,9 +140,6 @@ func (f *File) Dump(w io.Writer) error {
 			return err
 		}
 	}
-	if _, err := io.WriteString(w, "\n"); err != nil {
-		return err
-	}
 
 	if err := f.body.Dump(buf); err != nil {
 		return err
