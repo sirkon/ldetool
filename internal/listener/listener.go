@@ -54,6 +54,7 @@ type Listener struct {
 	expectEnd      bool
 	mustNotBeExact bool
 	lineStarts     map[int]int
+	lineTakers     map[int]int
 
 	comments map[int]map[int]string
 }
@@ -73,9 +74,22 @@ func (l *Listener) lineStart(el positionedElement) {
 	}
 }
 
+func (l *Listener) lineTaker(el positionedElement) int {
+	if l.lineTakers == nil {
+		l.lineTakers = map[int]int{}
+	}
+	lineNo := el.GetStart().GetLine()
+	prev := l.lineTakers[lineNo]
+	l.lineTakers[lineNo]++
+	return prev
+}
+
 func (l *Listener) commentFor(el positionedElement) []string {
 	line := el.GetStart().GetLine()
-	column := el.GetStart().GetColumn()
+	if l.lineTakers[line] > 1 {
+		return nil
+	}
+	column := l.lineStarts[line]
 	col, ok := l.lineStarts[line]
 	if !ok || col < column {
 		return nil
@@ -365,6 +379,7 @@ func (l *Listener) ExitRestCheck(c *parser.RestCheckContext) {}
 // EnterTakeUntil is called when production takeUntil is entered.
 func (l *Listener) EnterTakeUntil(ctx *parser.TakeUntilContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	checkReserved(ctx.Identifier().GetSymbol())
 	a := ast.TakeUntilTarget(l.commentFor(ctx), ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 	l.seq().Append(a)
@@ -377,6 +392,7 @@ func (l *Listener) ExitTakeUntil(ctx *parser.TakeUntilContext) {}
 // EnterTakeUntilIncluding is called when production takeUntilIncluding is enterd
 func (l *Listener) EnterTakeUntilIncluding(ctx *parser.TakeUntilIncludingContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	checkReserved(ctx.Identifier().GetSymbol())
 	a := ast.TakeUntilTargetIncluding(l.commentFor(ctx), ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 	l.seq().Append(a)
@@ -389,6 +405,7 @@ func (l *Listener) ExitTakeUntilIncluding(ctx *parser.TakeUntilIncludingContext)
 // EnterTakeUntilOrRest is called when production takeUntilOrRest is entered.
 func (l *Listener) EnterTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	checkReserved(ctx.Identifier().GetSymbol())
 	a := ast.TakeUntilTargetOrRest(l.commentFor(ctx), ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 	l.seq().Append(a)
@@ -401,6 +418,7 @@ func (l *Listener) ExitTakeUntilOrRest(ctx *parser.TakeUntilOrRestContext) {}
 // EnterTakeUntilIncludingOrRest ...
 func (l *Listener) EnterTakeUntilIncludingOrRest(ctx *parser.TakeUntilIncludingOrRestContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	checkReserved(ctx.Identifier().GetSymbol())
 	a := ast.TakeUntilTargetIncludingOrRest(l.commentFor(ctx), ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 	l.seq().Append(a)
@@ -413,6 +431,7 @@ func (l *Listener) ExitTakeUntilIncludingOrRest(c *parser.TakeUntilIncludingOrRe
 // EnterTakeUntilRest is called when production takeUntilRest is entered.
 func (l *Listener) EnterTakeUntilRest(ctx *parser.TakeUntilRestContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	checkReserved(ctx.Identifier().GetSymbol())
 	a := ast.TakeTheRest(l.commentFor(ctx), ctx.Identifier().GetSymbol(), ctx.FieldType().GetStart())
 	l.seq().Append(a)
@@ -426,6 +445,7 @@ func (l *Listener) ExitTakeUntilRest(ctx *parser.TakeUntilRestContext) {
 // EnterOptionalNamedArea is called when production optionalNamedArea is entered.
 func (l *Listener) EnterOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	checkReserved(ctx.Identifier().GetSymbol())
 
 	a := ast.Option(l.commentFor(ctx), ctx.Identifier().GetSymbol())
@@ -440,6 +460,7 @@ func (l *Listener) ExitOptionalNamedArea(ctx *parser.OptionalNamedAreaContext) {
 
 func (l *Listener) EnterOptionalNamedSilentArea(ctx *parser.OptionalNamedSilentAreaContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	checkReserved(ctx.Identifier().GetSymbol())
 
 	a := ast.OptionSilent(l.commentFor(ctx), ctx.Identifier().GetSymbol())
@@ -454,6 +475,7 @@ func (l *Listener) ExitOptionalNamedSilentArea(ctx *parser.OptionalNamedSilentAr
 // EnterOptionalArea is called when production optionalArea is entered.
 func (l *Listener) EnterOptionalArea(ctx *parser.OptionalAreaContext) {
 	l.lineStart(ctx)
+	l.lineTaker(ctx)
 	a := ast.Anonymous(l.commentFor(ctx), ctx.GetStart())
 	l.seq().Append(a)
 	l.actions = append(l.actions, a)
