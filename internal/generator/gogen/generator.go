@@ -35,8 +35,9 @@ type Generator struct {
 	imports        map[string]string // Set of import paths
 	scopeAbandoned map[string]bool   // Set check if the current scope was abandoned due to mismatch
 
-	labels    map[string]struct{} // Label name must be unique
-	labelName string              // Current label name, set on scope enter and add field actions
+	uniqueLabels map[string]struct{} // Map to track label names to avoid duplicates
+	labelName    string              // Current label name, set on scope enter and add field actions
+	labels       []string            // stack of labels
 
 	namespaces []string // Stack of namespaces (each item is a name of optional area)
 
@@ -161,18 +162,28 @@ func (g *Generator) regLabel() {
 	for {
 		labelName := g.goish.Private(strings.Join(namespaces, "_")+"_label") + suffix
 		labelName = g.goish.Private(g.goish.Package(g.ruleName) + "_" + labelName)
-		if _, ok := g.labels[labelName]; !ok {
+		if _, ok := g.uniqueLabels[labelName]; !ok {
 			g.labelName = labelName
 			break
 		}
 		i++
 		suffix = fmt.Sprintf("%d", i)
 	}
-	g.labels[g.labelName] = struct{}{}
+	g.uniqueLabels[g.labelName] = struct{}{}
+	g.labels = append(g.labels, g.labelName)
 }
 
 func (g *Generator) label() string {
 	return g.labelName
+}
+
+func (g *Generator) dropLabel() {
+	if len(g.labels) > 0 {
+		g.labels = g.labels[:len(g.labels)-1]
+	}
+	if len(g.labels) > 0 {
+		g.labelName = g.labels[len(g.labels)-1]
+	}
 }
 
 func (g *Generator) curObj() *srcobj.Strct {
@@ -199,9 +210,10 @@ func (g *Generator) UseRule(comment []string, t antlr.Token, name string) error 
 	g.rules[name] = t
 	g.fields = map[string]Name{}
 	g.scopeAbandoned = map[string]bool{}
-	g.labels = map[string]struct{}{}
+	g.uniqueLabels = map[string]struct{}{}
 	g.vars = map[string]string{}
 	g.namespaces = nil
+	g.labels = nil
 	g.ruleName = name
 	g.obj = []*srcobj.Strct{g.file.AddExtractor(g.comment, name, g)}
 	g.curObj().AddString(nil, "Rest")

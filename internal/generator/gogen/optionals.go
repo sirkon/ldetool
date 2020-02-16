@@ -47,6 +47,7 @@ func (g *Generator) CloseOptionalScope() error {
 		scopeLabelName := g.label()
 		g.body.Append(srcobj.OperatorColon(srcobj.Raw(scopeLabelName), srcobj.Raw("")))
 		g.indent()
+		g.dropLabel()
 	}
 	if !g.anonymous() {
 		g.obj = g.obj[:len(g.obj)-1]
@@ -95,6 +96,7 @@ func (g *Generator) CloseSilentOptionalScope() error {
 		scopeLabelName := g.label()
 		g.body.Append(srcobj.OperatorColon(srcobj.Raw(scopeLabelName), srcobj.Raw("")))
 		g.indent()
+		g.dropLabel()
 	}
 	if !g.anonymous() {
 		g.obj = g.obj[:len(g.obj)-1]

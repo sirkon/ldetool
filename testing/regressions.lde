@@ -4,3 +4,14 @@ Regression1 =
      State($uint8) ' '[1]
      Ppid(int32) ' '
      ;
+
+# FooBarBaz relates to https://github.com/sirkon/ldetool/issues/40
+FooBarBaz =
+    ^"<foo>" Stuff(string) "</foo>"
+    ?Bar (
+        ^"<Bar" ?ID (
+            ^" foobar='{" Foobarbaz(string) "}'"
+        ) ^"/>"
+    )
+    ^"<baz>" Baz(string) "</baz>"
+;

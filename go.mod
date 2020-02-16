@@ -1,5 +1,7 @@
 module github.com/sirkon/ldetool
 
+go 1.14
+
 require (
 	github.com/alexflint/go-arg v1.0.0
 	github.com/antlr/antlr4 v0.0.0-20190313170020-28fc84874d7f
@@ -16,6 +18,7 @@ require (
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/cli v1.20.0
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
+	gopkg.in/yaml.v2 v2.2.8 // indirect
 )
 
 replace github.com/sirkon/gosrcfmt => ../../../github.com/sirkon/gosrcfmt

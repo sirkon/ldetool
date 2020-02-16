@@ -173,7 +173,8 @@ func (g *Generator) curRestVar() string {
 	if len(g.namespaces) == 0 {
 		return "p.Rest"
 	}
-	return g.goish.Private(fmt.Sprintf("rest%d", len(g.namespaces)))
+	return g.goish.Private(strings.Join(g.namespaces, "_") + "_rest")
+	// return g.goish.Private(fmt.Sprintf("rest%d", len(g.namespaces)))
 }
 
 func (g *Generator) prevRestVar() string {
