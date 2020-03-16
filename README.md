@@ -168,7 +168,7 @@ type net.IP from "net";
 Custom = Time(time.Time) ' ' ?Addr(^"addr: " IP(ip.IP) ' ');
 ```
 
-Now, two parsing functions will be needed to parse this:
+Now, two parsing functions will be needed to parse this (they are to be written manually):
 
 ```go
 func (p *Custom) unmarshalTime(s string) (time.Time, error) { … }
