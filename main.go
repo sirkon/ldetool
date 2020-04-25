@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime/debug"
 	"sort"
 	"strings"
 
@@ -40,6 +41,7 @@ type runConfig struct {
 	BigEndian    bool   `arg:"--big-endian" help:"target architecture is big endian"`
 	LittleEndian bool   `arg:"--little-endian" help:"target architecture is little endian"`
 	GoString     bool   `arg:"--go-string" help:"treat strings as go string"`
+	Version      bool   `arg:"-v" help:"prints version and stop"`
 
 	File []string `arg:"positional" help:"file to process"`
 }
@@ -62,6 +64,18 @@ func main() {
 			}
 			cfg.File = cfg.File[:len(cfg.File)-1]
 		}
+	}
+	if cfg.Version {
+		var version string
+		info, ok := debug.ReadBuildInfo()
+		if !ok {
+			version = "(devel)"
+		} else {
+			version = info.Main.Version
+		}
+
+		message.Info(version)
+		return
 	}
 	switch len(cfg.File) {
 	case 0:

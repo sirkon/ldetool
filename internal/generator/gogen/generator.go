@@ -252,12 +252,17 @@ func (g *Generator) AddField(comment []string, name string, t antlr.Token, field
 				}
 				g.externalTypes[fieldType] = extType
 			}
+			if extType.String() == "str" {
+				extType = types.LocalType{
+					Name: "string",
+				}
+			}
 			if err != nil {
 				return g.ErrorToken(t, "%s", err)
 			}
 		}
 		if !ok {
-			// Last chance, it can a request for custom unmarshaler
+			// Last chance, it can a request for custom unmarshaler (with $)
 
 			typeAvailablePrep := types.Declarables()
 			var typeAvailable []string

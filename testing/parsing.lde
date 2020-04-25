@@ -232,3 +232,5 @@ Star = *'a' F(int) "|" *'a' B(int);
 JustToCompile = Head(hex16) '-'[4] Tail(hex16);
 
 JustToCompileString = Head(hex16) "abcd"[4] Tail(hex16);
+
+CustomStr = Data($str);

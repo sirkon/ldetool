@@ -3252,3 +3252,22 @@ func (p *JustToCompileString) Extract(line []byte) (bool, error) {
 	p.Rest = p.Rest[len(p.Rest):]
 	return true, nil
 }
+
+// CustomStr ...
+type CustomStr struct {
+	Rest []byte
+	Data string
+}
+
+// Extract ...
+func (p *CustomStr) Extract(line []byte) (bool, error) {
+	p.Rest = line
+	var err error
+
+	// Take the rest as Data($str)
+	if p.Data, err = p.unmarshalData(p.Rest); err != nil {
+		return false, fmt.Errorf("parsing `%s` into field Data(str): %s", string(p.Rest), err)
+	}
+	p.Rest = p.Rest[len(p.Rest):]
+	return true, nil
+}
