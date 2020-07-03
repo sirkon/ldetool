@@ -30,7 +30,7 @@ go get -u github.com/sirkon/ldetool
     ```yaml
     http: HTTP
     ```
-    and feed this file to the `ldetool` then every name (of field or rule itself) like `GetHttpHandle` or `get_http_hanlde` will be traslated into `GetHTTPHandle`
+    and feed this file to the `ldetool` then every name (of field or rule itself) like `GetHttpHandle` or `get_http_handle` will be translated into `GetHTTPHandle`
 3. `--package <pkg name>` name of the package to use in generated code. If a directory of `*.lde` file has other Go files package name will automatically setup with these files' package name.
 4. `--big-endian` or `--little-endian` sets the target architecture to be either big or little endian. This
     enables prefix check optimization 
