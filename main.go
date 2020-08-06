@@ -74,7 +74,7 @@ func main() {
 			version = info.Main.Version
 		}
 
-		message.Info(version)
+		message.Info("ldetool", "version", version)
 		return
 	}
 	switch len(cfg.File) {
