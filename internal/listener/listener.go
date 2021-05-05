@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
-
 	"github.com/sirkon/ldetool/internal/ast"
 	"github.com/sirkon/ldetool/internal/parser"
 	"github.com/sirkon/ldetool/internal/types"
@@ -30,7 +29,8 @@ func checkReserved(token antlr.Token) {
 		return
 	}
 	panic(
-		fmt.Sprintf("%d:%d \033[1m%s\033[0m is reserved identifier",
+		fmt.Sprintf(
+			"%d:%d \033[1m%s\033[0m is reserved identifier",
 			token.GetLine(),
 			token.GetColumn()+1,
 			token.GetText(),
@@ -567,9 +567,23 @@ func (l *Listener) EnterTargetLit(ctx *parser.TargetLitContext) {
 		l.seq().Append(a)
 	}
 	if ctx.StringLit() != nil {
-		l.target.SetString(ctx.StringLit().GetText())
+		if err := l.target.SetString(ctx.StringLit().GetText()); err != nil {
+			panic(fmt.Sprintf(
+				"%d:%d %s",
+				ctx.CharLit().GetSymbol().GetLine(),
+				ctx.CharLit().GetSymbol().GetColumn()+1,
+				err,
+			))
+		}
 	} else if ctx.CharLit() != nil {
-		l.target.SetChar(ctx.CharLit().GetText())
+		if err := l.target.SetChar(ctx.CharLit().GetText()); err != nil {
+			panic(fmt.Sprintf(
+				"%d:%d %s",
+				ctx.CharLit().GetSymbol().GetLine(),
+				ctx.CharLit().GetSymbol().GetColumn()+1,
+				err,
+			))
+		}
 	} else {
 		panic("Integerity error")
 	}
@@ -594,8 +608,11 @@ func (l *Listener) EnterBound(ctx *parser.BoundContext) {
 	}
 	if upper < lower {
 		token := ctx.IntLit(1).GetSymbol()
-		panic(fmt.Sprintf("%d:%d upper bound must be greater than lower",
-			token.GetLine(), token.GetColumn()+1))
+		panic(fmt.Sprintf(
+			"%d:%d upper bound must be greater than lower",
+			token.GetLine(),
+			token.GetColumn()+1,
+		))
 	}
 	l.target.SetBound(lower, upper)
 }
