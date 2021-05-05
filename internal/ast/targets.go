@@ -37,7 +37,7 @@ func (t *Target) SetChar(text string) error {
 	return nil
 }
 
-// SetString sets target into TypeName
+// SetString sets target into String
 func (t *Target) SetString(text string) error {
 	// TODO get rid of this after https://github.com/antlr/antlr4/pull/2642 will be merged
 	if _, err := strconv.Unquote(text); err != nil {

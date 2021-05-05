@@ -1,0 +1,22 @@
+type time.Duration from "time";
+type ip.IP from "net";
+
+Combined =
+  ?RemoteServer(IPAddress(ip.IP) ' - ')
+  ?RemoteUser(Value(string))
+  ^' [' Time(string) ']'
+  ^' ' ?HTTPHost(Value(string))
+  ^' "' ?HTTPLine(Value(string) '"')
+  ^' ' ?TlsProtocol(Value(string) '/')
+  ^' ' ?TlsCipher(Value(string) ' ')
+  ^' ' ?HTTPCode(Value(uint16) ' ')
+  ^' ' ?HTTPBodyBytesSent(Value(uint16) ' ')
+  ^' ' ?HTTPResponseTime(DurationFromSeconds(time.Duration) ' ')
+  ^' ' ?HTTPUpstreamResponseTime(DurationFromSeconds(time.Duration) ' ')
+  ^' ' ?HTTPUpstreamCode(Value(uint16) ' ')
+  ^' ' ?HTTPUpstreamHost(Host(string) ' ')
+  ^' ' ?HTTPUpstreamCacheStatus(Value(string) ' ')
+  ^' "' ?HTTPReferer(Value(string) '" ')
+  ^' "' ?HTTPUserAgent(Value(string) '" ')
+  ^'" ' ?HTTPForwardFor(Csv(string) '" ')
+  ^'" ' ?HTTPAuthorization(Value(string) '"');

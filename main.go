@@ -18,20 +18,16 @@ import (
 	"github.com/alexflint/go-arg"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
-	"github.com/urfave/cli"
-
 	"github.com/sirkon/ldetool/internal/ast"
 	"github.com/sirkon/ldetool/internal/generator"
 	"github.com/sirkon/ldetool/internal/generator/gogen"
 	"github.com/sirkon/ldetool/internal/listener"
+	_ "github.com/sirkon/ldetool/internal/parser"
 	parser2 "github.com/sirkon/ldetool/internal/parser"
 	"github.com/sirkon/ldetool/internal/srcbuilder"
 	"github.com/sirkon/ldetool/internal/types"
-
-	// These are for testing reasons
-	_ "github.com/sirkon/ldetool/internal/parser"
-
 	"github.com/sirkon/message"
+	"github.com/urfave/cli"
 )
 
 type runConfig struct {
@@ -87,7 +83,7 @@ func main() {
 
 	resolvePackageName(p, &cfg)
 	if err := generate(&cfg); err != nil {
-		message.Error(err)
+		message.Fatal(err)
 	}
 }
 
@@ -179,7 +175,8 @@ func generate(c *runConfig) (err error) {
 						c.File[0],
 						errorToken.GetLine(),
 						errorToken.GetColumn(),
-						err),
+						err,
+					),
 					1,
 				)
 			} else {
@@ -245,7 +242,7 @@ func generate(c *runConfig) (err error) {
 		gen.Relax()
 	}
 	if err = b.Build(); err != nil {
-		return
+		return fmt.Errorf("build generated code: %w", err)
 	}
 
 	destFileName := getOutputFileName(ruleFileName)
