@@ -2,16 +2,15 @@ package srcbuilder
 
 import (
 	"fmt"
-	"github.com/sirkon/message"
 	"io"
 	"strings"
 
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/sirkon/gotify"
 	"github.com/sirkon/ldetool/internal/ast"
-	"github.com/sirkon/ldetool/internal/types"
-
 	"github.com/sirkon/ldetool/internal/generator"
+	"github.com/sirkon/ldetool/internal/types"
+	"github.com/sirkon/message"
 )
 
 var _ ast.ActionDispatcher = &SrcBuilder{}
@@ -81,7 +80,10 @@ func (sb *SrcBuilder) BuildRule(rule *ast.Rule) (err error) {
 
 // Build full source file
 func (sb *SrcBuilder) Build() (err error) {
-	sb.gen.Generate(sb.pkgName, sb.dest)
+	if err := sb.gen.Generate(sb.pkgName, sb.dest); err != nil {
+		return err
+	}
+
 	return nil
 }
 

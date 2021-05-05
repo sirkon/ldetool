@@ -1,5 +1,10 @@
 package ast
 
+import (
+	"fmt"
+	"strconv"
+)
+
 // Target ...
 type Target struct {
 	Type  TargetEnum
@@ -20,15 +25,29 @@ func (t *Target) SetClose() {
 }
 
 // SetChar sets target into Char
-func (t *Target) SetChar(text string) {
+func (t *Target) SetChar(text string) error {
+	// TODO get rid of this after https://github.com/antlr/antlr4/pull/2642 will be merged
+	if _, err := strconv.Unquote(text); err != nil {
+		return fmt.Errorf("process rune %s: %w", text, err)
+	}
+
 	t.Type = Char
 	t.Value = text
+
+	return nil
 }
 
 // SetString sets target into TypeName
-func (t *Target) SetString(text string) {
+func (t *Target) SetString(text string) error {
+	// TODO get rid of this after https://github.com/antlr/antlr4/pull/2642 will be merged
+	if _, err := strconv.Unquote(text); err != nil {
+		return fmt.Errorf("process string %s: %w", text, err)
+	}
+
 	t.Type = String
 	t.Value = text
+
+	return nil
 }
 
 // SetLimit sets target limit
