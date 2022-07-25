@@ -13,13 +13,9 @@ require (
 	github.com/sirkon/gosrcfmt v1.7.0
 	github.com/sirkon/gotify v0.6.1
 	github.com/sirkon/message v1.5.1
-	github.com/sirkon/protoast v0.11.3 // indirect
-	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.6.1
 	github.com/urfave/cli v1.20.0
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )
-
-replace github.com/sirkon/gosrcfmt => ../../../github.com/sirkon/gosrcfmt
