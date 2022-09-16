@@ -10,16 +10,26 @@ import (
 	"unsafe"
 )
 
-var constAb = []byte("ab")
-var constAbcd = []byte("abcd")
-var constBa = []byte("ba")
-var constBar = []byte("|")
-var constConst123456789 = []byte("123456789")
-var constConst34 = []byte("34")
-var constDogs = []byte("@@")
-var constEe = []byte("ee")
-var constLl = []byte("ll")
-var constSpace = []byte(" ")
+var constAnonymousAreasSpace = []byte(" ")
+var constDecodersBoundedStringSpace = []byte(" ")
+var constDecodersBoundedStringStressSpace = []byte(" ")
+var constDecodersLimitedStringSpace = []byte(" ")
+var constDecodersLimitedStringStressSpace = []byte(" ")
+var constDecodersStringSpace = []byte(" ")
+var constDecodersStringStressSpace = []byte(" ")
+var constFixedLookConstFixedLook123456789 = []byte("123456789")
+var constFixedLookConstFixedLook34 = []byte("34")
+var constIncludeStringAb = []byte("ab")
+var constJumpDogs = []byte("@@")
+var constJustToCompileStringAbcd = []byte("abcd")
+var constLookupJumpDogs = []byte("@@")
+var constLookupJumpEe = []byte("ee")
+var constLookupJumpLl = []byte("ll")
+var constPrefixesConstPrefixes123456789 = []byte("123456789")
+var constShift1Ba = []byte("ba")
+var constShift3Ba = []byte("ba")
+var constSplitStringBar = []byte("|")
+var constStarBar = []byte("|")
 
 // Decoders ...
 type Decoders struct {
@@ -476,10 +486,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	var tmpUint uint64
 
 	// Take until " " as Int8(int8)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -489,10 +499,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Int8 = int8(tmpInt)
 
 	// Take until " " as Int16(int16)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -502,10 +512,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Int16 = int16(tmpInt)
 
 	// Take until " " as Int32(int32)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -515,10 +525,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Int32 = int32(tmpInt)
 
 	// Take until " " as Int64(int64)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -528,10 +538,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Int64 = int64(tmpInt)
 
 	// Take until " " as Uint8(uint8)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -541,10 +551,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Uint8 = uint8(tmpUint)
 
 	// Take until " " as Uint16(uint16)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -554,10 +564,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Uint16 = uint16(tmpUint)
 
 	// Take until " " as Uint32(uint32)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -567,10 +577,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Uint32 = uint32(tmpUint)
 
 	// Take until " " as Uint64(uint64)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -580,10 +590,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Uint64 = uint64(tmpUint)
 
 	// Take until " " as Float32(float32)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -593,10 +603,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Float32 = float32(tmpFloat)
 
 	// Take until " " as Float64(float64)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -606,10 +616,10 @@ func (p *DecodersString) Extract(line []byte) (bool, error) {
 	p.Float64 = float64(tmpFloat)
 
 	// Take until " " as String(string)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringSpace)
 	if pos >= 0 {
 		p.String = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -650,10 +660,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -668,10 +678,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -686,10 +696,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -704,10 +714,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -722,10 +732,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -740,10 +750,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -758,10 +768,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -776,10 +786,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -794,10 +804,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -812,10 +822,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -830,10 +840,10 @@ func (p *DecodersLimitedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringSpace)
 	if pos >= 0 {
 		p.String = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringSpace):]
 	} else {
 		return false, nil
 	}
@@ -862,10 +872,10 @@ func (p *DecodersBoundedString) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest[8:]
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersBoundedStringSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos+8]
-		p.Rest = p.Rest[pos+len(constSpace)+8:]
+		p.Rest = p.Rest[pos+len(constDecodersBoundedStringSpace)+8:]
 	} else {
 		return false, nil
 	}
@@ -1332,12 +1342,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	var tmpUint uint64
 
 	// Take until " " as Int8(int8)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int8(int8): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1345,12 +1355,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Int8 = int8(tmpInt)
 
 	// Take until " " as Int16(int16)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int16(int16): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1358,12 +1368,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Int16 = int16(tmpInt)
 
 	// Take until " " as Int32(int32)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int32(int32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1371,12 +1381,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Int32 = int32(tmpInt)
 
 	// Take until " " as Int64(int64)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int64(int64): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1384,12 +1394,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Int64 = int64(tmpInt)
 
 	// Take until " " as Uint8(uint8)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint8(uint8): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1397,12 +1407,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Uint8 = uint8(tmpUint)
 
 	// Take until " " as Uint16(uint16)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint16(uint16): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1410,12 +1420,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Uint16 = uint16(tmpUint)
 
 	// Take until " " as Uint32(uint32)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint32(uint32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1423,12 +1433,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Uint32 = uint32(tmpUint)
 
 	// Take until " " as Uint64(uint64)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint64(uint64): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1436,12 +1446,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Uint64 = uint64(tmpUint)
 
 	// Take until " " as Float32(float32)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Float32(float32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1449,12 +1459,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Float32 = float32(tmpFloat)
 
 	// Take until " " as Float64(float64)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", constDecodersStringStressSpace, string(p.Rest))
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Float64(float64): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1462,12 +1472,12 @@ func (p *DecodersStringStress) Extract(line []byte) (bool, error) {
 	p.Float64 = float64(tmpFloat)
 
 	// Take until " " as String(string)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constDecodersStringStressSpace)
 	if pos >= 0 {
 		p.String = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", constSpace, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", constDecodersStringStressSpace, string(p.Rest))
 	}
 
 	return true, nil
@@ -1506,12 +1516,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int8", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int8(int8): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1524,12 +1534,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int16", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int16(int16): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1542,12 +1552,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int32", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int32(int32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1560,12 +1570,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Int64", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Int64(int64): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1578,12 +1588,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint8", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 8); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint8(uint8): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1596,12 +1606,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint16", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 16); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint16(uint16): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1614,12 +1624,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint32", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint32(uint32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1632,12 +1642,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Uint64", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 10, 64); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Uint64(uint64): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1650,12 +1660,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float32", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Float32(float32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1668,12 +1678,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Float64(float64): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -1686,12 +1696,12 @@ func (p *DecodersLimitedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersLimitedStringStressSpace)
 	if pos >= 0 {
 		p.String = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constDecodersLimitedStringStressSpace):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field String", constDecodersLimitedStringStressSpace, string(tmpRest))
 	}
 
 	return true, nil
@@ -1718,12 +1728,12 @@ func (p *DecodersBoundedStringStress) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest[8:]
 	}
-	pos = bytes.Index(tmpRest, constSpace)
+	pos = bytes.Index(tmpRest, constDecodersBoundedStringStressSpace)
 	if pos >= 0 {
 		tmp = p.Rest[:pos+8]
-		p.Rest = p.Rest[pos+len(constSpace)+8:]
+		p.Rest = p.Rest[pos+len(constDecodersBoundedStringStressSpace)+8:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", constSpace, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Float64", constDecodersBoundedStringStressSpace, string(tmpRest))
 	}
 	if tmpFloat, err = strconv.ParseFloat(*(*string)(unsafe.Pointer(&tmp)), 64); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Float64(float64): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
@@ -2080,8 +2090,8 @@ func (p *Prefixes) Extract(line []byte) (bool, error) {
 	var tmpInt int64
 
 	// Checks if the rest starts with `"123456789"` and pass it
-	if bytes.HasPrefix(p.Rest, constConst123456789) {
-		p.Rest = p.Rest[len(constConst123456789):]
+	if bytes.HasPrefix(p.Rest, constPrefixesConstPrefixes123456789) {
+		p.Rest = p.Rest[len(constPrefixesConstPrefixes123456789):]
 	} else {
 		return false, fmt.Errorf("`\033[1m%s\033[0m` is expected to start with `\033[1m%s\033[0m`", string(p.Rest), "123456789")
 	}
@@ -2137,11 +2147,11 @@ func (p *FixedLook) Extract(line []byte) (bool, error) {
 	var tmpInt int64
 
 	// Take until 3rd character  if that part is started by "123456789" substring as Data(int32)
-	if len(p.Rest) < len(constConst123456789)+2 || !bytes.HasPrefix(p.Rest[2:], constConst123456789) {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Data", constConst123456789, string(p.Rest))
+	if len(p.Rest) < len(constFixedLookConstFixedLook123456789)+2 || !bytes.HasPrefix(p.Rest[2:], constFixedLookConstFixedLook123456789) {
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Data", constFixedLookConstFixedLook123456789, string(p.Rest))
 	}
 	tmp = p.Rest[:2]
-	p.Rest = p.Rest[2+len(constConst123456789):]
+	p.Rest = p.Rest[2+len(constFixedLookConstFixedLook123456789):]
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Data(int32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
 	}
@@ -2149,10 +2159,10 @@ func (p *FixedLook) Extract(line []byte) (bool, error) {
 
 	// Take until 4th character  if that part is started by "34" substring as Rest1(int32)
 	if len(p.Rest)-3 < 2 || *(*uint64)(unsafe.Pointer(&p.Rest[3]))&0xffff != 0x3433 {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Rest1", constConst34, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Rest1", constFixedLookConstFixedLook34, string(p.Rest))
 	}
 	tmp = p.Rest[:3]
-	p.Rest = p.Rest[3+len(constConst34):]
+	p.Rest = p.Rest[3+len(constFixedLookConstFixedLook34):]
 	if tmpInt, err = strconv.ParseInt(*(*string)(unsafe.Pointer(&tmp)), 10, 32); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Rest1(int32): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
 	}
@@ -2208,10 +2218,10 @@ anonymousareasAnonymousAreaLabel:
 anonymousareasAnonymousAreaLabel2:
 
 	// Take until " " (or all the rest if not found) as Data(string)
-	pos = bytes.Index(p.Rest, constSpace)
+	pos = bytes.Index(p.Rest, constAnonymousAreasSpace)
 	if pos >= 0 {
 		p.Data = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpace):]
+		p.Rest = p.Rest[pos+len(constAnonymousAreasSpace):]
 	} else {
 		p.Data = p.Rest
 		p.Rest = p.Rest[len(p.Rest):]
@@ -2291,12 +2301,12 @@ func (p *SplitString) Extract(line []byte) (bool, error) {
 	var pos int
 
 	// Take until "|" as Name(string)
-	pos = bytes.Index(p.Rest, constBar)
+	pos = bytes.Index(p.Rest, constSplitStringBar)
 	if pos >= 0 {
 		p.Name = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constBar):]
+		p.Rest = p.Rest[pos+len(constSplitStringBar):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Name", constBar, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Name", constSplitStringBar, string(p.Rest))
 	}
 
 	// Checks if rest[1:] starts with `"|"` and pass it
@@ -2322,10 +2332,10 @@ func (p *SplitString) Extract(line []byte) (bool, error) {
 
 	// Take until 2nd character  if that part is started by "|" substring as Count(string)
 	if len(p.Rest)-1 < 1 || *(*uint64)(unsafe.Pointer(&p.Rest[1]))&0xff != 0x7c {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", constBar, string(p.Rest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Count", constSplitStringBar, string(p.Rest))
 	}
 	p.Count = p.Rest[:1]
-	p.Rest = p.Rest[1+len(constBar):]
+	p.Rest = p.Rest[1+len(constSplitStringBar):]
 
 	return true, nil
 }
@@ -2348,12 +2358,12 @@ func (p *Shift1) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest[3:]
 	}
-	pos = bytes.Index(tmpRest, constBa)
+	pos = bytes.Index(tmpRest, constShift1Ba)
 	if pos >= 0 {
 		p.B = p.Rest[:pos+3]
-		p.Rest = p.Rest[pos+len(constBa)+3:]
+		p.Rest = p.Rest[pos+len(constShift1Ba)+3:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field B", constBa, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field B", constShift1Ba, string(tmpRest))
 	}
 
 	return true, nil
@@ -2406,12 +2416,12 @@ func (p *Shift3) Extract(line []byte) (bool, error) {
 	} else {
 		tmpRest = p.Rest[3:]
 	}
-	pos = bytes.Index(tmpRest, constBa)
+	pos = bytes.Index(tmpRest, constShift3Ba)
 	if pos >= 0 {
 		p.B = p.Rest[:pos+3]
-		p.Rest = p.Rest[pos+len(constBa)+3:]
+		p.Rest = p.Rest[pos+len(constShift3Ba)+3:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field B", constBa, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field B", constShift3Ba, string(tmpRest))
 	}
 
 	return true, nil
@@ -2500,24 +2510,24 @@ func (p *Jump) Extract(line []byte) (bool, error) {
 	if len(p.Rest) < 2 {
 		return false, fmt.Errorf("cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.Rest), string(p.Rest))
 	}
-	pos = bytes.Index(p.Rest[2:], constDogs)
+	pos = bytes.Index(p.Rest[2:], constJumpDogs)
 	if pos >= 0 {
 		p.Third = p.Rest[:pos+2]
-		p.Rest = p.Rest[pos+len(constDogs)+2:]
+		p.Rest = p.Rest[pos+len(constJumpDogs)+2:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Third", constDogs, string(p.Rest[2:]))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Third", constJumpDogs, string(p.Rest[2:]))
 	}
 
 	// Take until "@@" as Fourth(string)
 	if len(p.Rest) < 2 {
 		return false, fmt.Errorf("cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.Rest), string(p.Rest))
 	}
-	pos = bytes.Index(p.Rest[2:], constDogs)
+	pos = bytes.Index(p.Rest[2:], constJumpDogs)
 	if pos >= 0 {
 		p.Fourth = p.Rest[:pos+2]
-		p.Rest = p.Rest[pos+len(constDogs)+2:]
+		p.Rest = p.Rest[pos+len(constJumpDogs)+2:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Fourth", constDogs, string(p.Rest[2:]))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m` to bound data for field Fourth", constJumpDogs, string(p.Rest[2:]))
 	}
 
 	return true, nil
@@ -2549,11 +2559,11 @@ func (p *LookupJump) Extract(line []byte) (bool, error) {
 		return false, fmt.Errorf("cannot slice from %d as only %d characters left in the rest (`\033[1m%s\033[0m`)", 2, len(p.Rest), string(p.Rest))
 	}
 	// Looking for "@@" and then pass it
-	pos = bytes.Index(p.Rest[2:], constDogs)
+	pos = bytes.Index(p.Rest[2:], constLookupJumpDogs)
 	if pos >= 0 {
-		p.Rest = p.Rest[pos+len(constDogs)+2:]
+		p.Rest = p.Rest[pos+len(constLookupJumpDogs)+2:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", constDogs, string(p.Rest[2:]))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", constLookupJumpDogs, string(p.Rest[2:]))
 	}
 
 	if len(p.Rest) >= 12 {
@@ -2562,11 +2572,11 @@ func (p *LookupJump) Extract(line []byte) (bool, error) {
 		tmpRest = p.Rest
 	}
 	// Looking for "ll" and then pass it
-	pos = bytes.Index(tmpRest, constLl)
+	pos = bytes.Index(tmpRest, constLookupJumpLl)
 	if pos >= 0 {
-		p.Rest = p.Rest[pos+len(constLl):]
+		p.Rest = p.Rest[pos+len(constLookupJumpLl):]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", constLl, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", constLookupJumpLl, string(tmpRest))
 	}
 
 	if len(p.Rest) >= 12 {
@@ -2575,11 +2585,11 @@ func (p *LookupJump) Extract(line []byte) (bool, error) {
 		tmpRest = p.Rest[2:]
 	}
 	// Looking for "ee" and then pass it
-	pos = bytes.Index(tmpRest, constEe)
+	pos = bytes.Index(tmpRest, constLookupJumpEe)
 	if pos >= 0 {
-		p.Rest = p.Rest[pos+len(constEe)+2:]
+		p.Rest = p.Rest[pos+len(constLookupJumpEe)+2:]
 	} else {
-		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", constEe, string(tmpRest))
+		return false, fmt.Errorf("cannot find `\033[1m%s\033[0m` in `\033[1m%s\033[0m`", constLookupJumpEe, string(tmpRest))
 	}
 
 	// Looking for 'e' and then pass it
@@ -2837,19 +2847,19 @@ func (p *IncludeString) Extract(line []byte) (bool, error) {
 	var tmpInt int64
 
 	// Take until "ab" including it  as Data(string)
-	pos = bytes.Index(p.Rest, constAb)
+	pos = bytes.Index(p.Rest, constIncludeStringAb)
 	if pos >= 0 {
-		p.Data = p.Rest[:pos+len(constAb)]
-		p.Rest = p.Rest[pos+len(constAb):]
+		p.Data = p.Rest[:pos+len(constIncludeStringAb)]
+		p.Rest = p.Rest[pos+len(constIncludeStringAb):]
 	} else {
 		return false, nil
 	}
 
 	// Take until "ab" as Field2(int)
-	pos = bytes.Index(p.Rest, constAb)
+	pos = bytes.Index(p.Rest, constIncludeStringAb)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constAb):]
+		p.Rest = p.Rest[pos+len(constIncludeStringAb):]
 	} else {
 		return false, nil
 	}
@@ -3153,10 +3163,10 @@ func (p *Star) Extract(line []byte) (bool, error) {
 	}
 
 	// Take until "|" as F(int)
-	pos = bytes.Index(p.Rest, constBar)
+	pos = bytes.Index(p.Rest, constStarBar)
 	if pos >= 0 {
 		tmp = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constBar):]
+		p.Rest = p.Rest[pos+len(constStarBar):]
 	} else {
 		return false, nil
 	}
@@ -3238,7 +3248,7 @@ func (p *JustToCompileString) Extract(line []byte) (bool, error) {
 		return false, nil
 	}
 	tmp = p.Rest[:4]
-	p.Rest = p.Rest[4+len(constAbcd):]
+	p.Rest = p.Rest[4+len(constJustToCompileStringAbcd):]
 	if tmpUint, err = strconv.ParseUint(*(*string)(unsafe.Pointer(&tmp)), 16, 16); err != nil {
 		return false, fmt.Errorf("parsing `%s` into field Head(hex16): %s", string(*(*string)(unsafe.Pointer(&tmp))), err)
 	}

@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
-var constLessBar = "<Bar"
-var constLessBazMore = "<baz>"
-var constLessFooMore = "<foo>"
-var constLessSlashBazMore = "</baz>"
-var constLessSlashFooMore = "</foo>"
-var constRbrace = "}'"
-var constSlashMore = "/>"
-var constSpaceFoobarEqLbrace = " foobar='{"
+var constFooBarBazLessBar = "<Bar"
+var constFooBarBazLessBazMore = "<baz>"
+var constFooBarBazLessFooMore = "<foo>"
+var constFooBarBazLessSlashBazMore = "</baz>"
+var constFooBarBazLessSlashFooMore = "</foo>"
+var constFooBarBazRbrace = "}'"
+var constFooBarBazSlashMore = "/>"
+var constFooBarBazSpaceFoobarEqLbrace = " foobar='{"
 
 // Regression1 ...
 type Regression1 struct {
@@ -104,25 +104,25 @@ func (p *FooBarBaz) Extract(line string) (bool, error) {
 	var pos int
 
 	// Checks if the rest starts with `"<foo>"` and pass it
-	if strings.HasPrefix(p.Rest, constLessFooMore) {
-		p.Rest = p.Rest[len(constLessFooMore):]
+	if strings.HasPrefix(p.Rest, constFooBarBazLessFooMore) {
+		p.Rest = p.Rest[len(constFooBarBazLessFooMore):]
 	} else {
 		return false, nil
 	}
 
 	// Take until "</foo>" as Stuff(string)
-	pos = strings.Index(p.Rest, constLessSlashFooMore)
+	pos = strings.Index(p.Rest, constFooBarBazLessSlashFooMore)
 	if pos >= 0 {
 		p.Stuff = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constLessSlashFooMore):]
+		p.Rest = p.Rest[pos+len(constFooBarBazLessSlashFooMore):]
 	} else {
 		return false, nil
 	}
 	barRest = p.Rest
 
 	// Checks if the rest starts with `"<Bar"` and pass it
-	if strings.HasPrefix(barRest, constLessBar) {
-		barRest = barRest[len(constLessBar):]
+	if strings.HasPrefix(barRest, constFooBarBazLessBar) {
+		barRest = barRest[len(constFooBarBazLessBar):]
 	} else {
 		p.Bar.Valid = false
 		goto foobarbazBarLabel
@@ -130,18 +130,18 @@ func (p *FooBarBaz) Extract(line string) (bool, error) {
 	barIDRest = barRest
 
 	// Checks if the rest starts with `" foobar='{"` and pass it
-	if strings.HasPrefix(barIDRest, constSpaceFoobarEqLbrace) {
-		barIDRest = barIDRest[len(constSpaceFoobarEqLbrace):]
+	if strings.HasPrefix(barIDRest, constFooBarBazSpaceFoobarEqLbrace) {
+		barIDRest = barIDRest[len(constFooBarBazSpaceFoobarEqLbrace):]
 	} else {
 		p.Bar.ID.Valid = false
 		goto foobarbazBarIDLabel
 	}
 
 	// Take until "}'" as Foobarbaz(string)
-	pos = strings.Index(barIDRest, constRbrace)
+	pos = strings.Index(barIDRest, constFooBarBazRbrace)
 	if pos >= 0 {
 		p.Bar.ID.Foobarbaz = barIDRest[:pos]
-		barIDRest = barIDRest[pos+len(constRbrace):]
+		barIDRest = barIDRest[pos+len(constFooBarBazRbrace):]
 	} else {
 		p.Bar.ID.Valid = false
 		goto foobarbazBarIDLabel
@@ -152,8 +152,8 @@ func (p *FooBarBaz) Extract(line string) (bool, error) {
 foobarbazBarIDLabel:
 
 	// Checks if the rest starts with `"/>"` and pass it
-	if strings.HasPrefix(barRest, constSlashMore) {
-		barRest = barRest[len(constSlashMore):]
+	if strings.HasPrefix(barRest, constFooBarBazSlashMore) {
+		barRest = barRest[len(constFooBarBazSlashMore):]
 	} else {
 		p.Bar.Valid = false
 		goto foobarbazBarLabel
@@ -164,17 +164,17 @@ foobarbazBarIDLabel:
 foobarbazBarLabel:
 
 	// Checks if the rest starts with `"<baz>"` and pass it
-	if strings.HasPrefix(p.Rest, constLessBazMore) {
-		p.Rest = p.Rest[len(constLessBazMore):]
+	if strings.HasPrefix(p.Rest, constFooBarBazLessBazMore) {
+		p.Rest = p.Rest[len(constFooBarBazLessBazMore):]
 	} else {
 		return false, nil
 	}
 
 	// Take until "</baz>" as Baz(string)
-	pos = strings.Index(p.Rest, constLessSlashBazMore)
+	pos = strings.Index(p.Rest, constFooBarBazLessSlashBazMore)
 	if pos >= 0 {
 		p.Baz = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constLessSlashBazMore):]
+		p.Rest = p.Rest[pos+len(constFooBarBazLessSlashBazMore):]
 	} else {
 		return false, nil
 	}

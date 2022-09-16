@@ -19,11 +19,11 @@ func (g *Generator) constNameFromContent(value string) string {
 	res := w.String()
 
 	if ok, err := regexp.MatchString(`^\d.*$`, res); ok {
-		res = "const_" + res
+		res = "const_" + g.ruleName + res
 	} else if err != nil {
 		panic(err)
 	}
-	res = g.goish.Private("const_" + g.goish.Private(res))
+	res = g.goish.Private("const_" + g.ruleName + "_" + g.goish.Private(res))
 	newRes := res
 	i := 2
 	for {
@@ -63,7 +63,8 @@ func (g *Generator) regVar(name, varType string) error {
 		if oldType != varType {
 			return fmt.Errorf(
 				"local variable \033[1m%s\033[0m has been registered already with type \033[1m%s\033[0m",
-				name, varType,
+				name,
+				varType,
 			)
 		}
 	}
@@ -85,7 +86,9 @@ func (g *Generator) RegImport(importAs, path string) error {
 			return fmt.Errorf(
 				`Attempt to register import of "\033[1m%s\033[0m" as '\033[1m%s\033' while it has already been `+
 					`imported as '\033[1m%s\033[0m'`,
-				path, importAs, importedAs,
+				path,
+				importAs,
+				importedAs,
 			)
 		}
 	}
@@ -140,8 +143,12 @@ func (g *Generator) addField(name string, t antlr.Token) string {
 	if ppp, ok := g.fields[g.fullName(name)]; ok {
 		panic(fmt.Sprintf(
 			"%d:%d: Field `\033[1m%s\033[0m` redefinition, previously declared at (%d, %d)",
-			t.GetLine(), t.GetColumn()+1,
-			name, ppp.token.GetLine(), ppp.token.GetColumn()+1))
+			t.GetLine(),
+			t.GetColumn()+1,
+			name,
+			ppp.token.GetLine(),
+			ppp.token.GetColumn()+1,
+		))
 	}
 	g.fields[g.fullName(name)] = Name{
 		name:  namespaced,

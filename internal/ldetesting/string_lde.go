@@ -10,17 +10,18 @@ import (
 	time "time"
 )
 
-var constAbc = "abc"
-var constAddrColonSpace = "addr: "
-var constAmountColon = "Amount:"
-var constChangeSpaceInternalSpaceStateSpace = "change internal state "
-var constColonC = ":c"
-var constLsbrck = "["
-var constSpacePumpSpace = " Pump "
-var constSpaceToSpace = " to "
-var constStarsSpaceTimeColonSpace = "*** Time: "
-var constStateSpaceChangeSpace = "State change "
-var constUnrecognizedSequence = "ï»¿"
+var constBeforeLookupAbc = "abc"
+var constCheckPrefixAbc = "abc"
+var constCustomAddrColonSpace = "addr: "
+var constRegressionCheck1ChangeSpaceInternalSpaceStateSpace = "change internal state "
+var constRegressionCheck1Lsbrck = "["
+var constRegressionCheck1SpacePumpSpace = " Pump "
+var constRegressionCheck1SpaceToSpace = " to "
+var constRegressionCheck1StateSpaceChangeSpace = "State change "
+var constRegressionCheck2StarsSpaceTimeColonSpace = "*** Time: "
+var constRegressionCheck2UnrecognizedSequence = "ï»¿"
+var constRegressionCheck3ColonC = ":c"
+var constSilentAreasAmountColon = "Amount:"
 
 // Rule ...
 type Rule struct {
@@ -128,10 +129,10 @@ func (p *RegressionCheck1) Extract(line string) (bool, error) {
 	var tmpInt int64
 
 	// Take until " Pump " as Time(string)
-	pos = strings.Index(p.Rest, constSpacePumpSpace)
+	pos = strings.Index(p.Rest, constRegressionCheck1SpacePumpSpace)
 	if pos >= 0 {
 		p.Time = p.Rest[:pos]
-		p.Rest = p.Rest[pos+len(constSpacePumpSpace):]
+		p.Rest = p.Rest[pos+len(constRegressionCheck1SpacePumpSpace):]
 	} else {
 		return false, nil
 	}
@@ -157,27 +158,27 @@ func (p *RegressionCheck1) Extract(line string) (bool, error) {
 	pStateRest = p.Rest
 
 	// Checks if the rest starts with `"State change "` and pass it
-	if strings.HasPrefix(pStateRest, constStateSpaceChangeSpace) {
-		pStateRest = pStateRest[len(constStateSpaceChangeSpace):]
+	if strings.HasPrefix(pStateRest, constRegressionCheck1StateSpaceChangeSpace) {
+		pStateRest = pStateRest[len(constRegressionCheck1StateSpaceChangeSpace):]
 	} else {
 		p.PState.Valid = false
 		goto regressioncheck1PStateLabel
 	}
 
 	// Looking for " to " and then pass it
-	pos = strings.Index(pStateRest, constSpaceToSpace)
+	pos = strings.Index(pStateRest, constRegressionCheck1SpaceToSpace)
 	if pos >= 0 {
-		pStateRest = pStateRest[pos+len(constSpaceToSpace):]
+		pStateRest = pStateRest[pos+len(constRegressionCheck1SpaceToSpace):]
 	} else {
 		p.PState.Valid = false
 		goto regressioncheck1PStateLabel
 	}
 
 	// Take until "[" as State(string)
-	pos = strings.Index(pStateRest, constLsbrck)
+	pos = strings.Index(pStateRest, constRegressionCheck1Lsbrck)
 	if pos >= 0 {
 		p.PState.State = pStateRest[:pos]
-		pStateRest = pStateRest[pos+len(constLsbrck):]
+		pStateRest = pStateRest[pos+len(constRegressionCheck1Lsbrck):]
 	} else {
 		p.PState.Valid = false
 		goto regressioncheck1PStateLabel
@@ -189,17 +190,17 @@ regressioncheck1PStateLabel:
 	iStateRest = p.Rest
 
 	// Checks if the rest starts with `"change internal state "` and pass it
-	if strings.HasPrefix(iStateRest, constChangeSpaceInternalSpaceStateSpace) {
-		iStateRest = iStateRest[len(constChangeSpaceInternalSpaceStateSpace):]
+	if strings.HasPrefix(iStateRest, constRegressionCheck1ChangeSpaceInternalSpaceStateSpace) {
+		iStateRest = iStateRest[len(constRegressionCheck1ChangeSpaceInternalSpaceStateSpace):]
 	} else {
 		p.IState.Valid = false
 		goto regressioncheck1IStateLabel
 	}
 
 	// Looking for " to " and then pass it
-	pos = strings.Index(iStateRest, constSpaceToSpace)
+	pos = strings.Index(iStateRest, constRegressionCheck1SpaceToSpace)
 	if pos >= 0 {
-		iStateRest = iStateRest[pos+len(constSpaceToSpace):]
+		iStateRest = iStateRest[pos+len(constRegressionCheck1SpaceToSpace):]
 	} else {
 		p.IState.Valid = false
 		goto regressioncheck1IStateLabel
@@ -242,15 +243,15 @@ func (p *RegressionCheck2) Extract(line string) (bool, error) {
 	p.Rest = line
 
 	// Checks if the rest starts with `"ï»¿"` and pass it
-	if strings.HasPrefix(p.Rest, constUnrecognizedSequence) {
-		p.Rest = p.Rest[len(constUnrecognizedSequence):]
+	if strings.HasPrefix(p.Rest, constRegressionCheck2UnrecognizedSequence) {
+		p.Rest = p.Rest[len(constRegressionCheck2UnrecognizedSequence):]
 	} else {
 		return false, nil
 	}
 
 	// Checks if the rest starts with `"*** Time: "` and pass it
-	if strings.HasPrefix(p.Rest, constStarsSpaceTimeColonSpace) {
-		p.Rest = p.Rest[len(constStarsSpaceTimeColonSpace):]
+	if strings.HasPrefix(p.Rest, constRegressionCheck2StarsSpaceTimeColonSpace) {
+		p.Rest = p.Rest[len(constRegressionCheck2StarsSpaceTimeColonSpace):]
 	} else {
 		return false, nil
 	}
@@ -276,7 +277,7 @@ func (p *RegressionCheck3) Extract(line string) (bool, error) {
 	}
 
 	// Checks if rest[2:] starts with `":c"`
-	if len(p.Rest) < 2+len(constColonC) || !strings.HasPrefix(p.Rest[2:], constColonC) {
+	if len(p.Rest) < 2+len(constRegressionCheck3ColonC) || !strings.HasPrefix(p.Rest[2:], constRegressionCheck3ColonC) {
 		return false, nil
 	}
 
@@ -295,7 +296,7 @@ func (p *BeforeLookup) Extract(line string) (bool, error) {
 	var pos int
 
 	// Looking for "abc" and then pass it
-	pos = strings.Index(p.Rest, constAbc)
+	pos = strings.Index(p.Rest, constBeforeLookupAbc)
 	if pos >= 0 {
 		p.Rest = p.Rest[pos:]
 	} else {
@@ -319,7 +320,7 @@ func (p *CheckPrefix) Extract(line string) (bool, error) {
 	p.Rest = line
 
 	// Checks if the rest starts with `"abc"`
-	if !strings.HasPrefix(p.Rest, constAbc) {
+	if !strings.HasPrefix(p.Rest, constCheckPrefixAbc) {
 		return false, nil
 	}
 
@@ -389,8 +390,8 @@ func (p *Custom) Extract(line string) (bool, error) {
 	addrRest = p.Rest
 
 	// Checks if the rest starts with `"addr: "` and pass it
-	if strings.HasPrefix(addrRest, constAddrColonSpace) {
-		addrRest = addrRest[len(constAddrColonSpace):]
+	if strings.HasPrefix(addrRest, constCustomAddrColonSpace) {
+		addrRest = addrRest[len(constCustomAddrColonSpace):]
 	} else {
 		p.Addr.Valid = false
 		goto customAddrLabel
@@ -485,8 +486,8 @@ func (p *SilentAreas) Extract(line string) (bool, error) {
 	alt1Rest = p.Rest
 
 	// Checks if the rest starts with `"Amount:"` and pass it
-	if strings.HasPrefix(alt1Rest, constAmountColon) {
-		alt1Rest = alt1Rest[len(constAmountColon):]
+	if strings.HasPrefix(alt1Rest, constSilentAreasAmountColon) {
+		alt1Rest = alt1Rest[len(constSilentAreasAmountColon):]
 	} else {
 		p.Alt1.Valid = false
 		goto silentareasAlt1Label
@@ -511,8 +512,8 @@ silentareasAlt1Label:
 	alt2Rest = p.Rest
 
 	// Checks if the rest starts with `"Amount:"` and pass it
-	if strings.HasPrefix(alt2Rest, constAmountColon) {
-		alt2Rest = alt2Rest[len(constAmountColon):]
+	if strings.HasPrefix(alt2Rest, constSilentAreasAmountColon) {
+		alt2Rest = alt2Rest[len(constSilentAreasAmountColon):]
 	} else {
 		p.Alt2.Valid = false
 		goto silentareasAlt2Label
