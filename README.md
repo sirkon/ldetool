@@ -3,7 +3,7 @@
 `ldetool` is a command line utility to generate Go code for fast log files parsing.
 
 ```bash
-GO111MODULE=on go get github.com/sirkon/ldetool
+go install github.com/sirkon/ldetool@latest
 ```
 
 1. [Contributors](CONTRIBUTORS.md)
